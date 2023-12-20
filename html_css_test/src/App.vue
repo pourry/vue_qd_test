@@ -1,16 +1,15 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <IndexVue />
   <axiosTest></axiosTest>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import IndexVue from './components/IndexVue.vue'
 import axiosTest from './utils/AxiosUtils.vue'
 export default {
   name: 'App',
   components: {
-    HelloWorld,
+    IndexVue,
     axiosTest
   }
 }

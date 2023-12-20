@@ -1,6 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 
+const baseUrl = "/api";
 //设置 请求超市时间  设置为 10s
 axios.defaults.timeout = 10000;
 
@@ -31,7 +32,7 @@ axios.interceptors.response.use(
 function axiosget(url,params){
     return new Promise((resolve,reject)=>{
         axios.get(
-            url,
+            baseUrl+url,
             {
                 params: params
             }
@@ -52,7 +53,7 @@ function axiosget(url,params){
 function axiospost(url,params){
     return new Promise((resolve,reject)=>{
         axios.post(
-            url,
+            baseUrl+url,
             qs.stringify(params)
         ).then(res =>{
             if(res){
