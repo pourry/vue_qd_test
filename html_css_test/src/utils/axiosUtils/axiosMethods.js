@@ -1,5 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
+import { ref } from 'vue';
 
 const baseUrl = "/api";
 //设置 请求超市时间  设置为 10s
@@ -69,9 +70,85 @@ function axiospost(url,params){
 }
 //                            -----请求 结束------
 
+//下载  get
+//在 Vue.js 中，ref 是一个特殊的函数，用于创建响应式数据。
+//当你使用 ref 函数创建一个变量时，这个变量就会成为一个响应式数据，即当它发生改变时会自动触发重新渲染。
+//具体来说，当你声明一个 const 变量并将其赋值为 ref() 函数的返回值时，实际上是将这个变量绑定到了 ref 创建的响应式数据对象中。
+//因此，你可以通过访问 a.value 来读取或修改这个响应式数据的值。
+var onDownloadProgress = ref(0)
+function axiosdown(url,params){
+    
+    return new Promise((resolve,reject)=>{
+        axios(
+            {
+                url : baseUrl+url,
+                responseType:'blob',
+                method: 'get',
+                params : params,
+                 onDownloadProgress : function(progressEvent){
+                    if(progressEvent.lengthComputable){
+                        onDownloadProgress.value = progressEvent.loaded / progressEvent.total * 100
+                     }
+                }
+        },
+        ).then(res =>{
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(res.data);
+            link.download =  "test";
+            document.body.appendChild(link);
+            link.click();
+            URL.revokeObjectURL(link.href);
+            // if(res){
+            //     resolve(res.data)
+            // }
+        }).catch(err=>{
+            if(err){
+                reject(err.data)
+            }
+        })
+    })
+    
+}
+//上传
+var onUploadProgress = ref(0)
+function axiosupload(url,params){
+   
+    return new Promise((resolve,reject)=>{
+        axios(
+            {
+                url : baseUrl+url,
+                responseType:'blob',
+                method: 'post',
+                data : qs.stringify(params),
+                 onUploadProgress : function(progressEvent){
+                    if(progressEvent.lengthComputable){
+                        onUploadProgress.value = progressEvent.loaded / progressEvent.total * 100
+                     }
+                }
+        },
+        ).then(res =>{
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(res.data);
+            link.download =  "test";
+            document.body.appendChild(link);
+            link.click();
+            URL.revokeObjectURL(link.href);
+            // if(res){
+            //     resolve(res.data)
+            // }
+        }).catch(err=>{
+            if(err){
+                reject(err.data)
+            }
+        })
+    })
+    
+}
 
 //export导出 变量   export default  导出 值
 export {
     axiosget,
-    axiospost
+    axiospost,
+    axiosdown,
+    axiosupload
 }
