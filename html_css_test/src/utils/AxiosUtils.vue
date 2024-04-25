@@ -1,6 +1,7 @@
 <template>
 
  <div>
+    <div>您好</div>
     <button @click="toaxios()">点击</button>
  </div>
 </template>
