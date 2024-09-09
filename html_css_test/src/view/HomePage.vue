@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100%;;">
+    <div style="height: 100%;">
         <Top class='topcss'></Top>
         <Middle class='middlecss' ></Middle>
         <Bottom class='bottomcss' ></Bottom>

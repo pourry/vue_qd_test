@@ -1,12 +1,17 @@
 <template>
-    <div>下</div>
+    <div> 
+    </div>
 </template>
 
 <script>
 export default {
   name: 'Bottom',
   components: {
-  }
+  },
+  methods: {
+
+  },
+
 }
 </script>
 
