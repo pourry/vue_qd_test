@@ -1,13 +1,13 @@
 <template>
     <div>
-         <div>您好</div>
-       <router-view></router-view>
+         <div>我的页面</div>
+      
     </div>
 </template>
 
 <script>
 export default {
-  name: 'Middle',
+  name: 'UserSelf',
   components: {
   }
 }

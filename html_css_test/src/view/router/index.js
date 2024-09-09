@@ -1,6 +1,8 @@
 import { createRouter,createWebHistory } from 'vue-router'
 
-import Login from '../middle/Login.vue'
+import Login from '../middlePages/Login.vue'
+import UserSelf from '../middlePages/UserSelf.vue'
+import Favorites from '../middlePages/Favorites.vue'
 import HomePage from '../HomePage.vue'
 
 const routes = [
@@ -8,14 +10,29 @@ const routes = [
  {
     path: '/homePage',
     name: 'HomePage',
-    component: HomePage
+    component: HomePage,
+    children : [
+      {
+         //登录页面
+         path: '/favorites',
+         name: 'Favorites',
+         component: Favorites,
+      },
+      {
+         //登录页面
+         path: '/userSelf',
+         name: 'UserSelf',
+         component: UserSelf,
+      },
+      {
+         //登录页面
+         path: '/login',
+         name: 'Login',
+         component: Login,
+      },
+    ]
  },
- {
-   path: '/login',
-   components: {
-      middleView : () => import('@/view/middle/Login.vue')
-   }
-},
+
 {
    path:'/',
    redirect: '/homePage'

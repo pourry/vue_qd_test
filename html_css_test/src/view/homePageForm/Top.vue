@@ -3,18 +3,34 @@
       <div class="leftdiv">欢迎来到次元收藏夹</div>
       <div class="middlediv">middle</div>
       <div class="rightdiv">
-         <div>收藏夹</div>
-         <div>我的</div>
+         <div @click="toFavorites">收藏夹</div>
+         <div @click="toUserSelf">我的</div>
          <div>退出</div>
-         <div><router-link to="/login">登录</router-link></div>
+         <div @click="tologin">
+          登录
+          <!-- <router-link to="login">登录</router-link> -->
+        </div>
       </div>
     </div>
 </template>
 
 <script>
+import router from '../router';
+
 export default {
   name: 'Top',
   components: {
+  },
+  methods:{
+    toFavorites(){
+      router.push("/favorites")
+    },
+    toUserSelf(){
+      router.push("/userSelf")
+    },
+    tologin(){
+      router.push("/login")
+    }
   }
 }
 </script>
