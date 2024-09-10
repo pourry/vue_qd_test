@@ -3,6 +3,7 @@ import { createRouter,createWebHistory } from 'vue-router'
 import Login from '../middlePages/Login.vue'
 import UserSelf from '../middlePages/UserSelf.vue'
 import Favorites from '../middlePages/Favorites.vue'
+import Home from '../middlePages/Home.vue'
 import HomePage from '../HomePage.vue'
 
 const routes = [
@@ -13,13 +14,19 @@ const routes = [
     component: HomePage,
     children : [
       {
-         //登录页面
+         //次元收藏夹首页
+         path: '/home',
+         name: 'Home',
+         component: Home,
+      },
+      {
+         //收藏夹
          path: '/favorites',
          name: 'Favorites',
          component: Favorites,
       },
       {
-         //登录页面
+         //我的
          path: '/userSelf',
          name: 'UserSelf',
          component: UserSelf

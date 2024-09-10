@@ -1,6 +1,8 @@
 <template>
     <div class="tdiv">
-      <div class="leftdiv">欢迎来到次元收藏夹</div>
+      <div class="leftdiv">
+         <div  @click="toHome">欢迎来到次元收藏夹</div>
+      </div>
       <div class="middlediv">middle</div>
       <div class="rightdiv">
          <div @click="toFavorites">收藏夹</div>
@@ -21,16 +23,22 @@ export default {
   name: 'Top',
   components: {
   },
-  methods:{
-    toFavorites(){
+  setup() {
+    let toHome = function(){
+    router.push("/home")
+    }
+    let toFavorites = function(){
       router.push("/favorites")
-    },
-    toUserSelf(){
+    }
+    let toUserSelf = function(){
       router.push("/userSelf")
-    },
-    tologin(){
+    }
+    let tologin = function(){
       router.push("/login")
     }
+
+
+    return {toHome,toFavorites,toUserSelf,tologin}
   }
 }
 </script>
@@ -43,16 +51,27 @@ export default {
 .leftdiv {
   width: 30%;
   display: flex; 
-  justify-content: center; /*横向*/
+  justify-content: left; /*横向*/
   align-items: center;     /*纵向*/
+  cursor: pointer;
+}
+.leftdiv > div{
+  padding-left: 10%;
 }
 .middlediv {
   width: 40%;
+  display: flex;
+  justify-content:space-around;
+  align-items: center;     /*纵向*/
 }
 .rightdiv {
   width: 30%;
   display: flex;
   justify-content:space-around;
+  align-items: center;     /*纵向*/
+}
+.rightdiv > div {
+   cursor: pointer;
 }
 
 </style>

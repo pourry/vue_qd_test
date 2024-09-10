@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100%;">
+    <div class="overalllayout" >
         <Top class='topcss'></Top>
         <Middle class='middlecss' ></Middle>
         <Bottom class='bottomcss' ></Bottom>
@@ -22,6 +22,10 @@ export default {
 
 
 <style>
+.overalllayout{
+   height: 100%; 
+   width: 100%;
+}
 .topcss {
   height: 5%;
   background-color: #CCD3DB;

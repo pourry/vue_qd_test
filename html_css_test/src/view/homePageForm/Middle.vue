@@ -1,7 +1,6 @@
 <template>
     <div>
-         <div>您好</div>
-       <router-view></router-view>
+         <div class = 'operationcss'> <router-view></router-view> </div>
     </div>
 </template>
 
@@ -14,4 +13,15 @@ export default {
 </script>
 
 <style scoped>
+.noticecss {
+   display:flex;
+   justify-content: center;
+   align-items:center;
+   height:10%;
+   
+}
+.operationcss {
+   height:100%;
+   width:100%;
+}
 </style>
