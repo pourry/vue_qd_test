@@ -47,4 +47,11 @@ export default {
   background-color: #292B43;
   border-radius: 10px;
 }
+
+/*  当窗口最小为600px 使用以下样式 */
+@media (max-width: 550px) {
+  .overalllayout {
+      width:550px
+  }
+}
 </style>

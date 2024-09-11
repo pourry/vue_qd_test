@@ -1,9 +1,8 @@
 <template>
     <div class= "loginpage">
-         <div class= "loginpagechilds">登录页面</div>
          <div class= "loginpagechilds">
                <div class="wrapper">
-                    <form action="#" class="formcss">
+                    <div class="formcss">
                       <h1>登录</h1>
                       <div class="input-box">
                         <i class="fas fa-envelope icon"></i>
@@ -11,7 +10,7 @@
                         <label>用户名</label>
                       </div>
                       <div class="input-box">
-                        <i class="icon" @click="passwordshow"><View  v-if = "!passwordisshow"/> <Hide  v-if = "passwordisshow"/></i>
+                        <i class="icon" @click="passwordshow"><View  v-if = "passwordisshow"/> <Hide  v-if = "!passwordisshow"/></i>
                         <input id="passwordInput" type="password" required />
                         <label>密码</label>
                       </div>
@@ -22,12 +21,12 @@
                         <a onclick="forgotman()">找回密码</a>
                       </div>
 
-                      <button onclick="loginBrungle()" class="btn">登录</button>
+                      <button @click="loginBrungle()" class="btn">登录</button>
 
                       <div class="signup-link">
-                        <p>Don't have an account? <a href="#">Create one.</a></p>
+                        <p>没有账号? <a href="#" @click="toSignUp()">去创建-></a></p>
                       </div>
-                    </form>
+                    </div>
                 </div>
          </div>
       
@@ -36,12 +35,16 @@
 
 <script>
 import {ref} from 'vue'
+import {login} from '@/api/login'
+import router from '../router';
 export default {
   name: 'Login',
   components: {
   },
   setup(){
-  let passwordisshow = ref(true)
+
+  //控制 密码显隐
+  let passwordisshow = ref(false)
 
   let passwordshow = function(){
       let passwordField = document.getElementById('passwordInput');
@@ -53,9 +56,26 @@ export default {
          passwordisshow.value = false;
       }
   }
+
+  let loginBrungle = function(){
+      let username =  document.getElementById("usernameInput")
+      let userpassword =  document.getElementById("passwordInput")
+      login(
+      {'username': username.value,
+       'userpassword' : userpassword.vue}
+      ).then(res => {
+         console.log(res)
+      })
+  }
+
+  let toSignUp = function(){
+      router.push("/signUp");
+  }
   
 
-  return {passwordisshow,passwordshow}
+  return {passwordisshow,passwordshow,
+          loginBrungle,
+          toSignUp}
   }
 }
 </script>
@@ -64,9 +84,10 @@ export default {
 .loginpage {
    height:100%;
    width:100%;
-   display: grid; 
+   /*display: grid; 
    place-items: center;
-   grid-template-rows: 5% 80%;
+   grid-template-rows: 5% 80%; 
+   */
 }
 .loginpagechilds{
    width:100%;
@@ -79,13 +100,13 @@ export default {
 .wrapper {
   width: 50%;
   height:55%;
-  background: #3e404d;
+  background: rgba(62, 64, 77, 0.5);
   border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px); /*背景添加滤镜  模糊*/
 }
 
 .formcss{
@@ -97,7 +118,7 @@ export default {
 
   .wrapper:hover {
     box-shadow: 0 0 40px rgba(255,255,255,0.5);
-    background: #46474e;
+    background: rgba(62, 64, 77, 0.5);
   }
 
 .wrapper h1 {
@@ -208,20 +229,4 @@ export default {
   text-decoration: underline;
 }
 
-@media (max-width: 360px) {
-  .wrapper {
-    width: 100%;
-    height: 100vh;
-    border: none;
-    border-radius: 0px;
-  }
-
-  .wrapper .input-box {
-    width: 290px;
-  }
-  #img {
-  z-index: -90;
-  }
-}
-  
 </style>

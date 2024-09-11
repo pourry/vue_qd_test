@@ -5,6 +5,7 @@ import UserSelf from '../middlePages/UserSelf.vue'
 import Favorites from '../middlePages/Favorites.vue'
 import Home from '../middlePages/Home.vue'
 import HomePage from '../HomePage.vue'
+import SignUp from '../middlePages/SignUp.vue'
 
 const routes = [
 
@@ -35,7 +36,13 @@ const routes = [
          //登录页面
          path: '/login',
          name: 'Login',
-         component: Login
+         component: Login,
+      },
+      {
+         //登录页面
+         path: '/signUp',
+         name: 'SignUp',
+         component: SignUp,
       },
     ]
  },
