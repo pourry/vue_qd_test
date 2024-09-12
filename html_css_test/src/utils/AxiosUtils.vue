@@ -16,6 +16,7 @@ export default {
 
       function toaxios(){
            getSm2().then(res=>{
+           console.log("-------")
         console.log(res)
     })
       }

@@ -12,7 +12,8 @@ axios.interceptors.request.use(
     req =>{
         //处理
         //config.headers
-        console.log("axios请求拦截执行。。。。。",req)
+        req.headers.Authorization = localStorage.getItem("Authorization");
+        console.log("axios请求拦截执行。。。。。",req,"--结束--")
         return req;
        
     },
@@ -23,7 +24,11 @@ axios.interceptors.request.use(
 //响应拦截器
 axios.interceptors.response.use(
     res =>{
-            console.log("axios响应拦截执行。。。。",res)
+            console.log("axios响应拦截执行。。。。",res,"--结束--")
+            return res;
+    },
+    error =>{
+        return Promise.err(error);
     }
 )
 //                            -----拦截器 结束------
@@ -32,12 +37,11 @@ axios.interceptors.response.use(
 //get 请求
 function axiosget(url,params){
     return new Promise((resolve,reject)=>{
-        axios.get(
-            baseUrl+url,
-            {
-                params: params
-            }
-        ).then(res =>{
+      return  axios({
+        method: 'get',
+        url: baseUrl+url,
+        params: params
+      }).then(res =>{
             if(res){
                 resolve(res.data)
             }
@@ -53,9 +57,12 @@ function axiosget(url,params){
 //post 请求
 function axiospost(url,params){
     return new Promise((resolve,reject)=>{
-        axios.post(
-            baseUrl+url,
-            qs.stringify(params)
+        axios({
+            method: 'post',
+            url: baseUrl+url,
+            data:qs.stringify(params)
+           
+        }
         ).then(res =>{
             if(res){
                 resolve(res.data)

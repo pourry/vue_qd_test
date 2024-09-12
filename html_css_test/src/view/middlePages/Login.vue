@@ -8,11 +8,13 @@
                         <i class="fas fa-envelope icon"></i>
                         <input id="usernameInput" type="username" required />
                         <label>用户名</label>
+                        <span id="usernamemsg"></span>
                       </div>
                       <div class="input-box">
                         <i class="icon" @click="passwordshow"><View  v-if = "passwordisshow"/> <Hide  v-if = "!passwordisshow"/></i>
                         <input id="passwordInput" type="password" required />
                         <label>密码</label>
+                        <span id="passwordmsg"></span>
                       </div>
 
                       <div class="row">
@@ -57,20 +59,43 @@ export default {
       }
   }
 
+
+ //登录
   let loginBrungle = function(){
-      let username =  document.getElementById("usernameInput")
-      let userpassword =  document.getElementById("passwordInput")
+      let username =  document.getElementById("usernameInput");
+      let userpassword =  document.getElementById("passwordInput");
+      if(username.value.trim() =='' || username.value.trim() == undefined){
+         document.getElementById("usernamemsg").innerHTML= "*用户名不能为空";
+         return;
+      }else{
+         document.getElementById("usernamemsg").innerHTML= "";
+      }
+
+
+      if(userpassword.value.trim() =='' || userpassword.value.trim() == undefined){
+         document.getElementById("passwordmsg").innerHTML= "*密码不能为空";
+         return;
+      }else{
+         document.getElementById("passwordmsg").innerHTML= "";
+      }
+
+
       login(
       {'username': username.value,
-       'userpassword' : userpassword.vue}
+       'password' : userpassword.value}
       ).then(res => {
+         console.log("------")
          console.log(res)
+         if(res.successful){
+            localStorage.setItem("Authorization",res.resultValue.token);
+         }
       })
   }
-
+// 前往 注册页面
   let toSignUp = function(){
       router.push("/signUp");
   }
+  
   
 
   return {passwordisshow,passwordshow,
@@ -154,6 +179,13 @@ export default {
   color: #fff;
   pointer-events: none;
   transition: 0.5s;
+}
+
+.wrapper .input-box > span{
+   position: absolute;
+   top: 60px;
+   color: #eb2525;
+
 }
 
 .wrapper .input-box input:focus ~ label,
