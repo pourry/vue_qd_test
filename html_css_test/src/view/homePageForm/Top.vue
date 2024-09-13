@@ -7,8 +7,8 @@
       <div class="rightdiv">
          <div @click="toFavorites">收藏夹</div>
          <div @click="toUserSelf">我的</div>
-         <div>退出</div>
-         <div @click="tologin">
+         <div v-if="haslogin" @click="toquite">退出</div>
+         <div v-if="!haslogin" @click="tologin">
           登录
           <!-- <router-link to="login">登录</router-link> -->
         </div>
@@ -17,15 +17,34 @@
 </template>
 
 <script>
-import router from '../router';
-
+import {ref,onMounted,nextTick} from 'vue';
+import router from '@/utils/router'
 export default {
   name: 'Top',
   components: {
   },
   setup() {
+    //判断是否已登录
+    let haslogin = ref(false);
+    let isloginfunction = function(){
+       if(localStorage.getItem("Authorization")){
+          haslogin.value = true;
+       }else{
+          haslogin.value = false;
+       }
+       
+    }
+    //退出
+    let toquite = function(){
+      nextTick(()=>{
+        haslogin.value = false;
+      })
+      localStorage.clear();
+      router.push("/home")
+    }
+
     let toHome = function(){
-    router.push("/home")
+      router.push("/home")
     }
     let toFavorites = function(){
       router.push("/favorites")
@@ -38,7 +57,14 @@ export default {
     }
 
 
-    return {toHome,toFavorites,toUserSelf,tologin}
+    onMounted(() => {
+      isloginfunction();
+    });
+
+
+    return {toHome,toFavorites,toUserSelf,tologin,
+           haslogin,isloginfunction,
+           toquite}
   }
 }
 </script>

@@ -10,12 +10,13 @@ axios.defaults.timeout = 10000;
 //请求拦截器
 axios.interceptors.request.use(
     req =>{
+        console.log("axios请求拦截执行。。。。。",req,"--结束--")
         //处理
         //config.headers
-        req.headers.Authorization = localStorage.getItem("Authorization");
-        console.log("axios请求拦截执行。。。。。",req,"--结束--")
-        return req;
-       
+        let token = localStorage.getItem("Authorization");
+            req.headers.Authorization = token;
+            return req;
+
     },
     error =>{
         return Promise.err(error);

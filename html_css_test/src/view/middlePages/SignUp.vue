@@ -46,7 +46,7 @@
 
 <script>
 import {ref} from 'vue'
-import router from '../router';
+import router from '@/utils/router/index'
 export default {
   name: 'SignUp',
   components: {

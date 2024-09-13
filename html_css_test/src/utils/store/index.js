@@ -5,13 +5,18 @@ export default createStore({
     state:{
         sm2 : {
             publicKey:undefined,
-        }
+        },
+        //是否登录
+        haslogin: false,
 
     },
     //用于将state中的数据进行加工
     getters:{
         getSm2(state){
             return state.sm2;
+        },
+        getHaslogin(haslogin){
+            return haslogin;
         }
     },
     //操作数据

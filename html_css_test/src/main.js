@@ -5,7 +5,7 @@ import ElementUI from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import store from './utils/store'
 
-import router from './view/router'
+import router from './utils/router'
 // import preload from './utils/preLoading/preload'
 import {loadingSm2} from './utils/preLoading/preload'
 

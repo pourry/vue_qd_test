@@ -1,11 +1,11 @@
 import { createRouter,createWebHistory } from 'vue-router'
 
-import Login from '../middlePages/Login.vue'
-import UserSelf from '../middlePages/UserSelf.vue'
-import Favorites from '../middlePages/Favorites.vue'
-import Home from '../middlePages/Home.vue'
-import HomePage from '../HomePage.vue'
-import SignUp from '../middlePages/SignUp.vue'
+import Login from '@/view/middlePages/Login.vue'
+import UserSelf from '@/view/middlePages/UserSelf.vue'
+import Favorites from '@/view/middlePages/Favorites.vue'
+import Home from '@/view/middlePages/Home.vue'
+import HomePage from '@/view/HomePage.vue'
+import SignUp from '@/view/middlePages/SignUp.vue'
 
 const routes = [
 

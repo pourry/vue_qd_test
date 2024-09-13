@@ -38,7 +38,7 @@
 <script>
 import {ref} from 'vue'
 import {login} from '@/api/login'
-import router from '../router';
+import router from '@/utils/router'
 export default {
   name: 'Login',
   components: {
@@ -88,6 +88,9 @@ export default {
          console.log(res)
          if(res.successful){
             localStorage.setItem("Authorization",res.resultValue.token);
+            document.getElementById("usernameInput").value = "";
+            document.getElementById("passwordInput").value = "";
+            router.push("/home"); 
          }
       })
   }
