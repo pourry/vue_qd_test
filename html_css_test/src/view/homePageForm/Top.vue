@@ -5,9 +5,13 @@
       </div>
       <div class="middlediv">middle</div>
       <div class="rightdiv">
-         <div @click="toFavorites">收藏夹</div>
-         <div @click="toUserSelf">我的</div>
-         <div v-if="haslogin" @click="toquite">退出</div>
+         <div v-if="haslogin" @click="toFavorites">收藏夹</div>
+         <div v-if="haslogin" @click="toUserSelf">我的</div>
+         <div v-if="haslogin" @click="toquite">
+           <ul><li>退出<ul  class="nav-child" ><li>重新登录</li></ul></li>
+               
+           </ul>
+          </div>
          <div v-if="!haslogin" @click="tologin">
           登录
           <!-- <router-link to="login">登录</router-link> -->
@@ -17,29 +21,42 @@
 </template>
 
 <script>
-import {ref,onMounted,nextTick} from 'vue';
+import {ref,onMounted,nextTick,watch} from 'vue';
 import router from '@/utils/router'
+import store from '@/utils/store'
 export default {
   name: 'Top',
   components: {
   },
   setup() {
+
+
     //判断是否已登录
     let haslogin = ref(false);
-    let isloginfunction = function(){
-       if(localStorage.getItem("Authorization")){
-          haslogin.value = true;
-       }else{
-          haslogin.value = false;
-       }
-       
-    }
+
+
+    watch(()=>store.getters.getToken.value,
+         (newvalue, oldvalue)=>{
+         console.log("___",newvalue,"+++",oldvalue)
+	          if(newvalue){
+              haslogin.value = true;
+            }else{
+              haslogin.value = false;
+            }
+
+         },
+         {
+           deep:true,
+           immediate:true
+         }
+     ) 
     //退出
     let toquite = function(){
       nextTick(()=>{
         haslogin.value = false;
       })
       localStorage.clear();
+      store.commit("SETTOKEN",{value: undefined});
       router.push("/home")
     }
 
@@ -58,18 +75,38 @@ export default {
 
 
     onMounted(() => {
-      isloginfunction();
+      
     });
 
 
     return {toHome,toFavorites,toUserSelf,tologin,
-           haslogin,isloginfunction,
+           haslogin,
            toquite}
   }
 }
 </script>
 
 <style scoped>
+.nav-child{
+    position:relative;
+    left: 125px;
+    top: -0px;
+    width: 125px;
+    padding-left: 0%;
+    list-style: none;
+    background-color:darkgoldenrod;
+    display: none;
+    list-style: none;
+    background-color:chocolate;
+    
+}
+ .nav-child>li{
+    position: relative;
+}
+
+li:hover>.nav-child{
+    display: block;
+}
 .tdiv {
   
   display: flex;

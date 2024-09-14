@@ -39,6 +39,7 @@
 import {ref} from 'vue'
 import {login} from '@/api/login'
 import router from '@/utils/router'
+import store from '@/utils/store'
 export default {
   name: 'Login',
   components: {
@@ -84,12 +85,11 @@ export default {
       {'username': username.value,
        'password' : userpassword.value}
       ).then(res => {
-         console.log("------")
-         console.log(res)
          if(res.successful){
-            localStorage.setItem("Authorization",res.resultValue.token);
             document.getElementById("usernameInput").value = "";
             document.getElementById("passwordInput").value = "";
+            localStorage.setItem("Authorization",res.resultValue.token);
+            store.commit("SETTOKEN",{value: res.resultValue.token});
             router.push("/home"); 
          }
       })
