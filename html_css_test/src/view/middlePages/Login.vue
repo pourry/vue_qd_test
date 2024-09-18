@@ -23,8 +23,10 @@
                         <a onclick="forgotman()">找回密码</a>
                       </div>
 
-                      <button @click="loginBrungle()" class="btn">登录</button>
-
+                      <div class="loginbutcss">
+                        <button @click="loginBrungle()" class="btn">登录</button>
+                        <span id="loginfalsespan" class="loginfalse"></span>
+                      </div>
                       <div class="signup-link">
                         <p>没有账号? <a href="#" @click="toSignUp()">去创建-></a></p>
                       </div>
@@ -88,9 +90,12 @@ export default {
          if(res.successful){
             document.getElementById("usernameInput").value = "";
             document.getElementById("passwordInput").value = "";
+            document.getElementById("loginfalsespan").innerHTML= "";
             localStorage.setItem("Authorization",res.resultValue.token);
             store.commit("SETTOKEN",{value: res.resultValue.token});
             router.push("/home"); 
+         }else{
+            document.getElementById("loginfalsespan").innerHTML= res.resultValue
          }
       })
   }
@@ -109,6 +114,15 @@ export default {
 </script>
 
 <style scoped>
+.loginbutcss{
+ height:100%;
+ width:100%;
+ display:grid;
+ place-items:center;
+}
+.loginfalse{
+  color: #eb2525;
+}
 .loginpage {
    height:100%;
    width:100%;

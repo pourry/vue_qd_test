@@ -7,10 +7,16 @@
       <div class="rightdiv">
          <div v-if="haslogin" @click="toFavorites">收藏夹</div>
          <div v-if="haslogin" @click="toUserSelf">我的</div>
-         <div v-if="haslogin" @click="toquite">
-           <ul><li>退出<ul  class="nav-child" ><li>重新登录</li></ul></li>
-               
-           </ul>
+         <div  v-if="haslogin" @click="toquite">
+           <div class="tchead">
+            <div class="tccss">退出</div>
+            <ul  class="tc_li" >
+              <li>重新登录</li>
+              <li>重新登录</li>
+              <li>重新登录</li>
+              <li>重新登录</li>
+            </ul>
+           </div>
           </div>
          <div v-if="!haslogin" @click="tologin">
           登录
@@ -87,28 +93,48 @@ export default {
 </script>
 
 <style scoped>
-.nav-child{
-    position:relative;
-    left: 125px;
-    top: -0px;
-    width: 125px;
-    padding-left: 0%;
-    list-style: none;
-    background-color:darkgoldenrod;
-    display: none;
-    list-style: none;
-    background-color:chocolate;
-    
-}
- .nav-child>li{
-    position: relative;
-}
 
-li:hover>.nav-child{
-    display: block;
+.tchead{
+  height:100%;
+  width:100%;
+}
+.tccss{
+ position:relative;
+ height:100%;
+ width:100%;
+  display: flex; 
+  justify-content: center; /*横向*/
+  align-items: center;     /*纵向*/
+}
+.tc_li{
+   position: absolute;
+   display: none;
+   list-style-type: none; /*把前面的点去除*/
+   padding: 0;
+   margin: 0;
+   width:10%;
+   text-align:center;
+   box-shadow: inset 0 0 10px 5px #e0f5fc;
+}
+.tc_li li{
+  width:100%;
+  height:100%;
+  list-style: none;
+  background-color: rgba(249,255,255,0.5);
+  padding: 10px 0 10px 0;
+}
+.tc_li li:hover{
+  box-shadow: inset 0 0 10px 5px #e0f5fc;
+}
+/*相邻兄弟选择器（+）*/
+.tccss:hover + .tc_li{
+  display: block;
+  box-shadow: inset 0 0 10px 5px #e0f5fc;
+}
+.tc_li:hover {
+  display: block;
 }
 .tdiv {
-  
   display: flex;
 }
 .leftdiv {
@@ -128,6 +154,7 @@ li:hover>.nav-child{
   align-items: center;     /*纵向*/
 }
 .rightdiv {
+  height:100%;
   width: 30%;
   display: flex;
   justify-content:space-around;
@@ -135,6 +162,16 @@ li:hover>.nav-child{
 }
 .rightdiv > div {
    cursor: pointer;
+   height:100%;
+   width:100%;
+   display:flex;
+   justify-content: center;
+   align-items: center;
+   
+}
+.rightdiv > div:hover {
+  box-shadow: inset 0 0 10px 5px #e0f5fc;
+   border-radius: 10px;
 }
 
 </style>

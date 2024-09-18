@@ -6,12 +6,14 @@
                       <h1>注册</h1>
                       <div class="msgcss">
                           <div class="input-box">
-                            <input id="usernameInput" type="username" required />
+                            <input id="nicknameInput" type="username" required />
                             <label>昵称</label>
+                            <span id="nicknamemsg"></span>
                           </div>
                           <div class="input-box">
                             <input id="usernameInput" type="username" required />
                             <label>用户名</label>
+                            <span id="usernamemsg"></span>
                           </div>
                           <div class="input-box">
                             <i class="icon" @click="passwordshow"><View  v-if = "passwordisshow"/> <Hide  v-if = "!passwordisshow"/></i>
@@ -29,6 +31,7 @@
                             <i class="icon"><Message /></i>
                             <input id="emailInput" type="email" required />
                             <label>邮箱</label>
+                            <span id="emailmsg"></span>
                           </div>
                       </div>
 
@@ -87,8 +90,23 @@ export default {
         //注册
         let signUpBrungle = function(){
             
+            let nickname = document.getElementById("nicknameInput"); 
             let password = document.getElementById("passwordInput");
             let rePassword = document.getElementById("rePasswordInput");
+            if(nickname.value.trim() == "" || nickname.value.trim() == undefined){
+                document.getElementById("nicknamemsg").innerHTML = "*昵称不能为空"
+                return;
+            }
+            if(usernameInput.value.trim() == "" || usernameInput.value.trim() == undefined){
+                document.getElementById("usernamemsg").innerHTML = "*用户名不能为空"
+                return;
+            }
+            if(emailInput.value.trim() == "" || emailInput.value.trim() == undefined){
+                document.getElementById("emailmsg").innerHTML = "*用户名不能为空"
+                return;
+            }else if(!emailInput.value.trim().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)){
+                return;
+            }
             if(password.value !== rePassword.value || password.value.trim() == ""){
                 ispasswordequel.value = true;
             }else{
@@ -308,6 +326,12 @@ background-color:rgba(255,255,255,.3);
 
 .wrapper .signup-link a:hover {
   text-decoration: underline;
+}
+
+.wrapper .input-box > span{
+  position:absolute;
+  top: 60px;
+  color: #eb2525;
 }
 
 </style>
