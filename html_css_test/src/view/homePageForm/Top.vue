@@ -7,14 +7,11 @@
       <div class="rightdiv">
          <div v-if="haslogin" @click="toFavorites">收藏夹</div>
          <div v-if="haslogin" @click="toUserSelf">我的</div>
-         <div  v-if="haslogin" @click="toquite">
+         <div  v-if="haslogin" >
            <div class="tchead">
-            <div class="tccss">退出</div>
+            <div class="tccss" @click="toquite">退出</div>
             <ul  class="tc_li" >
-              <li>重新登录</li>
-              <li>重新登录</li>
-              <li>重新登录</li>
-              <li>重新登录</li>
+              <li @click="tologin">重新登录</li>
             </ul>
            </div>
           </div>
@@ -115,6 +112,18 @@ export default {
    width:10%;
    text-align:center;
    box-shadow: inset 0 0 10px 5px #e0f5fc;
+   overflow: hidden;
+   /* 绑定动画名字并且设置持续时间 */
+  animation-name: frames;
+  animation-duration: 0.5s;
+}
+@keyframes frames{
+  from{
+    height: 0%;
+  }
+  to{
+    height: auto;
+  }
 }
 .tc_li li{
   width:100%;
