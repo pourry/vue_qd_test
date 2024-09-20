@@ -1,7 +1,5 @@
 <template>
-    <div>
          <div class = 'operationcss'> <router-view></router-view> </div>
-    </div>
 </template>
 
 <script>
@@ -13,13 +11,6 @@ export default {
 </script>
 
 <style scoped>
-.noticecss {
-   display:flex;
-   justify-content: center;
-   align-items:center;
-   height:10%;
-   
-}
 .operationcss {
    height:100%;
    width:100%;
