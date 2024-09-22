@@ -29,12 +29,13 @@ export default {
 .topcss {
   height: 5%;
   background-color: #CCD3DB;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
 }
 .middlecss {
   height: 80%;
   background-color: #E7EBED;
   border: solid white 10px;
+  margin: -10px;
   border-radius: 10px;
   background-image: url(../assets/homePage/83066660_p0.png);
   background-repeat: no-repeat; 
@@ -45,7 +46,7 @@ export default {
 .bottomcss{
   height: 15%;
   background-color: #292B43;
-  border-radius: 10px;
+  border-radius: 0 0 10px 10px;
 }
 
 /*  当窗口最小为600px 使用以下样式 */
