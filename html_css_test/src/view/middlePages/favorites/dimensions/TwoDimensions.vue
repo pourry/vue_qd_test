@@ -1,6 +1,5 @@
 <template>
-    <div>
-         <div>二次元</div>
+    <div class="ecycss">
          <router-view></router-view>
       
     </div>
@@ -15,4 +14,8 @@ export default {
 </script>
 
 <style scoped>
+.ecycss{
+   width:100%;
+   height:100%;
+}
 </style>

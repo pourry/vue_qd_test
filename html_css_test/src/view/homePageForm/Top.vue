@@ -40,11 +40,14 @@ export default {
 
     watch(()=>store.getters.getToken.value,
          (newvalue, oldvalue)=>{
+         console.log(store.getters.getToken.value);
          console.log("___",newvalue,"+++",oldvalue)
 	          if(newvalue){
               haslogin.value = true;
+            }else if(localStorage.getItem("Authorization")){
+              haslogin.value = true;
             }else{
-              haslogin.value = false;
+            haslogin.value = false;
             }
 
          },

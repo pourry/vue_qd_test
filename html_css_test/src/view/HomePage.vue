@@ -35,7 +35,7 @@ export default {
   height: 80%;
   background-color: #E7EBED;
   border: solid white 10px;
-  margin: -10px;
+  margin: 0 0 0 -10px ;
   border-radius: 10px;
   background-image: url(../assets/homePage/83066660_p0.png);
   background-repeat: no-repeat; 

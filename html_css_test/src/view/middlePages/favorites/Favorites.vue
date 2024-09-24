@@ -15,7 +15,7 @@
                 <el-sub-menu index="2" route="/twoDimensions">
                   <template #title>
                     <el-icon><Menu /></el-icon>
-                    <span>二次元</span>
+                    <span>次元大厅</span>
                   </template>
                   <el-menu-item index="2-1" route="/animation">动画</el-menu-item>
                   <el-menu-item index="2-2" route="/comic">漫画</el-menu-item>

@@ -7,7 +7,7 @@ export default createStore({
             publicKey:undefined,
         },
         //是否登录
-        token: localStorage.getItem("Authorization")  == null ? {value:undefined}: localStorage.getItem("Authorization"),
+        token: localStorage.getItem("Authorization")  == null || localStorage.getItem("Authorization") ==  undefined ? {value:undefined}: localStorage.getItem("Authorization"),
 
     },
     //用于将state中的数据进行加工
