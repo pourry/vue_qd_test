@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  name: 'Animation',
+  name: 'TDrightMiddle',
   components: {
   }
 }
@@ -40,6 +40,7 @@ export default {
    display:flex;
    flex-wrap: wrap;
    align-content: flex-start;
+   justify-content: center;   /* 居中对齐 */
    height:100%;
    width:100%;
    overflow:auto;
@@ -48,7 +49,7 @@ export default {
 .tdrightmiddlecss >div >div{
    border:solid green 1px;
    height:25%;
-   width:27.5rem;
+   width:20rem;
 }
 
 

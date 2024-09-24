@@ -3,18 +3,23 @@
          <div class='tdtopcss'>上方查询条件</div>
          <div class='tdmiddlecss'>
            <!-- 中部 -->
-           <Tdrightmiddlecss></Tdrightmiddlecss>
+           <Tdrightmiddle></Tdrightmiddle>
          </div>
-         <div class='tdbottomcss'>下方页签</div>
+         <div class='tdbottomcss'>
+            <TDrightBottom></TDrightBottom>
+         </div>
     </div>
 </template>
 
 <script>
-import Tdrightmiddlecss from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightMiddle.vue'
+import Tdrightmiddle from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightMiddle.vue'
+import TDrightBottom from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightBottom.vue'
+
 export default {
   name: 'Animation',
   components: {
-    Tdrightmiddlecss
+    Tdrightmiddle,
+    TDrightBottom
   }
 }
 </script>
