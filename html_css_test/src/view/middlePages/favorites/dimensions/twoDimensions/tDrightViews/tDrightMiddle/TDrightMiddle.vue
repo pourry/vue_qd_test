@@ -1,7 +1,10 @@
 <template>
     <div class='tdrightmiddlecss'>
-      <div>
-         <div>1</div> 
+      <div class='collectshowcss'>
+         <div>
+           <el-image style="position:relative;height:100%;width:100%;background-color:rgba(255,255,255,0.5)">图片</el-image>
+           <lable style="position:absolute;background-color:red;width:50%;height:50%;right:0%;bottom:0%;">123</lable>
+         </div> 
          <div>2</div> 
          <div>3</div> 
          <div>4</div> 
@@ -34,23 +37,32 @@ export default {
 .tdrightmiddlecss{
    height:100%;
    width:100%;
+   display: flex;
+   justify-content:center;
+   align-items: center;
 }
 .tdrightmiddlecss >div{
    border:solid red 1px;
    display:flex;
-   flex-wrap: wrap;
-   align-content: flex-start;
+   flex-wrap: wrap;  /*可换行*/
+   align-content: flex-start; /*从左到右*/
    justify-content: center;   /* 居中对齐 */
-   height:100%;
-   width:100%;
+   height:98%;
+   width:98%;
    overflow:auto;
    
 }
-.tdrightmiddlecss >div >div{
-   border:solid green 1px;
+.collectshowcss >div{
+   position:relative;    /*absolute（绝对）  如果上级没有定位 时会往上找  最终会以html 为基准*/
    height:25%;
    width:20rem;
+   padding: 0.5%;
+   margin: 0.5%;
+   cursor: pointer;
+   
 }
-
+.collectshowcss >div:hover {
+  box-shadow: inset 0 0 100px 5px #e0f5fc;
+}
 
 </style>

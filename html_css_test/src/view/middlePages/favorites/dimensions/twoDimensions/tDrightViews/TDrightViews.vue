@@ -1,6 +1,8 @@
 <template>
     <div class='tdrightcss'>
-         <div class='tdtopcss'>上方查询条件</div>
+         <div class='tdtopcss'>
+           <TDrightTop></TDrightTop>
+         </div>
          <div class='tdmiddlecss'>
            <!-- 中部 -->
            <Tdrightmiddle></Tdrightmiddle>
@@ -14,12 +16,14 @@
 <script>
 import Tdrightmiddle from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightMiddle.vue'
 import TDrightBottom from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightBottom.vue'
+import TDrightTop from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightTop.vue'
 
 export default {
   name: 'Animation',
   components: {
     Tdrightmiddle,
-    TDrightBottom
+    TDrightBottom,
+    TDrightTop
   }
 }
 </script>
