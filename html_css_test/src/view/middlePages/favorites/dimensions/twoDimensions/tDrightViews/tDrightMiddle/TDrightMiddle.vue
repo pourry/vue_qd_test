@@ -2,8 +2,14 @@
     <div class='tdrightmiddlecss'>
       <div class='collectshowcss'>
          <div>
-           <el-image style="position:relative;height:100%;width:100%;background-color:rgba(255,255,255,0.5)">图片</el-image>
-           <lable style="position:absolute;background-color:red;width:50%;height:50%;right:0%;bottom:0%;">123</lable>
+           <el-image >图片</el-image>
+           <span>
+              <ul>
+                <li>名称</li>
+                <li>地址</li>
+                <li>备注</li>
+              </ul>
+           </span>
          </div> 
          <div>2</div> 
          <div>3</div> 
@@ -64,5 +70,18 @@ export default {
 .collectshowcss >div:hover {
   box-shadow: inset 0 0 100px 5px #e0f5fc;
 }
-
+.collectshowcss div>.el-image{
+  position:relative;
+  height:100%;
+  width:100%;
+  background-color:rgba(255,255,255,0.5)
+}
+.collectshowcss div>span{
+  position:absolute;
+  background-color:red;
+  width:50%;
+  height:30%;
+  right:0%;
+  bottom:0%;
+}
 </style>

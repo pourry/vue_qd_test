@@ -3,15 +3,17 @@
       <el-row :gutter="20" style='margin:0'>
         <el-col :span="6">1</el-col>
         <el-col :span="6">2</el-col>
-        <el-col :span="6">3</el-col>
-        <el-col :span="6">
-                      <el-input
-            v-model="input1"
-            class="w-50 m-2"
-            size="large"
-            placeholder="请输入"
-            :suffix-icon="Search"
-            />
+        <el-col :span="12">
+            <div class="TDserchcss">
+              <el-input
+                v-model="input1"
+                class="w-50 m-2"
+                size="large"
+                placeholder="请输入"
+                suffix-icon="Search"
+                />
+            <el-button type="primary" icon="Search" size="large" />
+            </div>
         </el-col>
       </el-row>
 
@@ -49,5 +51,10 @@ export default {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
+}
+.TDserchcss{
+  padding-left: 30%;
+  display: flex;
+  gap: 10%;
 }
 </style>
