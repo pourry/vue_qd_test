@@ -1,9 +1,6 @@
 <template>
-    <div>
-         <div>游戏</div>
-         <div>
+    <div class='gamecss'>
             <TDrightViews></TDrightViews>
-         </div>
     </div>
 </template>
 
@@ -18,4 +15,8 @@ export default {
 </script>
 
 <style scoped>
+.gamecss{ 
+    width:100%;
+    height:100%;
+}
 </style>

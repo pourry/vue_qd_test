@@ -1,9 +1,6 @@
 <template>
-    <div>
-         <div>小说</div>
-         <div>
+    <div class='novelcss'>
             <TDrightViews></TDrightViews>
-         </div> 
     </div>
 </template>
 
@@ -18,4 +15,8 @@ export default {
 </script>
 
 <style scoped>
+.novelcss{
+    width:100%;
+    height:100%;
+}
 </style>

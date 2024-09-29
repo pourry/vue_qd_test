@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import {ref} from 'vue'
+import {ref,onMounted,onBeforeUnmount} from 'vue'
 import {login} from '@/api/login'
 import router from '@/utils/router'
 import store from '@/utils/store'
@@ -103,12 +103,25 @@ export default {
   let toSignUp = function(){
       router.push("/signUp");
   }
+
+  let keyDown = function(e) {
+      // 回车则执行登录方法，enter键的ASCII是13
+      if (e.keyCode === 13) {
+        loginBrungle() // 需要执行的方法方法
+      }
+    }
   
-  
+  onMounted(() => {
+    window.addEventListener('keydown', keyDown)
+  })
+  onBeforeUnmount(() => {
+    window.removeEventListener('keydown',keyDown)
+  })
 
   return {passwordisshow,passwordshow,
           loginBrungle,
-          toSignUp}
+          toSignUp,
+          keyDown}
   }
 }
 </script>

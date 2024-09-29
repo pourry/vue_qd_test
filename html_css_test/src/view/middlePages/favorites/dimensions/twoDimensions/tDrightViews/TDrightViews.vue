@@ -34,12 +34,12 @@ export default {
    width:100%;
 }
 .tdtopcss{
-   height:10%;
+   height:5%;
    width:100%;
    background-color: red;
 }
 .tdmiddlecss{
-   height:85%;
+   height:90%;
    width:100%;
 }
 .tdbottomcss{
