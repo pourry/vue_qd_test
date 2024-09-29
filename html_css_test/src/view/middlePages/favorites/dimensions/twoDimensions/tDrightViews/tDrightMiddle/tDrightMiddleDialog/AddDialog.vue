@@ -1,8 +1,7 @@
 <template>
-        <el-dialog v-model="addshow" title="Shipping address">
-        1111
-
-        </el-dialog>
+  <div class="tdaddstartcss">
+    1111
+  </div>
 </template>
 
 <script>
@@ -20,13 +19,20 @@ export default {
   },
   setup(){
   onMounted(()=>{
-  debugger
-    console.log(addshow)
   })
   }
 }
 </script>
 
 <style scoped>
+.tdaddstartcss{
+  background-color: green;
+  position:absolute;
+  top:100%;
+  width: 100%;
+  height: 600%;
+  z-index: 100;
+}
+
 
 </style>

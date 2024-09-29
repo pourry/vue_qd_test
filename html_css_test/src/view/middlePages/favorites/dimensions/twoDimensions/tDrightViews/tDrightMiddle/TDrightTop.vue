@@ -2,9 +2,9 @@
     <div class='tdrighttopcss'>
       <el-row :gutter="20" style='margin:0;'>
         <el-col :span="6">
-           <el-button type="primary"  size="large" @click="toshowaddDialog">添加</el-button>
-           <el-button type="primary"  size="large" >修改</el-button>
-           <el-button type="primary"  size="large" >删除</el-button>
+           <el-button class="tdaddbut" type="primary" :span="2" size="large" @click="totdaddmenushow">添加</el-button>
+           <el-button type="primary" :span="2" size="large" >修改</el-button>
+           <el-button type="primary" :span="2" size="large" >删除</el-button>
         </el-col>
         <el-col :span="6">2</el-col>
         <el-col :span="12">
@@ -21,10 +21,8 @@
         </el-col>
       </el-row>
 
-    <!--  <AddDialog :addshow="addshow"></AddDialog>-->
-        <el-dialog v-model="addshow" title="Shipping address">
-        1111
-        </el-dialog>
+      <!-- 添加 -->
+     <AddDialog :class="tdaddmenushow"></AddDialog>
     </div>
 </template>
 
@@ -38,17 +36,22 @@ export default {
   },
   setup(){
      let searchTd = ref("");
-
-     let addshow =  ref(false);
-     let toshowaddDialog = function(){
-     debugger
-         addshow.value = true;
+     //添加页面显示隐藏 默认 隐藏样式
+     let tdaddmenushow = ref("tdaddhiddencss");
+     let totdaddmenushow = function(){
+         if(tdaddmenushow.value == "tdaddhiddencss"){
+          tdaddmenushow.value = "tdaddshowcss";
+         }else{
+          tdaddmenushow.value = "tdaddhiddencss";
+         }
      }
+     let addshow =  ref(false);
 
      return{
           searchTd,
           addshow,
-          toshowaddDialog
+          tdaddmenushow,
+          totdaddmenushow
         }
   }
 }
@@ -71,6 +74,7 @@ export default {
 .el-col {
   border-radius: 4px;
   border: solid green 1px;
+  display: flex;
 
 }
 
@@ -83,4 +87,15 @@ export default {
   display: flex;
   gap: 10%; /*网格行与列之间的间隙*/
 }
+
+.tdaddhiddencss{
+  display: none;
+}
+
+.tdaddshowcss{
+  display: block;
+  
+}
+
+
 </style>
