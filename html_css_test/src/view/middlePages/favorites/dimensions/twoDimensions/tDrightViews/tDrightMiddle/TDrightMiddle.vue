@@ -6,7 +6,7 @@
            <span>
               <ul>
                 <li>名称:{{item.name}}</li>
-                <li>地址:{{item.address}}</li>
+                <li>地址:<a href="#">{{item.address}}</a></li>
                 <li>更多...</li>
               </ul>
            </span>
@@ -23,34 +23,15 @@ export default {
   name: 'TDrightMiddle',
   components: {
   },
-  setup(){
+  props:{
+    msgList:{
+      type:Object,
+      required: true
+    }
+  },
+  setup(props){
     let hasselected = ref("unselectedcss")
-    let msgList = ref([
-                       {
-                       id: "id1",
-                       name: "name1",
-                       address: "address1",
-                       css:"unselectedcss"
-                       },
-                       {
-                       id: "id2",
-                       name: "name2",
-                       address: "address2",
-                       css:"unselectedcss"
-                       },
-                       {
-                       id: "id3",
-                       name: "name3",
-                       address: "address3",
-                       css:"unselectedcss"
-                       },
-                       {
-                       id: "id4",
-                       name: "name4",
-                       address: "address4",
-                       css:"unselectedcss"
-                       }
-                     ]);
+    let msgList = ref(props.msgList);
     let hasselecteds = ref([]);
 
     let toselectcss = function(){
@@ -74,13 +55,13 @@ export default {
           }
         }
         for(let i = 0; i< hasselecteds.value.length;i++){
-          if(item.id == hasselecteds.value[i]){
+          if(item.id == hasselecteds.value[i].id){
             hasselecteds.value.splice(i,1);
             console.log(hasselecteds.value)
             return;
           }
         }
-        hasselecteds.value.push(item.id);
+        hasselecteds.value.push(item);
         console.log(hasselecteds.value)
     }
 

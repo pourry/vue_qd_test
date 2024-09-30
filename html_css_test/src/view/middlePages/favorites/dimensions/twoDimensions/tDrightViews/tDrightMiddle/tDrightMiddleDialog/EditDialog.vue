@@ -2,37 +2,37 @@
   <div class="tdaddstartcss">
      <!-- <div>111</div> -->
      <div class="tdformcss">
-           <el-form :model="addform" label-position="right">
+           <el-form :model="editform" label-position="right">
                 <el-row :gutter="20">
                   <el-col :span="19" >
                     <el-form-item label="名称" >
-                      <el-input v-model="addform.name" />
+                      <el-input v-model="editform.name" />
                     </el-form-item>
                   </el-col>
                   <el-col :span="5">
                     <el-form-item label="完结状态" >
-                    <el-input v-model="addform.hasend" />
+                    <el-input v-model="editform.hasend" />
                   </el-form-item>
                   </el-col>
                 </el-row> 
                 <el-row :gutter="20">
                  <el-col :span="19">
                     <el-form-item label="地址（路径）" >
-                      <el-input v-model="addform.address" />
+                      <el-input v-model="editform.address" />
                     </el-form-item>
                   </el-col>
                 </el-row>      
                 <el-row :gutter="20">
                   <el-col :span="24">
                     <el-form-item label="备注" >
-                      <el-input v-model="addform.notes" type="textarea"/>
+                      <el-input v-model="editform.notes" type="textarea"/>
                     </el-form-item>
                   </el-col>
                 </el-row>  
                 <el-row :gutter="20" justify="end">
                   <el-col :span="5.4">
                     <el-form-item class="buttomcss">
-                      <el-button type="primary">新增</el-button>
+                      <el-button type="primary">修改</el-button>
                       <el-button @click="toclosef">关闭</el-button>
                     </el-form-item>
                   </el-col>
@@ -47,7 +47,7 @@
 import {ref,reactive,onMounted} from 'vue'
 
 export default {
-  name: 'AddDialog',
+  name: 'EditDialog',
   components: {
   },
   props:{
@@ -55,7 +55,7 @@ export default {
   },
   emits: ["toclose"],
   setup(props,{emit}){
-     let addform = reactive({name:undefined,
+     let editform = reactive({name:undefined,
                              hasend:undefined,
                              address:undefined,
                              notes:undefined
@@ -65,7 +65,7 @@ export default {
       }
   onMounted(()=>{
   })
-  return{addform,
+  return{editform,
          toclosef}
   }
 }
