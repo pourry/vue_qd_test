@@ -23,6 +23,13 @@
                   </el-col>
                 </el-row>      
                 <el-row :gutter="20">
+                 <el-col :span="19">
+                    <el-form-item label="别名" >
+                      <el-input v-model="addform.alias" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>      
+                <el-row :gutter="20">
                   <el-col :span="24">
                     <el-form-item label="备注" >
                       <el-input v-model="addform.notes" type="textarea"/>
@@ -46,7 +53,8 @@
 <script>
 import {ref,reactive,onMounted} from 'vue'
 import {toaddapi} from '@/api/animation'
- 
+import { ElMessage } from 'element-plus'
+
 export default {
   name: 'AddDialog',
   components: {
@@ -85,10 +93,22 @@ export default {
           // if (!formEl) return
           await formofaddref.value.validate((valid) => {
             if (valid) {
-              let animation = {};
-              animation.name = addform.name;
-              toaddapi({"animation":animation}).then(res=>{
+              let animation = addform;
+              toaddapi(animation).then(res=>{
                 console.log(res)
+                if(res.successful){
+                  ElMessage({
+                    message: res.resultValue,
+                    type: 'success',
+                  })
+                  //关闭
+                  toclosef();
+                }else{
+                  ElMessage({
+                    message: '失败！',
+                    type: 'warning',
+                  })
+                }
 
               })
               alert('submit!')
@@ -105,6 +125,7 @@ export default {
         val.hasend=undefined
         val.address=undefined
         val.notes=undefined
+        val.alias=undefined
      }
   onMounted(()=>{
   })
