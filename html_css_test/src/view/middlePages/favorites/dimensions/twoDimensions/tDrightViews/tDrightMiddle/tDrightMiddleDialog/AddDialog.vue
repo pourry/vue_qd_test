@@ -2,10 +2,10 @@
   <div class="tdaddstartcss">
      <!-- <div>111</div> -->
      <div class="tdformcss">
-           <el-form :model="addform" label-position="right">
+           <el-form :model="addform" label-position="right" :rules="rules" ref="formofaddref">
                 <el-row :gutter="20">
                   <el-col :span="19" >
-                    <el-form-item label="名称" >
+                    <el-form-item label="名称" prop="name">
                       <el-input v-model="addform.name" />
                     </el-form-item>
                   </el-col>
@@ -32,7 +32,7 @@
                 <el-row :gutter="20" justify="end">
                   <el-col :span="5.4">
                     <el-form-item class="buttomcss">
-                      <el-button type="primary">新增</el-button>
+                      <el-button type="primary" @click="toadd()">新增</el-button>
                       <el-button @click="toclosef">关闭</el-button>
                     </el-form-item>
                   </el-col>
@@ -45,7 +45,8 @@
 
 <script>
 import {ref,reactive,onMounted} from 'vue'
-
+import {toaddapi} from '@/api/animation'
+ 
 export default {
   name: 'AddDialog',
   components: {
@@ -58,14 +59,61 @@ export default {
   },
   emits: ["toclose"],
   setup(props,{emit}){
-     let addform = ref(props.addform);
+     let addform = reactive(props.addform);
       let toclosef = function(){
          emit("toclose")
       }
+
+      let rules = {
+        name:[
+                {
+                  required: true,
+                  trigger: 'blur',
+                },
+                {
+                  min: 2,
+                  // max: 255,
+                  message: '名称长度必须大于2',
+                  trigger: 'blur',
+                  informType: 'warning',
+                },
+              ],
+      }
+
+     let formofaddref = ref(null);
+     let toadd = async () => {
+          // if (!formEl) return
+          await formofaddref.value.validate((valid) => {
+            if (valid) {
+              let animation = {};
+              animation.name = addform.name;
+              toaddapi({"animation":animation}).then(res=>{
+                console.log(res)
+
+              })
+              alert('submit!')
+              formreset(addform);
+            } else {
+              console.log('error submit!')
+            }
+          })
+        
+     }
+     //重置表单
+     let formreset = function(val){
+        val.name=undefined
+        val.hasend=undefined
+        val.address=undefined
+        val.notes=undefined
+     }
   onMounted(()=>{
   })
   return{addform,
-         toclosef}
+         toclosef,
+         rules,
+         formofaddref,
+         formreset,
+         toadd}
   }
 }
 </script>
