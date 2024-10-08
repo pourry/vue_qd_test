@@ -146,6 +146,9 @@ export default {
           hasselecteds.forEach(item => {
             ids.push(item.id);
           });
+          if(ids.length <=0){
+            return
+          }
           console.log(ids)
           
      }
