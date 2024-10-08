@@ -27,12 +27,16 @@ export default {
     msgList:{
       type:Object,
       required: true
+    },
+    hasselecteds:{
+      type:Object,
+      required: true
     }
   },
   setup(props){
     let hasselected = ref("unselectedcss")
     let msgList = ref(props.msgList);
-    let hasselecteds = ref([]);
+    let hasselecteds = ref(props.hasselecteds);
 
     let toselectcss = function(){
       if(hasselected.value == "unselectedcss"){

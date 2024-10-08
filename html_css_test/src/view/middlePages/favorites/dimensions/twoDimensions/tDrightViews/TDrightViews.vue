@@ -1,7 +1,7 @@
 <template>
     <div class='tdrightcss'>
          <div class='tdtopcss'>
-           <TDrightTop></TDrightTop>
+           <TDrightTop :msgList="msgList" :hasselecteds="hasselecteds"></TDrightTop>
          </div>
          <div class='tdmiddlecss'>
            <!-- 中部 -->
@@ -54,7 +54,7 @@ export default {
                        }
                      ]);
 
-      let hasselecteds =ref();
+      let hasselecteds =ref([]);
       return{msgList,
              hasselecteds}
   }

@@ -51,15 +51,14 @@ export default {
   components: {
   },
   props:{
-
+     addform:{
+        type:Object,
+        required: true
+     }
   },
   emits: ["toclose"],
   setup(props,{emit}){
-     let addform = reactive({name:undefined,
-                             hasend:undefined,
-                             address:undefined,
-                             notes:undefined
-                            }); 
+     let addform = ref(props.addform);
       let toclosef = function(){
          emit("toclose")
       }

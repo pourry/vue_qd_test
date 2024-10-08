@@ -51,15 +51,14 @@ export default {
   components: {
   },
   props:{
-
+     editform:{
+        type:Object,
+        required: true
+     }
   },
   emits: ["toclose"],
   setup(props,{emit}){
-     let editform = reactive({name:undefined,
-                             hasend:undefined,
-                             address:undefined,
-                             notes:undefined
-                            }); 
+     let editform = ref(props.editform); 
       let toclosef = function(){
          emit("toclose")
       }

@@ -4,9 +4,9 @@
         <el-col :span="6">
            <el-button class="tdaddbut" type="primary" :span="2" size="large" @click="totdaddmenushow">{{tdaddmenushow.name}}</el-button>
            <el-button type="primary" :span="2" size="large" @click="totdeditmenushow">{{tdeditmenushow.name}}</el-button>
-           <el-button type="primary" :span="2" size="large" >删除</el-button>
+           <el-button type="primary" :span="2" size="large"   @click="totddel">删除</el-button>
         </el-col>
-        <el-col :span="6"></el-col>
+        <el-col :span="6" style="z-index:-1"></el-col>
         <el-col :span="12">
             <div class="TDserchcss">
               <el-input
@@ -22,14 +22,15 @@
       </el-row>
 
       <!-- 添加 -->
-     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" ></AddDialog>
+     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :addform="addandeditfrom"></AddDialog>
       <!-- 修改 -->
-     <EditDialog :class="tdeditmenushow.css" @toclose="closeeditmenu" ></EditDialog>
+     <EditDialog :class="tdeditmenushow.css" @toclose="closeeditmenu" :editform="addandeditfrom"></EditDialog>
     </div>
 </template>
 
 <script>
-import {ref,reactive,nextTick} from 'vue'
+import {ref,reactive,nextTick,onMounted} from 'vue'
+import { ElMessage } from 'element-plus'
 import AddDialog from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/tDrightMiddleDialog/AddDialog.vue'
 import EditDialog from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/tDrightMiddleDialog/EditDialog.vue'
 export default {
@@ -38,8 +39,29 @@ export default {
     AddDialog,
     EditDialog
   },
-  setup(){
+  props:{
+    msgList:{
+      type:Object,
+      required: true
+    },
+    hasselecteds:{
+      type:Object,
+      required: true
+    }
+  },
+  setup(props){
+    onMounted(()=>{
+    })
+    let msgList = reactive(props.msgList);
+    let hasselecteds = reactive(props.hasselecteds);
      let searchTd = ref("");
+
+     //添加修改页面的数据展示
+     let addandeditfrom = reactive({name:undefined,
+                                  hasend:undefined,
+                                  address:undefined,
+                                  notes:undefined
+                                  }); 
      //添加页面显示隐藏 默认 隐藏样式 -------------------------
      let tdaddmenushow = reactive({
                                   isshow: false,
@@ -47,6 +69,11 @@ export default {
                                   css:"tdaddhiddencss"
                                   });
      let totdaddmenushow = function(){
+         addandeditfrom.name = undefined;
+         addandeditfrom.hasend = undefined;
+         addandeditfrom.address = undefined;
+         addandeditfrom.notes = undefined;
+
          if(tdaddmenushow.css == "tdaddhiddencss"){
           tdaddmenushow.isshow= true;
           tdaddmenushow.name= "收起";
@@ -56,7 +83,6 @@ export default {
           tdeditmenushow.isshow= false;
           tdeditmenushow.name= "修改";
           tdeditmenushow.css= "tdaddhiddencss";
-
          }else{
           tdaddmenushow.isshow= false;
           tdaddmenushow.name= "添加";
@@ -76,6 +102,18 @@ export default {
                                   css:"tdaddhiddencss"
                                   });
      let totdeditmenushow = function(){
+         if(hasselecteds == undefined ||hasselecteds.length<=0 || hasselecteds.length>1){
+            ElMessage({
+              message: '请选择一个进行修改',
+              type: 'warning',
+            })
+            return;
+         }
+         addandeditfrom.name = hasselecteds[0].name;
+         addandeditfrom.hasend = hasselecteds[0].hasend;
+         addandeditfrom.address = hasselecteds[0].address;
+         addandeditfrom.notes = hasselecteds[0].notes;
+         
          if(tdeditmenushow.css == "tdaddhiddencss"){
           tdeditmenushow.isshow= true;
           tdeditmenushow.name= "收起";
@@ -98,6 +136,19 @@ export default {
           tdeditmenushow.name= "修改";
           tdeditmenushow.css= "tdaddhiddencss";
      }
+
+     //删除按钮
+     let totddel = function(){
+          //先关闭新增改弹框
+          closeaddmenu();
+          closeeditmenu();
+          let ids = [];
+          hasselecteds.forEach(item => {
+            ids.push(item.id);
+          });
+          console.log(ids)
+          
+     }
      return{
           searchTd,
           tdaddmenushow,
@@ -105,7 +156,9 @@ export default {
           closeaddmenu,
           tdeditmenushow,
           totdeditmenushow,
-          closeeditmenu
+          closeeditmenu,
+          totddel,
+          addandeditfrom
         }
   }
 }
