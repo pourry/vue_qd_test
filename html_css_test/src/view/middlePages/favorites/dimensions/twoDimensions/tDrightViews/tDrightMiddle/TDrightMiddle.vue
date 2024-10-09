@@ -63,6 +63,7 @@ export default {
             }
           }
         }
+        console.log("hasselecteds",hasselecteds)
         for(let i = 0; i< hasselecteds.length;i++){
           if(item.id == hasselecteds[i].id){
             hasselecteds.splice(i,1);
@@ -70,19 +71,16 @@ export default {
           }
         }
         hasselecteds.push(item);
-        console.log(hasselecteds)
+        
     }
 
     //列表查询
     let togetList = function(){
       emit("togetList",{},function(res){
          if(res.successful){
-           
           msgList.list = res.resultValue; 
-          debugger
-          console.log(msgList)
          }else{
-         ElMessage({
+                   ElMessage({
                      message: '失败！',
                      type: 'warning',
                    })
