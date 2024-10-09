@@ -1,6 +1,6 @@
 <template>
     <div class='animationcss'>
-            <TDrightViews :getList="getanimationList" @toadd="toaddanimation" @togetList="getanimationList"></TDrightViews>
+            <TDrightViews  @toadd="toaddanimation" @togetList="getanimationList"></TDrightViews>
     </div>
 </template>
 
@@ -20,15 +20,8 @@ export default {
     let getanimationList = function(e){
       
       animationapi.togetList(e.selectfrom).then(res=>{
-        if(res.successful){
-          //调用回调
-          e.listcallback(res.resultValue)
-        }else{
-        ElMessage({
-                    message: '失败！',
-                    type: 'warning',
-                  })
-        }
+        //调用回调
+        e.listcallback(res)
       })
     }
     //新增
@@ -36,7 +29,7 @@ export default {
             await  animationapi.toadd(e.animation).then(res=>{
                 if(res.successful){
                   //调用回调
-                  e.callback(res.resultValue)
+                  e.addcallback(res.resultValue)
                 }else{
                   ElMessage({
                     message: '失败！',

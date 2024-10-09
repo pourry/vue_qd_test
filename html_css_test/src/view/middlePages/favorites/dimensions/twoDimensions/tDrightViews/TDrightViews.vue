@@ -1,11 +1,11 @@
 <template>
     <div class='tdrightcss'>
          <div class='tdtopcss'>
-           <TDrightTop :msgList="msgList" :hasselecteds="hasselecteds" @toadd="toadd"></TDrightTop>
+           <TDrightTop :msgList="msgList.list" :hasselecteds="hasselecteds" @toadd="toadd"></TDrightTop>
          </div>
          <div class='tdmiddlecss'>
            <!-- 中部 -->
-           <Tdrightmiddle :msgList="msgList" :hasselecteds="hasselecteds"></Tdrightmiddle>
+           <Tdrightmiddle :msgList="msgList" :hasselecteds="hasselecteds" @togetList="togetList"></Tdrightmiddle>
          </div>
          <div class='tdbottomcss'>
             <TDrightBottom></TDrightBottom>
@@ -18,7 +18,8 @@ import Tdrightmiddle from '@/view/middlePages/favorites/dimensions/twoDimensions
 import TDrightBottom from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightBottom.vue'
 import TDrightTop from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightTop.vue'
 
-import {ref,onMounted} from 'vue'
+import {ElMessage} from 'element-plus'
+import {ref,onMounted, reactive} from 'vue'
 export default {
   name: 'Animation',
   components: {
@@ -27,63 +28,29 @@ export default {
     TDrightTop
   },
   props:{
-    getList:{
-      type:Object,
-      required: true
-    },
+
   },
   emits:["toadd","togetList"],
   setup(props,{emit}){
-   let getList = ref(props.getList);
-
-   let toadd =  function(paramVale,callback){
-      emit("toadd",{"animation":paramVale,callback})
+   let toadd =  function(paramVale,addcallback){
+      emit("toadd",{"animation":paramVale,addcallback})
    }
-   let togetList =  function(paramVal){
+   let togetList =  function(paramVal,listcallback){
       emit("togetList",{"animation":paramVal,listcallback})
    }
-   let listcallback = function(res){
-         console.log(res)
-      }
 
-   let msgList = ref([
-                       {
-                       id: "id1",
-                       name: "name1",
-                       address: "address1",
-                       css:"unselectedcss"
-                       },
-                       {
-                       id: "id2",
-                       name: "name2",
-                       address: "address2",
-                       css:"unselectedcss"
-                       },
-                       {
-                       id: "id3",
-                       name: "name3",
-                       address: "address3",
-                       css:"unselectedcss"
-                       },
-                       {
-                       id: "id4",
-                       name: "name4",
-                       address: "address4",
-                       css:"unselectedcss"
-                       }
-                     ]);
 
-      let hasselecteds =ref([]);
+   let msgList = reactive({"list":[ ]});
+
+      let hasselecteds =reactive([]);
 
       onMounted(()=>{
-         togetList({});
+         
       })
       return{msgList,
              hasselecteds,
-             getList,
              toadd,
-             togetList,
-             listcallback}
+             togetList}
   }
 
 }

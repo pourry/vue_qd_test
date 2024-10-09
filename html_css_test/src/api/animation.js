@@ -9,6 +9,6 @@ animationapi.toadd =function toadd(data){
 
 //列表查询 接口
 animationapi.togetList =function (data){
-    return axiospost("/animation/toadd",data)
+    return axiosget("/animation/getList",data)
 }
 export default animationapi

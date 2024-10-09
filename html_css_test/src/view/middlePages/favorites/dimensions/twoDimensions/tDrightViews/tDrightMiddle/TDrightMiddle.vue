@@ -1,7 +1,7 @@
 <template>
     <div class='tdrightmiddlecss'>
       <div class='collectshowcss'>
-         <div :class="item.css" @click="tochangeselect(item)" v-for="item in msgList" ::key="item.id" >
+         <div :class="item.css" @click="tochangeselect(item)" v-for="item in msgList.list" ::key="item.id" >
            <el-image >图片</el-image>
            <span>
               <ul>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import {ref,reactive,onMounted} from 'vue'
+import {ref,reactive,onMounted,watch} from 'vue'
 export default {
   name: 'TDrightMiddle',
   components: {
@@ -33,10 +33,12 @@ export default {
       required: true
     }
   },
-  setup(props){
+  emits:["togetList"],
+  setup(props,{emit}){
+    
     let hasselected = ref("unselectedcss")
-    let msgList = ref(props.msgList);
-    let hasselecteds = ref(props.hasselecteds);
+    let msgList = reactive(props.msgList);
+    let hasselecteds = reactive(props.hasselecteds);
 
     let toselectcss = function(){
       if(hasselected.value == "unselectedcss"){
@@ -47,39 +49,58 @@ export default {
     }
 
     let tochangeselect = function(item){
-        for(let i = 0; i< msgList.value.length;i++){
-          if(item.id == msgList.value[i].id){
-            if(msgList.value[i].css == "unselectedcss"){
-              msgList.value[i].css = "selectedcss";
+        for(let i = 0; i< msgList.list.length;i++){
+          if(item.id == msgList.list[i].id){
+            if(msgList.list[i].css == "unselectedcss"){
+              msgList.list[i].css = "selectedcss";
+              break;
+            }else if(msgList.list[i].css == "selectedcss"){
+              msgList.list[i].css = "unselectedcss";
               break;
             }else{
-              msgList.value[i].css = "unselectedcss";
+              msgList.list[i].css = "selectedcss";
               break;
             }
           }
         }
-        for(let i = 0; i< hasselecteds.value.length;i++){
-          if(item.id == hasselecteds.value[i].id){
-            hasselecteds.value.splice(i,1);
-            console.log(hasselecteds.value)
+        for(let i = 0; i< hasselecteds.length;i++){
+          if(item.id == hasselecteds[i].id){
+            hasselecteds.splice(i,1);
             return;
           }
         }
-        hasselecteds.value.push(item);
-        console.log(hasselecteds.value)
+        hasselecteds.push(item);
+        console.log(hasselecteds)
     }
 
     //列表查询
-    let selectfrom = reactive({});
+    let togetList = function(){
+      emit("togetList",{},function(res){
+         if(res.successful){
+           
+          msgList.list = res.resultValue; 
+          debugger
+          console.log(msgList)
+         }else{
+         ElMessage({
+                     message: '失败！',
+                     type: 'warning',
+                   })
+         }})
+    }
 
 
+    onMounted(()=>{
+      togetList();
+    })
 
     return{
       hasselected,
       toselectcss,
       msgList,
       hasselecteds,
-      tochangeselect
+      tochangeselect,
+      togetList
     }
   }
 }
