@@ -1,15 +1,53 @@
 <template>
     <div class='animationcss'>
-            <TDrightViews></TDrightViews>
+            <TDrightViews :getList="getanimationList" @toadd="toaddanimation" @togetList="getanimationList"></TDrightViews>
     </div>
 </template>
 
 <script>
 import TDrightViews from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/TDrightViews.vue'
+import animationapi from '@/api/animation'
+import { ElMessage } from 'element-plus'
+
+import {ref} from 'vue'
 export default {
   name: 'Animation',
   components: {
     TDrightViews
+  },
+  setup(){
+    //查询列表
+    let getanimationList = function(e){
+      
+      animationapi.togetList(e.selectfrom).then(res=>{
+        if(res.successful){
+          //调用回调
+          e.listcallback(res.resultValue)
+        }else{
+        ElMessage({
+                    message: '失败！',
+                    type: 'warning',
+                  })
+        }
+      })
+    }
+    //新增
+    let toaddanimation = async  function(e){
+            await  animationapi.toadd(e.animation).then(res=>{
+                if(res.successful){
+                  //调用回调
+                  e.callback(res.resultValue)
+                }else{
+                  ElMessage({
+                    message: '失败！',
+                    type: 'warning',
+                  })
+                }
+
+              })
+    }
+    return {getanimationList,
+    toaddanimation}
   }
 }
 </script>

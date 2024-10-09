@@ -1,7 +1,7 @@
 <template>
     <div class='tdrightcss'>
          <div class='tdtopcss'>
-           <TDrightTop :msgList="msgList" :hasselecteds="hasselecteds"></TDrightTop>
+           <TDrightTop :msgList="msgList" :hasselecteds="hasselecteds" @toadd="toadd"></TDrightTop>
          </div>
          <div class='tdmiddlecss'>
            <!-- 中部 -->
@@ -18,7 +18,7 @@ import Tdrightmiddle from '@/view/middlePages/favorites/dimensions/twoDimensions
 import TDrightBottom from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightBottom.vue'
 import TDrightTop from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/TDrightTop.vue'
 
-import {ref} from 'vue'
+import {ref,onMounted} from 'vue'
 export default {
   name: 'Animation',
   components: {
@@ -26,7 +26,26 @@ export default {
     TDrightBottom,
     TDrightTop
   },
-  setup(){
+  props:{
+    getList:{
+      type:Object,
+      required: true
+    },
+  },
+  emits:["toadd","togetList"],
+  setup(props,{emit}){
+   let getList = ref(props.getList);
+
+   let toadd =  function(paramVale,callback){
+      emit("toadd",{"animation":paramVale,callback})
+   }
+   let togetList =  function(paramVal){
+      emit("togetList",{"animation":paramVal,listcallback})
+   }
+   let listcallback = function(res){
+         console.log(res)
+      }
+
    let msgList = ref([
                        {
                        id: "id1",
@@ -55,8 +74,16 @@ export default {
                      ]);
 
       let hasselecteds =ref([]);
+
+      onMounted(()=>{
+         togetList({});
+      })
       return{msgList,
-             hasselecteds}
+             hasselecteds,
+             getList,
+             toadd,
+             togetList,
+             listcallback}
   }
 
 }

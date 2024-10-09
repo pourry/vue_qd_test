@@ -22,7 +22,7 @@
       </el-row>
 
       <!-- 添加 -->
-     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :addform="addandeditfrom"></AddDialog>
+     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :addform="addandeditfrom" @toadd="toadd"></AddDialog>
       <!-- 修改 -->
      <EditDialog :class="tdeditmenushow.css" @toclose="closeeditmenu" :editform="addandeditfrom"></EditDialog>
     </div>
@@ -47,11 +47,17 @@ export default {
     hasselecteds:{
       type:Object,
       required: true
-    }
+    },
+
   },
-  setup(props){
+  emits:["toadd"],
+  setup(props,{emit}){
     onMounted(()=>{
     })
+    let toadd = function(paramVale,callback){
+      emit("toadd",paramVale,callback)
+    }
+    
     let msgList = reactive(props.msgList);
     let hasselecteds = reactive(props.hasselecteds);
      let searchTd = ref("");
@@ -161,7 +167,8 @@ export default {
           totdeditmenushow,
           closeeditmenu,
           totddel,
-          addandeditfrom
+          addandeditfrom,
+          toadd
         }
   }
 }

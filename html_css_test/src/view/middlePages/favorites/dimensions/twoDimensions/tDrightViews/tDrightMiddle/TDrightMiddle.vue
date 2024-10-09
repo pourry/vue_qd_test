@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import {ref} from 'vue'
+import {ref,reactive,onMounted} from 'vue'
 export default {
   name: 'TDrightMiddle',
   components: {
@@ -68,6 +68,11 @@ export default {
         hasselecteds.value.push(item);
         console.log(hasselecteds.value)
     }
+
+    //列表查询
+    let selectfrom = reactive({});
+
+
 
     return{
       hasselected,

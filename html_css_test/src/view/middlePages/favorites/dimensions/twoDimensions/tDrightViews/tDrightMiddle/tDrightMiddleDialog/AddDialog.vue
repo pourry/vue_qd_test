@@ -52,7 +52,7 @@
 
 <script>
 import {ref,reactive,onMounted} from 'vue'
-import {toaddapi} from '@/api/animation'
+import animationapi from '@/api/animation'
 import { ElMessage } from 'element-plus'
 
 export default {
@@ -65,7 +65,7 @@ export default {
         required: true
      }
   },
-  emits: ["toclose"],
+  emits: ["toclose","toadd"],
   setup(props,{emit}){
      let addform = reactive(props.addform);
       let toclosef = function(){
@@ -77,6 +77,7 @@ export default {
                 {
                   required: true,
                   trigger: 'blur',
+                   message: '名称不能为空',
                 },
                 {
                   min: 2,
@@ -88,33 +89,32 @@ export default {
               ],
       }
 
+//  标签 ref 名 需要先附null
      let formofaddref = ref(null);
-     let toadd = async () => {
+
+     let toadd =  function() {
           // if (!formEl) return
-          await formofaddref.value.validate((valid) => {
+            formofaddref.value.validate((valid) => {
             if (valid) {
               let animation = addform;
-              toaddapi(animation).then(res=>{
-                console.log(res)
-                if(res.successful){
+              emit("toadd",animation,function(res){
+                //有返回值则说明 请求成功了
+                if(res){
+                ElMessage({
+                  message: res,
+                  type: 'success',
+                })
+                //关闭
+                toclosef();
+              }
+              formreset(addform);
+                console.log("res++",res)
+              });
+            } else {
                   ElMessage({
-                    message: res.resultValue,
-                    type: 'success',
-                  })
-                  //关闭
-                  toclosef();
-                }else{
-                  ElMessage({
-                    message: '失败！',
+                    message: '表单验证失败！',
                     type: 'warning',
                   })
-                }
-
-              })
-              alert('submit!')
-              formreset(addform);
-            } else {
-              console.log('error submit!')
             }
           })
         
