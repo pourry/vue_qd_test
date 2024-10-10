@@ -1,6 +1,7 @@
 <template>
     <div class='animationcss'>
-            <TDrightViews  @toadd="toaddanimation" @togetList="getanimationList"></TDrightViews>
+            <TDrightViews  @toadd="toaddanimation" @togetList="getanimationList" @toedit="toeditanimation" 
+                           @todelete="todeleteanimation"></TDrightViews>
     </div>
 </template>
 
@@ -25,22 +26,30 @@ export default {
       })
     }
     //新增
-    let toaddanimation = async  function(e){
-            await  animationapi.toadd(e.animation).then(res=>{
-                if(res.successful){
-                  //调用回调
-                  e.addcallback(res.resultValue)
-                }else{
-                  ElMessage({
-                    message: '失败！',
-                    type: 'warning',
-                  })
-                }
-
+    let toaddanimation = function(e){
+              animationapi.toadd(e.animation).then(res=>{
+                //调用回调
+                e.addcallback(res)
               })
     }
+    //修改
+    let toeditanimation = function(e){
+              animationapi.toedit(e.animation).then(res=>{
+                //调用回调
+                e.editcallback(res)
+              })
+    }
+    //删除
+    let todeleteanimation = function(e){
+              animationapi.todelete(e.ids).then(res=>{
+                //调用回调
+                e.deletecallback(res)
+              })  
+    }
     return {getanimationList,
-    toaddanimation}
+    toaddanimation,
+    toeditanimation,
+    todeleteanimation}
   }
 }
 </script>

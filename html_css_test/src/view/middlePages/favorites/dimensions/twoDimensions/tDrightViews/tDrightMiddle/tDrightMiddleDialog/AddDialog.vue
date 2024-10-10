@@ -2,37 +2,37 @@
   <div class="tdaddstartcss">
      <!-- <div>111</div> -->
      <div class="tdformcss">
-           <el-form :model="addform" label-position="right" :rules="rules" ref="formofaddref">
+           <el-form :model="addform.form" label-position="right" :rules="rules" ref="formofaddref">
                 <el-row :gutter="20">
                   <el-col :span="19" >
                     <el-form-item label="名称" prop="name">
-                      <el-input v-model="addform.name" />
+                      <el-input v-model="addform.form.name" />
                     </el-form-item>
                   </el-col>
                   <el-col :span="5">
                     <el-form-item label="完结状态" >
-                    <el-input v-model="addform.hasend" />
+                    <el-input v-model="addform.form.hasend" />
                   </el-form-item>
                   </el-col>
                 </el-row> 
                 <el-row :gutter="20">
                  <el-col :span="19">
                     <el-form-item label="地址（路径）" >
-                      <el-input v-model="addform.address" />
+                      <el-input v-model="addform.form.address" />
                     </el-form-item>
                   </el-col>
                 </el-row>      
                 <el-row :gutter="20">
                  <el-col :span="19">
                     <el-form-item label="别名" >
-                      <el-input v-model="addform.alias" />
+                      <el-input v-model="addform.form.alias" />
                     </el-form-item>
                   </el-col>
                 </el-row>      
                 <el-row :gutter="20">
                   <el-col :span="24">
                     <el-form-item label="备注" >
-                      <el-input v-model="addform.notes" type="textarea"/>
+                      <el-input v-model="addform.form.notes" type="textarea"/>
                     </el-form-item>
                   </el-col>
                 </el-row>  
@@ -65,7 +65,7 @@ export default {
         required: true
      }
   },
-  emits: ["toclose","toadd"],
+  emits: ["toclose","toadd","tosearch"],
   setup(props,{emit}){
      let addform = reactive(props.addform);
       let toclosef = function(){
@@ -96,19 +96,19 @@ export default {
           // if (!formEl) return
             formofaddref.value.validate((valid) => {
             if (valid) {
-              let animation = addform;
+              let animation = addform.form;
               emit("toadd",animation,function(res){
                 //有返回值则说明 请求成功了
-                if(res){
+                if(res.successful){
                 ElMessage({
-                  message: res,
+                  message: res.resultValue,
                   type: 'success',
                 })
                 //关闭
                 toclosef();
+                emit("tosearch");
               }
               formreset(addform);
-                console.log("res++",res)
               });
             } else {
                   ElMessage({

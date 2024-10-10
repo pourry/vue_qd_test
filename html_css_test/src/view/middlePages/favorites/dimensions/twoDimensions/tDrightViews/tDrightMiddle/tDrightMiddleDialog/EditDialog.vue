@@ -2,38 +2,45 @@
   <div class="tdaddstartcss">
      <!-- <div>111</div> -->
      <div class="tdformcss">
-           <el-form :model="editform" label-position="right">
+           <el-form :model="editform.form" label-position="right">
                 <el-row :gutter="20">
                   <el-col :span="19" >
                     <el-form-item label="名称" >
-                      <el-input v-model="editform.name" />
+                      <el-input v-model="editform.form.name" />
                     </el-form-item>
                   </el-col>
                   <el-col :span="5">
                     <el-form-item label="完结状态" >
-                    <el-input v-model="editform.hasend" />
+                    <el-input v-model="editform.form.hasend" />
                   </el-form-item>
                   </el-col>
                 </el-row> 
                 <el-row :gutter="20">
                  <el-col :span="19">
+                    <el-form-item label="别名" >
+                      <el-input v-model="editform.form.alias" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>  
+                <el-row :gutter="20">
+                 <el-col :span="19">
                     <el-form-item label="地址（路径）" >
-                      <el-input v-model="editform.address" />
+                      <el-input v-model="editform.form.address" />
                     </el-form-item>
                   </el-col>
                 </el-row>      
                 <el-row :gutter="20">
                   <el-col :span="24">
                     <el-form-item label="备注" >
-                      <el-input v-model="editform.notes" type="textarea"/>
+                      <el-input v-model="editform.form.notes" type="textarea"/>
                     </el-form-item>
                   </el-col>
                 </el-row>  
                 <el-row :gutter="20" justify="end">
                   <el-col :span="5.4">
                     <el-form-item class="buttomcss">
-                      <el-button type="primary">修改</el-button>
-                      <el-button @click="toclosef">关闭</el-button>
+                      <el-button type="primary" @click="toedit">修改</el-button>
+                      <el-button @click="toclose">关闭</el-button>
                     </el-form-item>
                   </el-col>
                 </el-row>  
@@ -45,6 +52,7 @@
 
 <script>
 import {ref,reactive,onMounted} from 'vue'
+import {ElMessage} from 'element-plus'
 
 export default {
   name: 'EditDialog',
@@ -56,16 +64,35 @@ export default {
         required: true
      }
   },
-  emits: ["toclose"],
+  emits: ["toclose","toedit","tosearch"],
   setup(props,{emit}){
-     let editform = ref(props.editform); 
-      let toclosef = function(){
+     let editform = reactive(props.editform); 
+      let toclose = function(){
          emit("toclose")
+      }
+
+      let toedit = function(){
+        emit("toedit",editform.form,function(res){
+          if(res.successful){
+                ElMessage({
+                  message: res.resultValue,
+                  type: 'success',
+                })
+                toclose();
+                emit("tosearch");
+          }else{
+                ElMessage({
+                  message: res.resultValue,
+                  type: 'warning',
+                })
+          }
+        })
       }
   onMounted(()=>{
   })
   return{editform,
-         toclosef}
+         toclose,
+         toedit}
   }
 }
 </script>

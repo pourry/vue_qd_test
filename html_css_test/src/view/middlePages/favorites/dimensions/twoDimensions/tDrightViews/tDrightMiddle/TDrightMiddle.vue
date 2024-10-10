@@ -63,28 +63,21 @@ export default {
             }
           }
         }
-        console.log("hasselecteds",hasselecteds)
-        for(let i = 0; i< hasselecteds.length;i++){
-          if(item.id == hasselecteds[i].id){
-            hasselecteds.splice(i,1);
+        console.log("hasselecteds",hasselecteds.list)
+        for(let i = 0; i< hasselecteds.list.length;i++){
+          
+          if(item.id == hasselecteds.list[i].id){
+            hasselecteds.list.splice(i,1);
             return;
           }
         }
-        hasselecteds.push(item);
+        hasselecteds.list.push(item);
         
     }
 
     //列表查询
     let togetList = function(){
-      emit("togetList",{},function(res){
-         if(res.successful){
-          msgList.list = res.resultValue; 
-         }else{
-                   ElMessage({
-                     message: '失败！',
-                     type: 'warning',
-                   })
-         }})
+      emit("togetList",{})
     }
 
 

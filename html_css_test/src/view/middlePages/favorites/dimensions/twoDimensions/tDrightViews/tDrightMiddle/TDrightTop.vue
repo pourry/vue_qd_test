@@ -16,15 +16,15 @@
                 placeholder="请输入名称"
                 suffix-icon="Search"
                 />
-            <el-button type="primary" icon="Search" size="large" />
+            <el-button type="primary" icon="Search" size="large" @click="tosearch" />
             </div>
         </el-col>
       </el-row>
 
       <!-- 添加 -->
-     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :addform="addandeditfrom" @toadd="toadd"></AddDialog>
+     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :addform="addandeditform" @toadd="toadd" @tosearch="tosearch"></AddDialog>
       <!-- 修改 -->
-     <EditDialog :class="tdeditmenushow.css" @toclose="closeeditmenu" :editform="addandeditfrom"></EditDialog>
+     <EditDialog :class="tdeditmenushow.css" @toclose="closeeditmenu" :editform="addandeditform" @toedit="toedit" @tosearch="tosearch"></EditDialog>
     </div>
 </template>
 
@@ -50,24 +50,40 @@ export default {
     },
 
   },
-  emits:["toadd"],
+  emits:["toadd", "togetList","toedit","todelete"],
   setup(props,{emit}){
     onMounted(()=>{
     })
-    let toadd = function(paramVale,callback){
-      emit("toadd",paramVale,callback)
-    }
-    
+
     let msgList = reactive(props.msgList);
     let hasselecteds = reactive(props.hasselecteds);
      let searchTd = ref("");
 
      //添加修改页面的数据展示
-     let addandeditfrom = reactive({name:undefined,
-                                  hasend:undefined,
-                                  address:undefined,
-                                  notes:undefined
-                                  }); 
+     let addandeditform = reactive({"form":{
+                                            id:undefined,
+                                            name:undefined,
+                                            hasend:undefined,
+                                            address:undefined,
+                                            notes:undefined,
+                                            alias:undefined
+                                            }
+                                    }); 
+     //重置
+     let resetfrom = function(){
+      addandeditform.form = {
+                              id:undefined,
+                              name:undefined,
+                              hasend:undefined,
+                              address:undefined,
+                              notes:undefined,
+                              alias:undefined
+                            }
+     }
+     //赋值
+     let setfrom = function(formvalue){
+      addandeditform.form = formvalue;
+     }
      //添加页面显示隐藏 默认 隐藏样式 -------------------------
      let tdaddmenushow = reactive({
                                   isshow: false,
@@ -75,10 +91,7 @@ export default {
                                   css:"tdaddhiddencss"
                                   });
      let totdaddmenushow = function(){
-         addandeditfrom.name = undefined;
-         addandeditfrom.hasend = undefined;
-         addandeditfrom.address = undefined;
-         addandeditfrom.notes = undefined;
+         resetfrom();
 
          if(tdaddmenushow.css == "tdaddhiddencss"){
           tdaddmenushow.isshow= true;
@@ -108,17 +121,19 @@ export default {
                                   css:"tdaddhiddencss"
                                   });
      let totdeditmenushow = function(){
-         if(hasselecteds == undefined ||hasselecteds.length<=0 || hasselecteds.length>1){
+         if(hasselecteds == undefined ||hasselecteds.list.length<=0 || hasselecteds.list.length>1){
             ElMessage({
               message: '请选择一个进行修改',
               type: 'warning',
             })
             return;
          }
-         addandeditfrom.name = hasselecteds[0].name;
-         addandeditfrom.hasend = hasselecteds[0].hasend;
-         addandeditfrom.address = hasselecteds[0].address;
-         addandeditfrom.notes = hasselecteds[0].notes;
+         setfrom(hasselecteds.list[0]);
+        //  addandeditform.form.id = hasselecteds.list[0].id;
+        //  addandeditform.form.name = hasselecteds.list[0].name;
+        //  addandeditform.form.hasend = hasselecteds.list[0].hasend;
+        //  addandeditform.form.address = hasselecteds.list[0].address;
+        //  addandeditform.form.notes = hasselecteds.list[0].notes;
          
          if(tdeditmenushow.css == "tdaddhiddencss"){
           tdeditmenushow.isshow= true;
@@ -149,14 +164,40 @@ export default {
           closeaddmenu();
           closeeditmenu();
           let ids = [];
-          hasselecteds.forEach(item => {
+          hasselecteds.list.forEach(item => {
             ids.push(item.id);
           });
           if(ids.length <=0){
             return
           }
+          emit("todelete",ids,function(res){
+            if(res.resultValue){
+              ElMessage({
+                message: res.resultValue,
+                type: 'success',
+              })
+              tosearch();
+            }else{
+              ElMessage({
+                message: '失败',
+                type: 'warning',
+              })
+            }
+          })
           console.log(ids)
           
+     }
+     //查询按钮
+     let tosearch = function(){
+        emit("togetList",{})
+     }
+     //新增
+     let toadd = function(paramVale,callback){
+      emit("toadd",paramVale,callback)
+     }
+     //修改
+     let toedit = function(paramVale,callback){
+      emit("toedit",paramVale,callback)
      }
      return{
           searchTd,
@@ -167,8 +208,12 @@ export default {
           totdeditmenushow,
           closeeditmenu,
           totddel,
-          addandeditfrom,
-          toadd
+          addandeditform,
+          toadd,
+          toedit,
+          tosearch,
+          resetfrom,
+          setfrom
         }
   }
 }

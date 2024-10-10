@@ -1,7 +1,7 @@
 <template>
     <div class='tdrightcss'>
          <div class='tdtopcss'>
-           <TDrightTop :msgList="msgList.list" :hasselecteds="hasselecteds" @toadd="toadd"></TDrightTop>
+           <TDrightTop :msgList="msgList.list" :hasselecteds="hasselecteds" @toadd="toadd"  @togetList="togetList" @toedit="toedit" @todelete="todelete"></TDrightTop>
          </div>
          <div class='tdmiddlecss'>
            <!-- 中部 -->
@@ -30,19 +30,35 @@ export default {
   props:{
 
   },
-  emits:["toadd","togetList"],
+  emits:["toadd","togetList","toedit","todelete"],
   setup(props,{emit}){
    let toadd =  function(paramVale,addcallback){
       emit("toadd",{"animation":paramVale,addcallback})
    }
-   let togetList =  function(paramVal,listcallback){
-      emit("togetList",{"animation":paramVal,listcallback})
+   let togetList =  function(paramVal){
+      emit("togetList",{"animation":paramVal,listcallback:function(res){
+         if(res.successful){
+          msgList.list = res.resultValue; 
+          //保证列表查询后 所有选中的为未选中
+          hasselecteds.list = [];
+         }else{
+                   ElMessage({
+                     message: '失败！',
+                     type: 'warning',
+                   })
+         }}})
+   }
+   let toedit = function(paramVale,editcallback){
+      emit("toedit",{"animation":paramVale,editcallback})
+   }
+   let todelete = function(paramVale,deletecallback){
+      emit("todelete",{"ids":paramVale,deletecallback})
    }
 
 
-   let msgList = reactive({"list":[ ]});
+   let msgList = reactive({"list":[]});
 
-      let hasselecteds =reactive([]);
+      let hasselecteds =reactive({"list":[]});
 
       onMounted(()=>{
          
@@ -50,7 +66,9 @@ export default {
       return{msgList,
              hasselecteds,
              toadd,
-             togetList}
+             togetList,
+             toedit,
+             todelete}
   }
 
 }
