@@ -1,7 +1,8 @@
 import axios from 'axios';
 import qs from 'qs';
 import { ref } from 'vue';
-
+import router from '@/utils/router'
+import store from '@/utils/store'
 const baseUrl = "/api";
 //设置 请求超市时间  设置为 10s
 axios.defaults.timeout = 10000;
@@ -26,6 +27,12 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     res =>{
             console.log("axios响应拦截执行。。。。",res,"--结束--")
+            if(res.data.code =="410"){
+                localStorage.removeItem('Authorization');
+                store.commit("SETTOKEN",{value:undefined});
+                router.push("/login");
+                return ;
+            }
             return res;
     },
     error =>{

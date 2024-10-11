@@ -16,7 +16,7 @@
                 placeholder="请输入名称"
                 suffix-icon="Search"
                 />
-            <el-button type="primary" icon="Search" size="large" @click="tosearch" />
+            <el-button type="primary" icon="Search" size="large" v-model="searchTd" @click="tosearch" />
             </div>
         </el-col>
       </el-row>
@@ -184,12 +184,11 @@ export default {
               })
             }
           })
-          console.log(ids)
           
      }
      //查询按钮
      let tosearch = function(){
-        emit("togetList",{})
+        emit("togetList",{"name":searchTd.value})
      }
      //新增
      let toadd = function(paramVale,callback){
