@@ -15,8 +15,10 @@
                 size="large"
                 placeholder="请输入名称"
                 suffix-icon="Search"
+                clearable="true"
+                @keyup.enter="tosearch"
                 />
-            <el-button type="primary" icon="Search" size="large" v-model="searchTd" @click="tosearch" />
+            <el-button type="primary" icon="Search" size="large"   @click="tosearch" />
             </div>
         </el-col>
       </el-row>
@@ -29,7 +31,7 @@
 </template>
 
 <script>
-import {ref,reactive,nextTick,onMounted} from 'vue'
+import {ref,reactive,nextTick,onMounted,onBeforeUnmount} from 'vue'
 import { ElMessage } from 'element-plus'
 import AddDialog from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/tDrightMiddleDialog/AddDialog.vue'
 import EditDialog from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/tDrightMiddleDialog/EditDialog.vue'
@@ -188,7 +190,7 @@ export default {
      }
      //查询按钮
      let tosearch = function(){
-        emit("togetList",{"name":searchTd.value})
+        emit("togetList",{"name":searchTd.value.trim()})
      }
      //新增
      let toadd = function(paramVale,callback){
@@ -198,6 +200,9 @@ export default {
      let toedit = function(paramVale,callback){
       emit("toedit",paramVale,callback)
      }
+
+
+
      return{
           searchTd,
           tdaddmenushow,

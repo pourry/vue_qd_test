@@ -20,7 +20,7 @@ export default {
     //查询列表
     let getanimationList = function(e){
       
-      animationapi.togetList(e.selectfrom).then(res=>{
+      animationapi.togetList(e.animation).then(res=>{
         //调用回调
         e.listcallback(res)
       })
@@ -46,6 +46,7 @@ export default {
                 e.deletecallback(res)
               })  
     }
+
     return {getanimationList,
     toaddanimation,
     toeditanimation,
