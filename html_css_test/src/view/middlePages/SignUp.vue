@@ -11,25 +11,25 @@
                             <span id="nicknamemsg"></span>
                           </div>
                           <div class="input-box">
-                            <input id="usernameInput" type="username" required />
+                            <input id="usernameInput" type="username" required @blur="checkname" />
                             <label>用户名</label>
                             <span id="usernamemsg"></span>
                           </div>
                           <div class="input-box">
-                            <i class="icon" @click="passwordshow"><View  v-if = "passwordisshow"/> <Hide  v-if = "!passwordisshow"/></i>
+                            <i class="icon" @click="passwordshow"><View  v-if="passwordisshow"/> <Hide  v-if="!passwordisshow"/></i>
                             <input id="passwordInput" type="password" required />
                             <label>密码</label>
-                            <span class="checkpasspword" v-show="ispasswordequel">*两次密码不一致</span>
+                            <span id="passwordmsg"></span>
                           </div>
                           <div class="input-box">
-                            <i class="icon" @click="rePasswordshow"><View  v-if = "rePasswordisshow"/> <Hide  v-if = "!rePasswordisshow"/></i>
+                            <i class="icon" @click="rePasswordshow"><View  v-if="rePasswordisshow"/> <Hide  v-if="!rePasswordisshow"/></i>
                             <input id="rePasswordInput" type="password" required />
                             <label>确认密码</label>
-                            <span  class="checkpasspword" v-show="ispasswordequel">*两次密码不一致</span>
+                            <span id="rePasswordmsg"></span>
                           </div>
                           <div class="input-box">
                             <i class="icon"><Message /></i>
-                            <input id="emailInput" type="email" required />
+                            <input id="emailInput" type="username" required />
                             <label>邮箱</label>
                             <span id="emailmsg"></span>
                           </div>
@@ -50,6 +50,9 @@
 <script>
 import {ref} from 'vue'
 import router from '@/utils/router/index'
+import {signUpApi,tochecknameApi} from '@/api/login'
+import { ElMessage } from 'element-plus'
+
 export default {
   name: 'SignUp',
   components: {
@@ -85,35 +88,100 @@ export default {
         }
         
 
-        //验证两次密码是否一致
-        let ispasswordequel = ref(false);
         //注册
         let signUpBrungle = function(){
             
             let nickname = document.getElementById("nicknameInput"); 
+            let username = document.getElementById("usernameInput"); 
             let password = document.getElementById("passwordInput");
+            let email = document.getElementById("emailInput");
             let rePassword = document.getElementById("rePasswordInput");
             if(nickname.value.trim() == "" || nickname.value.trim() == undefined){
                 document.getElementById("nicknamemsg").innerHTML = "*昵称不能为空"
                 return;
+            }else{
+              document.getElementById("nicknamemsg").innerHTML = ""
             }
-            if(usernameInput.value.trim() == "" || usernameInput.value.trim() == undefined){
+            if(username.value.trim() == "" || username.value.trim() == undefined){
                 document.getElementById("usernamemsg").innerHTML = "*用户名不能为空"
                 return;
-            }
-            if(emailInput.value.trim() == "" || emailInput.value.trim() == undefined){
-                document.getElementById("emailmsg").innerHTML = "*用户名不能为空"
-                return;
-            }else if(!emailInput.value.trim().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)){
-                return;
-            }
-            if(password.value !== rePassword.value || password.value.trim() == ""){
-                ispasswordequel.value = true;
             }else{
-                ispasswordequel.value = false;
+              document.getElementById("usernamemsg").innerHTML = ""
             }
-            let email = document.getElementById("emailInput");
-           
+            if(password.value.trim() == "" || password.value.trim() == undefined){
+                document.getElementById("passwordmsg").innerHTML = "*密码不能为空"
+                return;
+            }else{
+              document.getElementById("passwordmsg").innerHTML = ""
+            }
+            if(rePassword.value.trim() == "" || rePassword.value.trim() == undefined){
+                document.getElementById("rePasswordmsg").innerHTML = "*确认密码不能为空"
+                return;
+            }else{
+              document.getElementById("rePasswordmsg").innerHTML = ""
+            }
+            if(email.value.trim() !="" && email.value.trim() != undefined){
+              if(!email.value.trim().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)){
+                 document.getElementById("emailmsg").innerHTML = "*邮箱格式错误"
+                  return;
+              }
+            }else{
+              document.getElementById("emailmsg").innerHTML = ""
+            }
+
+            if(password.value !== rePassword.value){
+                document.getElementById("passwordmsg").innerHTML = "*两次密码不一致"
+                document.getElementById("rePasswordmsg").innerHTML = "*两次密码不一致"
+                return;
+            }else{
+              document.getElementById("passwordmsg").innerHTML = ""
+              document.getElementById("rePasswordmsg").innerHTML = ""
+            }
+            // let email = document.getElementById("emailInput");
+           signUpApi(
+            {"nickName":nickname.value.trim(),
+             "username":username.value.trim(),
+             "password":password.value.trim(),
+             "email":email.value.trim()
+            }
+           ).then(res=>{
+            if(res.successful){
+                  ElMessage({
+                    message: '注册成功',
+                    type: 'success',
+                  })
+              resetfrom()
+              toLogin();
+            }else{
+                  ElMessage({
+                    message: '注册失败'+res.resultValue,
+                    type: 'warning',
+                  })
+            }
+           })
+        }
+
+        //验证用户名是否重复
+        let checkname = function(){
+          let username = document.getElementById("usernameInput"); 
+          if(username.value.trim() !="" && username.value.trim() !=undefined){
+            tochecknameApi({"username":username.value.trim()}).then(res=>{
+              if(res.successful){
+                document.getElementById("usernamemsg").innerHTML = ""
+              }else{
+                document.getElementById("usernamemsg").innerHTML = "*昵称已被注册"
+              }
+            })
+          }
+          
+        }
+        //重置表单
+        let resetfrom = function(){
+            document.getElementById("nicknameInput").value = ""
+            document.getElementById("usernameInput").value = ""
+            document.getElementById("passwordInput").value = ""
+            document.getElementById("emailInput").value = ""
+            document.getElementById("rePasswordInput").value = ""
         }
   
         let toLogin = function(){
@@ -126,7 +194,8 @@ export default {
                 rePasswordisshow,rePasswordshow,
                 signUpBrungle,
                 toLogin,
-                ispasswordequel,
+                resetfrom,
+                checkname
                 }
     }
 }

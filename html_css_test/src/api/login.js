@@ -9,3 +9,11 @@ export function getSm2(){
 export function login(data){
     return axiospost("/login/login",data)
 }
+//注册 接口
+export function signUpApi(data){
+    return axiospost("/login/signUp",data)
+}
+//判断用户名是否重复 接口
+export function tochecknameApi(data){
+    return axiospost("/login/tocheckname",data)
+}
