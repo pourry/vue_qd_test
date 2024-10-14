@@ -41,11 +41,13 @@
                     <el-upload action="#" list-type="picture-card" 
                     :auto-upload="false" 
                     :file-list="fileList"
+                    :on-change="filechange"
+                    :on-remove="handleRemove"
                     >
                         <el-icon><Plus /></el-icon>
 
-                        <template #file="{file}">
-                          <div>
+                        <template #file="{file}" class="uploadremcss" >
+                          <div >
                             <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
                             <span class="el-upload-list__item-actions">
                               <span
@@ -173,22 +175,14 @@ export default {
      let dialogImageUrl = ref('')
      let dialogVisibleShowpicture = ref(false)
      let fileList =  ref([
-  {
-    name: 'food.jpeg',
-    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-  },
-  {
-    name: 'plant-1.png',
-    url: '/images/plant-1.png',
-  }
+
 ])
-     //
+     // 添加图片触发
      let filechange = function(file){
-      fileList.list.push(flie);
-      console.log("fileList",fileList)
+      fileList.value.push(file);
      }
      //图片展示
-     let handlePictureCardPreview = function(file){
+     let handlePictureCardPreview = function(file,uploadFiles){
       dialogImageUrl.value = file.url
       dialogVisibleShowpicture.value = true
      }
@@ -198,13 +192,22 @@ export default {
      }
      //移除图片
      let handleRemove = function(file){
-      console.log(file)
-      for(let i = 0 ; i<fileList.value.length; i++){
-        if(fileList.value[i] == file){
-          fileList.splice(i)
+      for(let i = 0;i<fileList.value.length;i++){
+        console.log("fileList.value[i].uid == file.uid",fileList.value[i].uid,file,fileList.value[i].uid == file.uid)
+        if(fileList.value[i].uid == file.uid){
+          fileList.value.splice(i);
         }
       }
-      console.log(fileList)
+      //获取所有的li标签添加删除元素事件  会造成同vue 其他li标签点击都绑定删除元素
+      let list =document.querySelectorAll("li");
+				for (let i = 0; i < list.length; i++) {
+					(function (i) {
+						list[i].onclick = function () {
+							list[i].remove();
+						}
+					})(i);
+				}
+        console.log(fileList.value)
      }
   onMounted(()=>{
   })
@@ -249,5 +252,9 @@ export default {
 .showimgcss{
   height:100%;
   width:100%;
+}
+/*用来选择并删除元素用 */
+.uploadremcss{
+
 }
 </style>
