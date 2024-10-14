@@ -1,16 +1,16 @@
 <template>
     <div class='tdrightbottomcss'>
 
-        <div class="paginationcss">
-            <el-pagination
-            v-model:currentPage="currentPage4"
-            v-model:page-size="pageSize4"
-            :page-sizes="[100, 200, 300, 400]"
+        <div >
+            <el-pagination 
+            v-model:currentPage="pagemsg.msg.currentPage"
+            v-model:page-size="pagemsg.msg.pageSize"
+            :page-sizes="[10, 50, 100, 200]"
             :small="small"
             :disabled="disabled"
             :background="true"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="400"
+            :total="pagemsg.msg.total"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             />
@@ -20,32 +20,38 @@
 </template>
 
 <script>
-import {ref} from 'vue'
+import {ref,reactive,onMounted} from 'vue'
 export default {
   name: 'TDrightBottom',
   components: {
   },
-  setup(){
-    const currentPage1 = ref(5)
-    const currentPage2 = ref(5)
-    const currentPage3 = ref(5)
-    const currentPage4 = ref(4)
-    const pageSize2 = ref(100)
-    const pageSize3 = ref(100)
-    const pageSize4 = ref(100)
+  props:{
+    pagemsg:{
+      type:Object,
+      required: true
+    }
+  },
+  emits:["togetList"],
+  setup(props,{emit}){
+    let pagemsg = reactive(props.pagemsg);
     const small = ref(false)
     const background = ref(false)
     const disabled = ref(false)
     const handleSizeChange = (number) => {
+      pagemsg.animation.pageSize = number;
+      emit("togetList",pagemsg.animation);
     console.log(`${number} items per page`)
     }
     const handleCurrentChange = (number) => {
+      pagemsg.animation.pageNumber = number;
+      emit("togetList",pagemsg.animation);
     console.log(`current page: ${number}`)
     }
-    return{
-        currentPage1,currentPage2,currentPage3,currentPage4,
-        pageSize2,pageSize3,pageSize4,small,background,disabled,
-        handleCurrentChange,handleSizeChange}
+    onMounted(()=>{
+      console.log("pagemsg++++",pagemsg)
+    })
+    return{small,background,disabled,
+        handleCurrentChange,handleSizeChange,pagemsg}
   }
 }
 </script>
@@ -67,4 +73,11 @@ export default {
 .demo-pagination-block .demonstration {
   margin-bottom: 16px;
 }
+::v-deep .el-pagination__total{
+  color: white;
+}
+::v-deep .el-pagination__jump{
+  color: white;
+}
+
 </style>

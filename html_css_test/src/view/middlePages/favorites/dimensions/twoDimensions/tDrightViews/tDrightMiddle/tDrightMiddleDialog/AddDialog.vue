@@ -28,14 +28,51 @@
                       <el-input v-model="addform.form.alias" />
                     </el-form-item>
                   </el-col>
-                </el-row>      
+                </el-row>
                 <el-row :gutter="20">
                   <el-col :span="24">
                     <el-form-item label="备注" >
                       <el-input v-model="addform.form.notes" type="textarea"/>
                     </el-form-item>
                   </el-col>
-                </el-row>  
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="19">
+                    <el-upload action="#" list-type="picture-card" 
+                    :auto-upload="false" 
+                    :file-list="fileList"
+                    >
+                        <el-icon><Plus /></el-icon>
+
+                        <template #file="{file}">
+                          <div>
+                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                            <span class="el-upload-list__item-actions">
+                              <span
+                                class="el-upload-list__item-preview"
+                                @click="handlePictureCardPreview(file)"
+                              >
+                                <el-icon><zoom-in /></el-icon>
+                              </span>
+                              <span
+                                class="el-upload-list__item-delete"
+                                @click="handleDownload(file)"
+                              >
+                                <el-icon><Download /></el-icon>
+                              </span>
+                              <span
+                                class="el-upload-list__item-delete"
+                                @click="handleRemove(file)"
+                              >
+                                <el-icon><Delete /></el-icon>
+                              </span>
+                            </span>
+                          </div>
+                        </template>
+                      </el-upload>
+                  </el-col>
+                </el-row>      
+  
                 <el-row :gutter="20" justify="end">
                   <el-col :span="5.4">
                     <el-form-item class="buttomcss">
@@ -47,6 +84,9 @@
               </el-form>
   
      </div>
+      <el-dialog v-model="dialogVisibleShowpicture">
+        <div > <img w-full :src="dialogImageUrl" alt="Preview Image" class="showimgcss"/></div>
+      </el-dialog>
   </div>
 </template>
 
@@ -54,7 +94,7 @@
 import {ref,reactive,onMounted} from 'vue'
 import animationapi from '@/api/animation'
 import { ElMessage } from 'element-plus'
-
+import { UploadProps, UploadUserFile } from 'element-plus'
 export default {
   name: 'AddDialog',
   components: {
@@ -127,6 +167,45 @@ export default {
         val.notes=undefined
         val.alias=undefined
      }
+
+
+     //图片处理
+     let dialogImageUrl = ref('')
+     let dialogVisibleShowpicture = ref(false)
+     let fileList =  ref([
+  {
+    name: 'food.jpeg',
+    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+  },
+  {
+    name: 'plant-1.png',
+    url: '/images/plant-1.png',
+  }
+])
+     //
+     let filechange = function(file){
+      fileList.list.push(flie);
+      console.log("fileList",fileList)
+     }
+     //图片展示
+     let handlePictureCardPreview = function(file){
+      dialogImageUrl.value = file.url
+      dialogVisibleShowpicture.value = true
+     }
+     //下载图片
+     let handleDownload = function(file){
+
+     }
+     //移除图片
+     let handleRemove = function(file){
+      console.log(file)
+      for(let i = 0 ; i<fileList.value.length; i++){
+        if(fileList.value[i] == file){
+          fileList.splice(i)
+        }
+      }
+      console.log(fileList)
+     }
   onMounted(()=>{
   })
   return{addform,
@@ -134,7 +213,8 @@ export default {
          rules,
          formofaddref,
          formreset,
-         toadd}
+         toadd,
+         handlePictureCardPreview,handleDownload,handleRemove,fileList,filechange,dialogVisibleShowpicture,dialogImageUrl}
   }
 }
 </script>
@@ -165,5 +245,9 @@ export default {
 }
 
 .buttomcss{
+}
+.showimgcss{
+  height:100%;
+  width:100%;
 }
 </style>

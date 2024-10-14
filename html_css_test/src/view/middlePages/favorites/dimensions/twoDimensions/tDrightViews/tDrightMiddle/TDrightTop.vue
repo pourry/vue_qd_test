@@ -50,7 +50,10 @@ export default {
       type:Object,
       required: true
     },
-
+    pagemsg:{
+      type:Object,
+      required: true
+    }
   },
   emits:["toadd", "togetList","toedit","todelete"],
   setup(props,{emit}){
@@ -188,9 +191,13 @@ export default {
           })
           
      }
+     let pagemsg = reactive(props.pagemsg)
      //查询按钮
      let tosearch = function(){
-        emit("togetList",{"name":searchTd.value.trim()})
+      if(searchTd.value.trim() != undefined || searchTd.value.trim() != ''){
+        pagemsg.animation.name = searchTd.value.trim();
+      }
+        emit("togetList",pagemsg.animation)
      }
      //新增
      let toadd = function(paramVale,callback){
@@ -217,7 +224,8 @@ export default {
           toedit,
           tosearch,
           resetfrom,
-          setfrom
+          setfrom,
+          pagemsg
         }
   }
 }

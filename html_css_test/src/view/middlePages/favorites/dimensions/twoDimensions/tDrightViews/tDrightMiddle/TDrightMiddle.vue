@@ -31,6 +31,10 @@ export default {
     hasselecteds:{
       type:Object,
       required: true
+    },
+    pagemsg:{
+      type:Object,
+      required: true
     }
   },
   emits:["togetList"],
@@ -75,9 +79,11 @@ export default {
         
     }
 
+
+    let pagemsg = reactive(props.pagemsg)
     //列表查询
     let togetList = function(){
-      emit("togetList",{})
+      emit("togetList",pagemsg.animation)
     }
 
 
@@ -91,7 +97,8 @@ export default {
       msgList,
       hasselecteds,
       tochangeselect,
-      togetList
+      togetList,
+      pagemsg
     }
   }
 }
@@ -106,7 +113,6 @@ export default {
    align-items: center;
 }
 .tdrightmiddlecss >div{
-   border:solid red 1px;
    display:flex;
    flex-wrap: wrap;  /*可换行*/
    align-content: flex-start; /*从左到右*/

@@ -1,14 +1,15 @@
 <template>
     <div class='tdrightcss'>
          <div class='tdtopcss'>
-           <TDrightTop :msgList="msgList.list" :hasselecteds="hasselecteds" @toadd="toadd"  @togetList="togetList" @toedit="toedit" @todelete="todelete"></TDrightTop>
+           <TDrightTop :msgList="msgList.list" :hasselecteds="hasselecteds" @toadd="toadd"  @togetList="togetList" @toedit="toedit" @todelete="todelete" :pagemsg="pagemsg"></TDrightTop>
          </div>
          <div class='tdmiddlecss'>
            <!-- 中部 -->
-           <Tdrightmiddle :msgList="msgList" :hasselecteds="hasselecteds" @togetList="togetList"></Tdrightmiddle>
+           <Tdrightmiddle :msgList="msgList" :hasselecteds="hasselecteds" @togetList="togetList" :pagemsg="pagemsg"></Tdrightmiddle>
          </div>
+         <!-- 底部 -->
          <div class='tdbottomcss'>
-            <TDrightBottom></TDrightBottom>
+            <TDrightBottom @togetList="togetList" :pagemsg="pagemsg"></TDrightBottom>
          </div>
     </div>
 </template>
@@ -32,13 +33,34 @@ export default {
   },
   emits:["toadd","togetList","toedit","todelete"],
   setup(props,{emit}){
+   let pagemsg = reactive(
+    {
+      "animation":{
+      name: undefined,
+      pageSize:10,
+      pageNumber:1
+      },
+      "msg":{
+      pageSize:10,
+      currentPage:1,
+      total:0,
+      currentPage:0
+      }
+    }
+   );
    let toadd =  function(paramVale,addcallback){
       emit("toadd",{"animation":paramVale,addcallback})
    }
    let togetList =  function(paramVal){
       emit("togetList",{"animation":paramVal,listcallback:function(res){
          if(res.successful){
-          msgList.list = res.resultValue; 
+          msgList.list = res.resultValue.list; 
+          pagemsg.msg = {
+            "pageSize": res.resultValue.pageSize,
+            "currentPage":res.resultValue.pageNumber,
+            "total":res.resultValue.total
+          }
+          console.log(pagemsg)
           //保证列表查询后 所有选中的为未选中
           hasselecteds.list = [];
          }else{
@@ -58,7 +80,7 @@ export default {
 
    let msgList = reactive({"list":[]});
 
-      let hasselecteds =reactive({"list":[]});
+   let hasselecteds =reactive({"list":[]});
 
       onMounted(()=>{
          
@@ -68,7 +90,8 @@ export default {
              toadd,
              togetList,
              toedit,
-             todelete}
+             todelete,
+             pagemsg}
   }
 
 }
@@ -90,6 +113,5 @@ export default {
 .tdbottomcss{
    height:5%;
    width:100%;
-   background-color: green;
 }
 </style>
