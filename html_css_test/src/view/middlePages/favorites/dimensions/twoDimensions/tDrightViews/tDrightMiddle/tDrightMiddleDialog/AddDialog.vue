@@ -143,7 +143,6 @@ export default {
           // if (!formEl) return
             formofaddref.value.validate((valid) => {
             if (valid) {
-              console.log(fileList.value)
               let formdata = new FormData();
               let animation = addform.form;
               for(let key in animation){

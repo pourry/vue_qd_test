@@ -39,16 +39,15 @@ export default {
     const disabled = ref(false)
     const handleSizeChange = (number) => {
       pagemsg.animation.pageSize = number;
+      
       emit("togetList",pagemsg.animation);
-    console.log(`${number} items per page`)
     }
     const handleCurrentChange = (number) => {
       pagemsg.animation.pageNumber = number;
+      console.log("123333333",pagemsg.animation)
       emit("togetList",pagemsg.animation);
-    console.log(`current page: ${number}`)
     }
     onMounted(()=>{
-      console.log("pagemsg++++",pagemsg)
     })
     return{small,background,disabled,
         handleCurrentChange,handleSizeChange,pagemsg}

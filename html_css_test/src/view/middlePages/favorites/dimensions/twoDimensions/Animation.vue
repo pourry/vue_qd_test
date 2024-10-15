@@ -27,7 +27,6 @@ export default {
     }
     //新增
     let toaddanimation = function(e){
-      console.log(e,"1111")
               animationapi.toadd(e.paramVale).then(res=>{
                 //调用回调
                 e.addcallback(res)

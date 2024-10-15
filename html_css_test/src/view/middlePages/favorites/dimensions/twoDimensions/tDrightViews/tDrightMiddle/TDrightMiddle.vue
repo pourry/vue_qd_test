@@ -2,16 +2,15 @@
     <div class='tdrightmiddlecss'>
       <div class='collectshowcss'>
          <div :class="item.css" @click="tochangeselect(item)" v-for="item in msgList.list" ::key="item.id" >
-           <el-image >图片</el-image>
+           <el-image :src="msgList.list.pictures ? msgList.list.pictures[0].pictureUrl : undefined">图片</el-image>
            <span>
               <ul>
                 <li>名称:{{item.name}}</li>
-                <li>地址:<a href="#">{{item.address}}</a></li>
+                <li>地址:<a :href="item.address"  target="_blank">{{item.address}}</a></li>
                 <li>更多...</li>
               </ul>
            </span>
-         </div>  
-        
+         </div> 
       </div>
 
     </div>

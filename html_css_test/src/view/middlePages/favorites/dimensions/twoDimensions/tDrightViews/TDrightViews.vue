@@ -52,7 +52,7 @@ export default {
       emit("toadd",{paramVale,addcallback})
    }
    let togetList =  function(paramVal){
-      emit("togetList",{paramVal,listcallback:function(res){
+      emit("togetList",{"animation":paramVal,listcallback:function(res){
          if(res.successful){
           msgList.list = res.resultValue.list; 
           pagemsg.msg = {
@@ -60,7 +60,6 @@ export default {
             "currentPage":res.resultValue.pageNumber,
             "total":res.resultValue.total
           }
-          console.log(pagemsg)
           //保证列表查询后 所有选中的为未选中
           hasselecteds.list = [];
          }else{
