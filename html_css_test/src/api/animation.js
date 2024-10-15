@@ -1,10 +1,10 @@
-import{axiosget,axiospost}from '../utils/axiosUtils/axiosMethods'
+import{axiosget,axiospost,axiosupload}from '../utils/axiosUtils/axiosMethods'
 
 const animationapi = Object.assign({}) 
 
 //新增 接口
 animationapi.toadd =function (data){
-    return axiospost("/animation/toadd",data)
+    return axiosupload("/animation/toadd",data)
 }
 //修改 接口
 animationapi.toedit =function (data){

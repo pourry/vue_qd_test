@@ -56,12 +56,12 @@
                               >
                                 <el-icon><zoom-in /></el-icon>
                               </span>
-                              <span
+                              <!-- <span
                                 class="el-upload-list__item-delete"
                                 @click="handleDownload(file)"
                               >
                                 <el-icon><Download /></el-icon>
-                              </span>
+                              </span> -->
                               <span
                                 class="el-upload-list__item-delete"
                                 @click="handleRemove(file)"
@@ -112,6 +112,11 @@ export default {
      let addform = reactive(props.addform);
       let toclosef = function(){
          emit("toclose")
+         //清空图片
+         let list =document.querySelectorAll("li");
+          for (let i = 0; i < list.length; i++) {
+            list[i].remove();
+          }
       }
 
       let rules = {
@@ -138,8 +143,21 @@ export default {
           // if (!formEl) return
             formofaddref.value.validate((valid) => {
             if (valid) {
+              console.log(fileList.value)
+              let formdata = new FormData();
               let animation = addform.form;
-              emit("toadd",animation,function(res){
+              for(let key in animation){
+                if(animation.hasOwnProperty(key)){
+                  formdata.append(key,animation[key]);
+                }
+              }
+              let files = fileList.value;
+              for(let key in files){
+                if(files.hasOwnProperty(key)){
+                  formdata.append("file",files[key].raw)
+                }
+              }
+              emit("toadd",formdata,function(res){
                 //有返回值则说明 请求成功了
                 if(res.successful){
                 ElMessage({
@@ -175,8 +193,7 @@ export default {
      let dialogImageUrl = ref('')
      let dialogVisibleShowpicture = ref(false)
      let fileList =  ref([
-
-])
+     ])
      // 添加图片触发
      let filechange = function(file){
       fileList.value.push(file);
@@ -193,7 +210,6 @@ export default {
      //移除图片
      let handleRemove = function(file){
       for(let i = 0;i<fileList.value.length;i++){
-        console.log("fileList.value[i].uid == file.uid",fileList.value[i].uid,file,fileList.value[i].uid == file.uid)
         if(fileList.value[i].uid == file.uid){
           fileList.value.splice(i);
         }
@@ -207,7 +223,6 @@ export default {
 						}
 					})(i);
 				}
-        console.log(fileList.value)
      }
   onMounted(()=>{
   })

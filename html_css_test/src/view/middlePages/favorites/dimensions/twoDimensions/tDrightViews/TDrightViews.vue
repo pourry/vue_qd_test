@@ -49,10 +49,10 @@ export default {
     }
    );
    let toadd =  function(paramVale,addcallback){
-      emit("toadd",{"animation":paramVale,addcallback})
+      emit("toadd",{paramVale,addcallback})
    }
    let togetList =  function(paramVal){
-      emit("togetList",{"animation":paramVal,listcallback:function(res){
+      emit("togetList",{paramVal,listcallback:function(res){
          if(res.successful){
           msgList.list = res.resultValue.list; 
           pagemsg.msg = {

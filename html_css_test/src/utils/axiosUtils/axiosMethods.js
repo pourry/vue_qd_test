@@ -132,9 +132,9 @@ function axiosupload(url,params){
         axios(
             {
                 url : baseUrl+url,
-                responseType:'blob',
                 method: 'post',
-                data : qs.stringify(params),
+                headers:{"content-type":"multipart/form-data"},
+                data : params,
                  onUploadProgress : function(progressEvent){
                     if(progressEvent.lengthComputable){
                         onUploadProgress.value = progressEvent.loaded / progressEvent.total * 100
