@@ -15,7 +15,7 @@
                 size="large"
                 placeholder="请输入名称"
                 suffix-icon="Search"
-                clearable="true"
+                :clearable="true"
                 @keyup.enter="tosearch"
                 />
             <el-button type="primary" icon="Search" size="large"   @click="tosearch" />
@@ -24,9 +24,9 @@
       </el-row>
 
       <!-- 添加 -->
-     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :addform="addandeditform" @toadd="toadd" @tosearch="tosearch"></AddDialog>
+     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :hasendoptions="hasendoptions" :addform="addandeditform" @toadd="toadd" @tosearch="tosearch"></AddDialog>
       <!-- 修改 -->
-     <EditDialog :class="tdeditmenushow.css" @toclose="closeeditmenu" :editform="addandeditform" @toedit="toedit" @tosearch="tosearch"></EditDialog>
+     <EditDialog :class="tdeditmenushow.css" @toclose="closeeditmenu"  :hasendoptions="hasendoptions" :editform="addandeditform" @toedit="toedit" @tosearch="tosearch"></EditDialog>
     </div>
 </template>
 
@@ -53,12 +53,18 @@ export default {
     pagemsg:{
       type:Object,
       required: true
+    },
+    hasendoptions:{
+      type:Object,
+      required: true
     }
   },
   emits:["toadd", "togetList","toedit","todelete"],
   setup(props,{emit}){
     onMounted(()=>{
     })
+
+    let hasendoptions = reactive(props.hasendoptions);
 
     let msgList = reactive(props.msgList);
     let hasselecteds = reactive(props.hasselecteds);
@@ -69,6 +75,7 @@ export default {
                                             id:undefined,
                                             name:undefined,
                                             hasend:undefined,
+                                            hasendLabel:undefined,
                                             address:undefined,
                                             notes:undefined,
                                             alias:undefined
@@ -80,6 +87,7 @@ export default {
                               id:undefined,
                               name:undefined,
                               hasend:undefined,
+                              hasendLabel:undefined,
                               address:undefined,
                               notes:undefined,
                               alias:undefined
@@ -125,6 +133,7 @@ export default {
                                   name:"修改",
                                   css:"tdaddhiddencss"
                                   });
+     let pictures = ref([]);
      let totdeditmenushow = function(){
          if(hasselecteds == undefined ||hasselecteds.list.length<=0 || hasselecteds.list.length>1){
             ElMessage({
@@ -133,13 +142,19 @@ export default {
             })
             return;
          }
+          let pict = hasselecteds.list[0].pictures;
+          for(let i=0;i<pict.length;i++){
+            pict[i].name=pict[i].pictureLogic;
+            pict[i].url = pict[i].pictureUrl;
+          }
+          addandeditform.pictures = pict;
          setfrom(hasselecteds.list[0]);
         //  addandeditform.form.id = hasselecteds.list[0].id;
         //  addandeditform.form.name = hasselecteds.list[0].name;
         //  addandeditform.form.hasend = hasselecteds.list[0].hasend;
         //  addandeditform.form.address = hasselecteds.list[0].address;
         //  addandeditform.form.notes = hasselecteds.list[0].notes;
-         
+
          if(tdeditmenushow.css == "tdaddhiddencss"){
           tdeditmenushow.isshow= true;
           tdeditmenushow.name= "收起";
@@ -225,7 +240,10 @@ export default {
           tosearch,
           resetfrom,
           setfrom,
-          pagemsg
+          pagemsg,
+          pictures,
+          msgList,
+          hasendoptions
         }
   }
 }

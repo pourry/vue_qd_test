@@ -8,19 +8,19 @@
                 @close="handleClose"
                 :router="true"
               >
-                <el-menu-item index="1" disabled>
+                <el-menu-item index="1" route="/oneDimensions/uRLcollect">
                   <el-icon></el-icon>
-                  <span>一次元</span>
+                  <span>网址收藏</span>
                 </el-menu-item>
                 <el-sub-menu index="2" route="/twoDimensions">
                   <template #title>
                     <el-icon><Menu /></el-icon>
-                    <span>次元大厅</span>
+                    <span>ACG收藏</span>
                   </template>
-                  <el-menu-item index="2-1" route="/animation">动画</el-menu-item>
-                  <el-menu-item index="2-2" route="/comic">漫画</el-menu-item>
-                  <el-menu-item index="2-3" route="/novel">小说</el-menu-item>
-                  <el-menu-item index="2-4" route="/game">游戏</el-menu-item>
+                  <el-menu-item index="2-1" route="/twoDimensions/animation">动画</el-menu-item>
+                  <el-menu-item index="2-2" route="/twoDimensions/comic">漫画</el-menu-item>
+                  <el-menu-item index="2-3" route="/twoDimensions/novel">小说</el-menu-item>
+                  <el-menu-item index="2-4" route="/twoDimensions/game">游戏</el-menu-item>
                 </el-sub-menu>
                 <el-sub-menu index="3" >
                   <template #title>
@@ -89,7 +89,8 @@ const handleClose = (key, keyPath) => {
   background-color: rgba(249,255,255,0.5);
   height: 100%;
 }
-
+.el-menu-item.is-active{
+}
 
 
 </style>

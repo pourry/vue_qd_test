@@ -113,9 +113,9 @@ function axiosdown(url,params){
             document.body.appendChild(link);
             link.click();
             URL.revokeObjectURL(link.href);
-            // if(res){
-            //     resolve(res.data)
-            // }
+            if(res){
+                resolve(res.data)
+            }
         }).catch(err=>{
             if(err){
                 reject(err.data)
@@ -142,15 +142,15 @@ function axiosupload(url,params){
                 }
         },
         ).then(res =>{
-            let link = document.createElement("a");
-            link.href = URL.createObjectURL(res.data);
-            link.download =  "test";
-            document.body.appendChild(link);
-            link.click();
-            URL.revokeObjectURL(link.href);
-            // if(res){
-            //     resolve(res.data)
-            // }
+            // let link = document.createElement("a");
+            // link.href = URL.createObjectURL(res.data);
+            // link.download =  "test";
+            // document.body.appendChild(link);
+            // link.click();
+            // URL.revokeObjectURL(link.href);
+            if(res){
+                resolve(res.data)
+            }
         }).catch(err=>{
             if(err){
                 reject(err.data)

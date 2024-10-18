@@ -2,16 +2,34 @@
     <div class='tdrightmiddlecss'>
       <div class='collectshowcss'>
          <div :class="item.css" @click="tochangeselect(item)" v-for="item in msgList.list" ::key="item.id" >
-           <el-image :src="msgList.list.pictures ? msgList.list.pictures[0].pictureUrl : undefined">图片</el-image>
-           <span>
-              <ul>
-                <li>名称:{{item.name}}</li>
-                <li>地址:<a :href="item.address"  target="_blank">{{item.address}}</a></li>
-                <li>更多...</li>
-              </ul>
-           </span>
+           <el-image :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined"/>
+            <el-popover
+            :popper-style="{width:'auto'}"
+              placement="right-start"
+              :title="item.name"
+              trigger="hover"
+            >
+                <template #reference>
+                <span >
+                    <ul class='animationmsg'>
+                      <li>名称:{{item.name}}</li>
+                      <li>地址:<a :href="item.address"  target="_blank">{{item.address}}</a></li>
+                      <li>完结状态:{{item.hasendLabel}}</li>
+                    </ul>
+                </span>
+                </template>
+                    <ul class='animationmsgdetailcss'>
+                      <li>名称:{{item.name}}</li>
+                      <li>地址:<a :href="item.address"  target="_blank">{{item.address}}</a></li>
+                      <li>别名:{{item.alias}}</li>
+                      <li>完结状态:{{item.hasendLabel}}</li>
+                      <li>备注:{{item.notes}}</li>
+                    </ul>
+            </el-popover>
          </div> 
       </div>
+
+
 
     </div>
 </template>
@@ -34,11 +52,16 @@ export default {
     pagemsg:{
       type:Object,
       required: true
+    },
+    hasendoptions:{
+      type:Object,
+      required: true
     }
   },
   emits:["togetList"],
   setup(props,{emit}){
     
+    let hasendoptions = reactive(props.hasendoptions)
     let hasselected = ref("unselectedcss")
     let msgList = reactive(props.msgList);
     let hasselecteds = reactive(props.hasselecteds);
@@ -153,10 +176,43 @@ export default {
 }
 .collectshowcss div>span{
   position:absolute;
-  background-color:red;
+  background-color:rgba(106,241,230,0.7);
   width:50%;
   height:30%;
   right:0%;
   bottom:0%;
 }
+.animationmsg{
+  height:100%;
+  width:100%;
+  padding: 0px;
+  margin: 0px;
+}
+.animationmsg >li{
+  padding: 5px;
+  height:20%;
+  width:90%;
+  white-space:nowrap; /*不让文字内容换行*/
+  overflow:hidden;/*文字溢出的部分隐藏起来*/
+  text-overflow:ellipsis; /*用...替代溢出的部分*/
+}
+.animationmsgdetailcss{
+   list-style-type: none;
+
+}
+
+</style>
+
+<style>
+/*popover 专用*/
+
+.el-popover.el-popper {
+  background-color:rgba(106,241,230,0.7) !important;
+  color: black;
+  
+}
+.el-popover__title {
+ color: black;
+}
+
 </style>

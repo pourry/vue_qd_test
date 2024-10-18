@@ -1,11 +1,11 @@
 <template>
     <div class='tdrightcss'>
          <div class='tdtopcss'>
-           <TDrightTop :msgList="msgList.list" :hasselecteds="hasselecteds" @toadd="toadd"  @togetList="togetList" @toedit="toedit" @todelete="todelete" :pagemsg="pagemsg"></TDrightTop>
+           <TDrightTop :msgList="msgList.list" :hasendoptions="hasendoptions" :hasselecteds="hasselecteds" @toadd="toadd"  @togetList="togetList" @toedit="toedit" @todelete="todelete" :pagemsg="pagemsg"></TDrightTop>
          </div>
          <div class='tdmiddlecss'>
            <!-- 中部 -->
-           <Tdrightmiddle :msgList="msgList" :hasselecteds="hasselecteds" @togetList="togetList" :pagemsg="pagemsg"></Tdrightmiddle>
+           <Tdrightmiddle :msgList="msgList" :hasendoptions="hasendoptions" :hasselecteds="hasselecteds" @togetList="togetList" :pagemsg="pagemsg"></Tdrightmiddle>
          </div>
          <!-- 底部 -->
          <div class='tdbottomcss'>
@@ -33,6 +33,21 @@ export default {
   },
   emits:["toadd","togetList","toedit","todelete"],
   setup(props,{emit}){
+   let hasendoptions = reactive([
+      {
+        "label":"完结",
+        "value":"end"
+      },
+      {
+        "label":"连载中",
+        "value":"serialize"
+      },
+      {
+        "label":"未开始",
+        "value":"beforeStart"
+      }
+    ]);
+
    let pagemsg = reactive(
     {
       "animation":{
@@ -51,10 +66,20 @@ export default {
    let toadd =  function(paramVale,addcallback){
       emit("toadd",{paramVale,addcallback})
    }
-   let togetList =  function(paramVal){
-      emit("togetList",{"animation":paramVal,listcallback:function(res){
+   let togetList =  function(paramVale){
+      emit("togetList",{"paramVale":paramVale,listcallback:function(res){
          if(res.successful){
           msgList.list = res.resultValue.list; 
+          for(let i = 0; i<msgList.list.length;i++){
+            for(let j =0; j <hasendoptions.length;j++){
+               if(msgList.list[i].hasend){
+                  if(msgList.list[i].hasend == hasendoptions[j].value){
+                     msgList.list[i].hasendLabel = hasendoptions[j].label
+                  }
+               }
+
+            }
+          }
           pagemsg.msg = {
             "pageSize": res.resultValue.pageSize,
             "currentPage":res.resultValue.pageNumber,
@@ -70,7 +95,7 @@ export default {
          }}})
    }
    let toedit = function(paramVale,editcallback){
-      emit("toedit",{"animation":paramVale,editcallback})
+      emit("toedit",{"paramVale":paramVale,editcallback})
    }
    let todelete = function(paramVale,deletecallback){
       emit("todelete",{"ids":paramVale,deletecallback})
@@ -90,7 +115,8 @@ export default {
              togetList,
              toedit,
              todelete,
-             pagemsg}
+             pagemsg,
+             hasendoptions}
   }
 
 }

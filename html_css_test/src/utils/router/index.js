@@ -13,6 +13,8 @@ import TwoDimensions from '@/view/middlePages/favorites/dimensions/TwoDimensions
 import ThreeDimensions from '@/view/middlePages/favorites/dimensions/ThreeDimensions.vue'
 import FourDimensions from '@/view/middlePages/favorites/dimensions/FourDimensions.vue'
 
+import URLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions/URLcollect.vue'
+
 import Animation from '@/view/middlePages/favorites/dimensions/twoDimensions/Animation.vue'
 import Comic from '@/view/middlePages/favorites/dimensions/twoDimensions/Comic.vue'
 import Novel from '@/view/middlePages/favorites/dimensions/twoDimensions/Novel.vue'
@@ -39,11 +41,25 @@ const routes = [
          name: 'Favorites',
          component: Favorites,
          children : [
+            // {
+            //    //一次元
+            //    path: '/oneDimensions',
+            //    name: 'OneDimensions',
+            //    component: OneDimensions,
+            //    children: [
+            //       {
+            //          //网站收藏
+            //          path: '/uRLcollect',
+            //          name: 'URLcollect',
+            //          component: URLcollect,
+            //       },
+            //    ]
+            // },
             {
-               //一次元
-               path: '/oneDimensions',
-               name: 'OneDimensions',
-               component: OneDimensions,
+               //网站收藏
+               path: '/oneDimensions/uRLcollect',
+               name: 'URLcollect',
+               component: URLcollect,
             },
             {
                //二次元
@@ -53,25 +69,25 @@ const routes = [
                children : [
                   {
                      //动画
-                     path: '/animation',
+                     path: '/twoDimensions/animation',
                      name: 'Animation',
                      component: Animation,
                   },
                   {
                      //漫画
-                     path: '/comic',
+                     path: '/twoDimensions/comic',
                      name: 'Comic',
                      component: Comic,
                   },
                   {
                      //小说
-                     path: '/novel',
+                     path: '/twoDimensions/novel',
                      name: 'Novel',
                      component: Novel,
                   },
                   {
                      //游戏
-                     path: '/game',
+                     path: '/twoDimensions/game',
                      name: 'Game',
                      component: Game,
                   },

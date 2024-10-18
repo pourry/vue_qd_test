@@ -20,7 +20,7 @@ export default {
     //查询列表
     let getanimationList = function(e){
       
-      animationapi.togetList(e.animation).then(res=>{
+      animationapi.togetList(e.paramVale).then(res=>{
         //调用回调
         e.listcallback(res)
       })
@@ -34,7 +34,8 @@ export default {
     }
     //修改
     let toeditanimation = function(e){
-              animationapi.toedit(e.animation).then(res=>{
+      console.log("44444",e)
+              animationapi.toedit(e.paramVale).then(res=>{
                 //调用回调
                 e.editcallback(res)
               })

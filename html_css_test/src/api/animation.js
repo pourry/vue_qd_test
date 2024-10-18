@@ -8,7 +8,7 @@ animationapi.toadd =function (data){
 }
 //修改 接口
 animationapi.toedit =function (data){
-    return axiospost("/animation/toedit",data)
+    return axiosupload("/animation/toedit",data)
 }
 //删除 接口
 animationapi.todelete =function (data){

@@ -1,7 +1,6 @@
 <template>
     <div>
-         <div>一次元</div>
-      
+      <router-view></router-view>
     </div>
 </template>
 

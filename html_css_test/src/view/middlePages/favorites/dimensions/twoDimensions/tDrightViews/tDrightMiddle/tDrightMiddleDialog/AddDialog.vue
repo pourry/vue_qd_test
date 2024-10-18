@@ -4,14 +4,22 @@
      <div class="tdformcss">
            <el-form :model="addform.form" label-position="right" :rules="rules" ref="formofaddref">
                 <el-row :gutter="20">
-                  <el-col :span="19" >
+                  <el-col :span="17" >
                     <el-form-item label="名称" prop="name">
                       <el-input v-model="addform.form.name" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="5">
+                  <el-col :span="7">
                     <el-form-item label="完结状态" >
-                    <el-input v-model="addform.form.hasend" />
+                    <!-- <el-input v-model="addform.form.hasend" /> -->
+                    <el-select v-model="addform.form.hasend" placeholder="请选择">
+                      <el-option
+                        v-for="item in hasendoptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
                   </el-form-item>
                   </el-col>
                 </el-row> 
@@ -105,20 +113,16 @@ export default {
      addform:{
         type:Object,
         required: true
+     },
+     hasendoptions:{
+        type:Object,
+        required: true
      }
   },
   emits: ["toclose","toadd","tosearch"],
   setup(props,{emit}){
+     let hasendoptions = reactive(props.hasendoptions);
      let addform = reactive(props.addform);
-      let toclosef = function(){
-         emit("toclose")
-         //清空图片
-         let list =document.querySelectorAll("li");
-          for (let i = 0; i < list.length; i++) {
-            list[i].remove();
-          }
-      }
-
       let rules = {
         name:[
                 {
@@ -143,11 +147,18 @@ export default {
           // if (!formEl) return
             formofaddref.value.validate((valid) => {
             if (valid) {
+              for(let i = 0;i < hasendoptions.length;i++){
+                  if(hasendoptions[i].value == addform.form.hasend ){
+                    addform.form.hasendLabel = hasendoptions[i].label;
+                  }
+              }
               let formdata = new FormData();
               let animation = addform.form;
               for(let key in animation){
                 if(animation.hasOwnProperty(key)){
-                  formdata.append(key,animation[key]);
+                  if(animation[key] != undefined){
+                    formdata.append(key,animation[key]);
+                  }
                 }
               }
               let files = fileList.value;
@@ -166,6 +177,11 @@ export default {
                 //关闭
                 toclosef();
                 emit("tosearch");
+              }else{
+                ElMessage({
+                  message: res.resultValue,
+                  type: 'warning',
+                })
               }
               formreset(addform);
               });
@@ -180,11 +196,12 @@ export default {
      }
      //重置表单
      let formreset = function(val){
-        val.name=undefined
-        val.hasend=undefined
-        val.address=undefined
-        val.notes=undefined
-        val.alias=undefined
+        val.name=''
+        val.hasend=''
+        val.hasendLabel=''
+        val.address=''
+        val.notes=''
+        val.alias=''
      }
 
 
@@ -223,6 +240,16 @@ export default {
 					})(i);
 				}
      }
+
+      let toclosef = function(){
+         emit("toclose")
+         //清空图片
+        //  let list =document.querySelectorAll("li");
+        //   for (let i = 0; i < list.length; i++) {
+        //     list[i].remove();
+        //   }
+          fileList.value = [];
+      }
   onMounted(()=>{
   })
   return{addform,
@@ -231,7 +258,8 @@ export default {
          formofaddref,
          formreset,
          toadd,
-         handlePictureCardPreview,handleDownload,handleRemove,fileList,filechange,dialogVisibleShowpicture,dialogImageUrl}
+         handlePictureCardPreview,handleDownload,handleRemove,fileList,filechange,dialogVisibleShowpicture,dialogImageUrl,
+         hasendoptions}
   }
 }
 </script>
