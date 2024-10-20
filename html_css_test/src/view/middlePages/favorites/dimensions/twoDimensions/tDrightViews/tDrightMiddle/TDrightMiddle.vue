@@ -2,7 +2,7 @@
     <div class='tdrightmiddlecss'>
       <div class='collectshowcss'>
          <div :class="item.css" @click="tochangeselect(item)" v-for="item in msgList.list" ::key="item.id" >
-           <el-image :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined"/>
+           <el-image class="clickimgcss" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined"/>
             <el-popover
             :popper-style="{width:'auto'}"
               placement="right-start"
@@ -181,6 +181,41 @@ export default {
   height:30%;
   right:0%;
   bottom:0%;
+}
+.clickimgcss:hover{
+  /* border: solid 1px red; */
+  margin-top: -0.5%;
+  margin-left: -0.5%;
+  height: 101% !important;
+  width: 101% !important;
+  transition: width 0.4s, height 0.4s, margin-top 0.4s, margin-left 0.4s;
+  -webkit-transition: width 0.4s, height 0.4s,  margin-top 0.4s, margin-left 0.4s;
+}
+.clickimgcss{
+  /* margin-top: 0%;
+  margin-left: 0%;
+  height: 100% !important;
+  width: 100% !important;
+  transition: width 0.4s, height 0.4s, margin-top 0.4s, margin-left 0.4s;
+  -webkit-transition: width 0.4s, height 0.4s,  margin-top 0.4s, margin-left 0.4s; */
+}
+::v-deep .el-image__inner{
+  width: 100%;
+  margin-top: 0%;
+  margin-left: 0%;
+  height: 100%;
+  transition: width 0.2s, height 0.2s, margin-top 0.2s, margin-left 0.2s;
+  -webkit-transition: width 0.2s, height 0.2s,  margin-top 0.2s, margin-left 0.2s;
+  /* webkit-, -ms- 或 -moz- 前的数字为支持该前缀属性的第一个浏览器版本号。 */
+}
+::v-deep .el-image__inner:hover{
+  width: 120%;
+  margin-top: -5%;
+  margin-left: -5%;
+  height: 120%;
+  transition: width 0.2s, height 0.2s, margin-top 0.2s, margin-left 0.2s;
+  -webkit-transition: width 0.2s, height 0.2s,  margin-top 0.2s, margin-left 0.2s;
+  /* webkit-, -ms- 或 -moz- 前的数字为支持该前缀属性的第一个浏览器版本号。 */
 }
 .animationmsg{
   height:100%;
