@@ -27,8 +27,8 @@
                           <span v-if="node.data.typename">{{ node.data.typename }}</span>
                           <span v-if="node.data.urlname">{{ node.data.urlname }}</span>
                           <span>
-                            <el-icon @click="append(data)"><Plus /></el-icon>
-                            <el-icon style="margin-left: 8px" @click="remove(node, data)"><Minus /></el-icon>
+                            <el-icon v-if="!node.data.urlname" @click="append(data)"><Plus /></el-icon>
+                            <el-icon v-if="!node.data.label" style="margin-left: 8px" @click="remove(node, data)"><Minus /></el-icon>
                           </span>
                         </span>
                       </template>
@@ -37,27 +37,23 @@
           </div>
          </div>
         
-         <div class="collectlistcss" v-for="item of treedata.list[0]" :key="item.id">
+         <div class="collectlistcss" v-for="item of treedata.list[0].children" :key="item.id">
             <span class="urltypecss">{{item.typename}}</span>
             <div class="urlshowcss">
-              <ul>
-                <li>名称：</li>
+              <ul v-for="childitem of item.children" :key="childitem.id">
+                <li>名称：{{childitem.urlname}}</li>
                 <li>网址：
                       <el-tooltip
                         class="box-item"
                         effect="dark"
-                        content="https://www.baidu.com/"
+                        :content="childitem.url"
                         placement="bottom-start"
                       >
-                        <a href="https://www.baidu.com/"  target="_blank">https://www.baidu.com/</a>
+                        <a :href="childitem.url"  target="_blank">{{childitem.url}}</a>
                       </el-tooltip>
                 </li>
                       
               </ul>
-              <ul>网站2</ul>
-              <ul>网站3</ul>
-              <ul>网站4</ul>
-              <ul>网站5</ul>
             </div>
          </div>
       
