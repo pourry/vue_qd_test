@@ -2,17 +2,18 @@
     <div class="urlcollectcss">
          <div class="urlcollectoperatecss">
           <div>
-              <div>
+              <div @click="toshowTree">
               <el-icon><Menu /></el-icon>
-              操作
+              {{showTree.msg}}
               </div>
-              <div class="urlcollectoperateshowcss">
+              <div :class="showTree.css">
                 <el-tree
                   :allow-drop="allowDrop"
                   :allow-drag="allowDrag"
                   :data="treedata.list"
                   draggable
                   default-expand-all
+                  :expand-on-click-node="false"
                   node-key="id"
                   @node-drag-start="handleDragStart"
                   @node-drag-enter="handleDragEnter"
@@ -28,6 +29,7 @@
                           <span v-if="node.data.urlname">{{ node.data.urlname }}</span>
                           <span>
                             <el-icon v-if="!node.data.urlname" @click="append(data)"><Plus /></el-icon>
+                            <el-icon v-if="!node.data.label" style="margin-left: 8px" @click="editnode(data)"><Edit /></el-icon>
                             <el-icon v-if="!node.data.label" style="margin-left: 8px" @click="remove(node, data)"><Minus /></el-icon>
                           </span>
                         </span>
@@ -56,17 +58,31 @@
               </ul>
             </div>
          </div>
-      
+
+         <AddURLcollect :addvisible="addvisible"  @getList="geturlTypeCollection" :urlssurltype="urlssurltype"></AddURLcollect>
+         <EditURLcollect :editvisible="editvisible" :editform="editform"  @getList="geturlTypeCollection" :urlssurltype="urlssurltype"></EditURLcollect>
+         <AddURLTypecollect :addvisible="addTypevisible" @getList="geturlTypeCollection"></AddURLTypecollect>
+         <EditURLTypecollect :editvisible="editTypevisible" :editTypeform="editTypeform" @getList="geturlTypeCollection"></EditURLTypecollect>
+
     </div>
 </template>
 
 <script>
+import AddURLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions/AddURLcollect.vue'
+import AddURLTypecollect from '@/view/middlePages/favorites/dimensions/oneDimensions/AddURLTypecollect.vue'
+import EditURLTypecollect from '@/view/middlePages/favorites/dimensions/oneDimensions/EditURLTypecollect.vue'
+import EditURLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions/EditURLcollect.vue'
 import {ref,reactive,onMounted} from 'vue'
 import urlTypeCollectionapi from '@/api/urlTypeCollection'
+import urlCollectionapi from '@/api/urlCollection'
 import {ElMessage} from 'element-plus'
 export default {
   name: 'URLcollect',
   components: {
+    AddURLcollect,
+    AddURLTypecollect,
+    EditURLcollect,
+    EditURLTypecollect
   },
   setup(){
     onMounted(()=>{
@@ -78,11 +94,22 @@ export default {
   return `${a.protocol}//${a.hostname}/favicon.ico`
   }
 // getFavicon('https://www.baidu.com/s?wd=js%20favicon.ico&rsv_spt=1&rsv_iqid=0xe90a78d7000ab990&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&rsv_dl=tb&oq=%25E5%25A6%2582%25E4%25BD%2595%25E8%258E%25B7%25E5%258F%2596favicon.ico&rsv_btype=t&inputT=1697&rsv_t=c92cDcLsEiY1ithFI2xdNgDjsJFipUVyppcywRIJFnYd5WND62XK1CWnTQi5hNPPxD3%2F&rsv_pq=98568fd304a58f6b&rsv_sug3=35&rsv_sug1=32&rsv_sug7=100&rsv_sug2=0&rsv_sug4=1697')
+ 
+ let toshowTree = function(){
+    if(showTree.css == "urlcollectoperateshowcss"){
+      showTree.css = "urlcollectoperateshow"
+      showTree.msg = "收起"
+    }else{
+      showTree.css = "urlcollectoperateshowcss"
+      showTree.msg = "操作"
+    }
+ }
+ let showTree = reactive({"css":"urlcollectoperateshowcss",
+                           "msg":"操作"})
  let geturlTypeCollection = function(){
    urlTypeCollectionapi.geturltree().then(res =>{
     if(res.successful){
       treedata.list[0].children = res.resultValue;
-      console.log(treedata)
     }else{
       ElMessage({
                   message: res.resultValue,
@@ -99,13 +126,79 @@ let treedata = reactive({"list":[
     ],
   }
 ]})
+let urlssurltype = reactive({"ssurltypeid":undefined})
 const append = (data) => {
+  console.log(data.typename)
+  urlssurltype.ssurltypeid = data.id;
+  if(data.typename){
+    addvisible.visible = true;
+    
+  }else{
+    //说明  是开始节点
+    addTypevisible.visible = true;
+  }
+  
   console.log(data)
 }
+let editTypevisible = reactive({"visible":false});
+let editvisible = reactive({"visible":false});
+let editform =reactive({      
+                        "id":undefined,
+                        "urlname":undefined,
+                        "url":undefined,
+                        "ssurltypeid":undefined,
+                        "notes":undefined
+                        });
+let editTypeform =reactive({"id":undefined,"typename":undefined});
+const editnode = function(data){
+  if(data.typename){
+    editTypevisible.visible = true;
+    editTypeform.id = data.id;
+    editTypeform.typename = data.typename;
+  }else{
+    editvisible.visible = true;
+    editform.id = data.id;
+    editform.urlname = data.urlname;
+    editform.url = data.url;
+    editform.ssurltypeid = data.ssurltypeid;
+    editform.notes = data.notes;
+  }
+}
+
 
 const remove = (node, data) => {
-   console.log(node.typename)
+  let id = data.id
+   if(data.typename){
+    removeurlType(id);
+   }else{
+    removeurl(id);
+   }
    console.log(node,data)
+}
+//
+let removeurl = function(id){
+  urlCollectionapi.todelete(id).then(res=>{
+    if(res.successful){
+      geturlTypeCollection();
+    }else{
+      ElMessage({
+                  message: res.resultValue,
+                  type: 'warning',
+                })
+    }
+  })
+}
+let removeurlType = function(id){
+  urlTypeCollectionapi.todelete(id).then(res=>{
+    if(res.successful){
+      geturlTypeCollection();
+    }else{
+      ElMessage({
+                  message: res.resultValue,
+                  type: 'warning',
+                })
+    }
+  })
 }
 // 节点开始拖拽时触发的事件
 const handleDragStart = (node, ev) => {
@@ -164,7 +257,11 @@ const allowDrag = (draggingNode) => {
   return !draggingNode.data.label.includes('Level three 3-1-1')
 }
 
-return {getFavicon,
+let addvisible = reactive({visible:false});
+let addTypevisible = reactive({visible:false});
+return {showTree,
+        toshowTree,
+        getFavicon,
         treedata,
         handleDragStart,
         handleDragEnter,
@@ -174,7 +271,11 @@ return {getFavicon,
         allowDrop,
         append,
         remove,
-        geturlTypeCollection}
+        geturlTypeCollection,
+        addvisible,addTypevisible,
+        removeurl,removeurlType,urlssurltype,editnode,
+        editTypevisible,editvisible,
+        editform,editTypeform}
 
   }
 }
@@ -199,6 +300,8 @@ return {getFavicon,
 }
 .urlcollectoperatecss>div{
   cursor:pointer;
+  position: relative;
+  right:2%;
 }
 .urlcollectoperatecss>div:hover .urlcollectoperateshowcss{
   display:block;
@@ -206,7 +309,14 @@ return {getFavicon,
 .urlcollectoperateshowcss{
   position:absolute;
   right:0%;
-  display:none
+  display:none;
+  min-width:150px
+}
+.urlcollectoperateshow{
+    position:absolute;
+  right:0%;
+  display:block;
+  min-width:150px
 }
 .urlshowcss{
     width:100%;

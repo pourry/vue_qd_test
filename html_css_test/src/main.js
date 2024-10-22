@@ -10,7 +10,6 @@ import store from './utils/store'
 import router from './utils/router'
 // import preload from './utils/preLoading/preload'
 import {loadingSm2} from './utils/preLoading/preload'
-
 const app = createApp(App);
 app.use(ElementPlus,{locale: zhCn}).use(store).use(router).use(loadingSm2).mount('#app')
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
