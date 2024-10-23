@@ -101,7 +101,7 @@ export default {
                 })
             }else{
                 ElMessage({
-                      message: res.resultValue,
+                      message: "表单验证失败！",
                       type: 'warning',
                 })
             }

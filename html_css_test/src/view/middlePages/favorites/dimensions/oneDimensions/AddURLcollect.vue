@@ -79,13 +79,6 @@ export default {
                   trigger: 'blur',
                    message: '不能为空',
                 }
-              ],
-        notes:[
-                {
-                  required: true,
-                  trigger: 'blur',
-                   message: '不能为空',
-                }
               ]
     }
     let urlssurltype = reactive(props.urlssurltype);
@@ -107,7 +100,7 @@ export default {
                 })
             }else{
                 ElMessage({
-                      message: res.resultValue,
+                      message: "表单验证失败！",
                       type: 'warning',
                 })
             }

@@ -18,6 +18,10 @@ urlTypeCollectionapi.todelete =function (data){
 urlTypeCollectionapi.geturltree =function (data){
     return axiosget("/urlTypeCollection/geturltree",data)
 }
+//节点位置改变 接口
+urlTypeCollectionapi.tochange =function (data){
+    return axiospost("/urlTypeCollection/tochange",data)
+}
 
 
 export default urlTypeCollectionapi

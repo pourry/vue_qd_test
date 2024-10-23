@@ -48,7 +48,7 @@ export default {
     let dialogVisible = reactive(props.editvisible);
     //  标签 ref 名 需要先附null
     let editurlTyperef = ref(null);
-    let form = reactive(props.editTypeform)
+    let form = reactive(props.editTypeform);
     let rules = {
         typename:[
                 {

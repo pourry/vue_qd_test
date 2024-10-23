@@ -138,7 +138,6 @@ const append = (data) => {
     addTypevisible.visible = true;
   }
   
-  console.log(data)
 }
 let editTypevisible = reactive({"visible":false});
 let editvisible = reactive({"visible":false});
@@ -173,7 +172,6 @@ const remove = (node, data) => {
    }else{
     removeurl(id);
    }
-   console.log(node,data)
 }
 //
 let removeurl = function(id){
@@ -202,7 +200,7 @@ let removeurlType = function(id){
 }
 // 节点开始拖拽时触发的事件
 const handleDragStart = (node, ev) => {
-  console.log('drag start', node)
+  // console.log('drag start', node)
 }
 // 拖拽进入其他节点时触发的事件
 const handleDragEnter = (
@@ -210,7 +208,8 @@ const handleDragEnter = (
   dropNode,
   ev
 ) => {
-  console.log('tree drag enter:', dropNode.label)
+  // console.log('tree drag draggingNode:', draggingNode)
+  // console.log('tree drag dropNode:', dropNode)
 }
 //拖拽离开某个节点时触发的事件
 const handleDragLeave = (
@@ -218,11 +217,11 @@ const handleDragLeave = (
   dropNode,
   ev
 ) => {
-  console.log('tree drag leave:', dropNode.label)
+  // console.log('tree drag leave:', dropNode.label)
 }
 //在拖拽节点时触发的事件（类似浏览器的 mouseover 事件）
 const handleDragOver = (draggingNode, dropNode, ev) => {
-  console.log('tree drag over:', dropNode.label)
+  // console.log('tree drag over:', dropNode.label)
 }
 //拖拽结束时（可能未成功）触发的事件
 const handleDragEnd = (
@@ -231,7 +230,7 @@ const handleDragEnd = (
   dropType,
   ev
 ) => {
-  console.log('tree drag end:', dropNode && dropNode.label, dropType)
+  // console.log('tree drag end:', dropNode , dropType)
 }
 //拖拽成功完成时触发的事件
 const handleDrop = (
@@ -240,21 +239,37 @@ const handleDrop = (
   dropType,
   ev
 ) => {
-  console.log('tree drop:', dropNode.label, dropType)
+  // console.log('tree drop:', dropNode,draggingNode, dropType)
+  changenode({
+    "dropid":dropNode.data.id,
+    "dragid":draggingNode.data.id,
+    "dropType":dropType
+  })
 }
-//判断节点能否被拖拽 如果返回 false ，节点不能被拖动
-const allowDrop = (draggingNode, dropNode, type) => {
-  if (dropNode.data.label === 'Level two 3-1') {
-    return type !== 'inner'
-  } else {
-    return true
-  }
+let changenode = function(data){
+  urlTypeCollectionapi.tochange(data).then(res=>{
+    if(!res.successful){
+            ElMessage({
+                  message: res.resultValue,
+                  type: 'warning',
+                })
+    }
+  })
 }
+
 //拖拽时判定目标节点能否成为拖动目标位置。 
 //如果返回 false ，拖动节点不能被拖放到目标节点。 
 //type 参数有三种情况：'prev'、'inner' 和 'next'，分别表示放置在目标节点前、插入至目标节点和放置在目标节点后
+const allowDrop = (draggingNode, dropNode, type) => {
+    
+    return (draggingNode.data.ssurltypeid !=undefined && dropNode.data.ssurltypeid !=undefined && type !="inner") ||
+    (draggingNode.data.typename !=undefined && dropNode.data.typename !=undefined  && type !="inner") ||
+    (draggingNode.data.ssurltypeid !=undefined && dropNode.data.typename !=undefined && type =="inner");
+}
+//判断节点能否被拖拽 如果返回 false ，节点不能被拖动 draggingNode:处于其后面的节点  dropNode 当前节点
 const allowDrag = (draggingNode) => {
-  return !draggingNode.data.label.includes('Level three 3-1-1')
+  // console.log("dropNode",dropNode)
+  return true;
 }
 
 let addvisible = reactive({visible:false});
@@ -275,7 +290,8 @@ return {showTree,
         addvisible,addTypevisible,
         removeurl,removeurlType,urlssurltype,editnode,
         editTypevisible,editvisible,
-        editform,editTypeform}
+        editform,editTypeform,
+        changenode}
 
   }
 }
@@ -313,7 +329,7 @@ return {showTree,
   min-width:150px
 }
 .urlcollectoperateshow{
-    position:absolute;
+  position:absolute;
   right:0%;
   display:block;
   min-width:150px
@@ -323,18 +339,19 @@ return {showTree,
     display:flex;
     flex-wrap: wrap;  /*可换行*/
     align-content: flex-start; /*从左到右*/
-    justify-content: center;   /* 居中对齐 */
+    /*justify-content: center;*/   /* 居中对齐 */
     background-color:rgba(106,241,230,0.2);
+    font-size:0.5rem;
    
 }
 .urltypecss{
   font-size: 1.25rem;
-   background-color:rgba(106,241,230,0.2);
+  background-color:rgba(106,241,230,0.2);
   width:auto;
   border-radius: 0 5px 0 0;
 }
 .urlshowcss > ul{
-    width:30%;
+    width:20%;
     height:auto;
     background-color:rgba(106,241,230,0.3);
     margin:1%;
