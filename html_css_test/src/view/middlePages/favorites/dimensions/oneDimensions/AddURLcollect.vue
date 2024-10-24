@@ -85,6 +85,12 @@ export default {
     let toaddurl = function(){
       addurlref.value.validate((valid) => {
             if (valid) {
+              if(form.url){
+                form.urllogopath = form.url.substring(0,form.url.indexOf("//")+2)+
+                                   form.url.substring(form.url.indexOf("//")+2,form.url.length).substring(
+                                                                                                0,form.url.substring(form.url.indexOf("//")+2,form.url.length).indexOf("/"))+
+                                   "/favicon.ico";
+              }
               form.ssurltypeid = urlssurltype.ssurltypeid
                 urlCollectionapi.toadd(form).then(res=>{
                   if(res.successful){

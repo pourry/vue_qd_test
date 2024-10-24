@@ -10,6 +10,10 @@ urlCollectionapi.toadd =function (data){
 urlCollectionapi.toedit =function (data){
     return axiospost("/urlCollection/toedit",data)
 }
+//保存logo 接口
+urlCollectionapi.tosavelogo =function (data){
+    return axiospost("/urlCollection/tosavelogo",data)
+}
 //删除 接口
 urlCollectionapi.todelete =function (data){
     return axiospost("/urlCollection/todelete/"+data)

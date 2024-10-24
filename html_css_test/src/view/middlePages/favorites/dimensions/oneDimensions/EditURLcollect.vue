@@ -75,18 +75,18 @@ export default {
                   trigger: 'blur',
                    message: '不能为空',
                 }
-              ],
-        notes:[
-                {
-                  required: true,
-                  trigger: 'blur',
-                   message: '不能为空',
-                }
               ]
     }
     let toediturl = function(){
       editurlref.value.validate((valid) => {
             if (valid) {
+                            if(form.url){
+                form.urllogopath = form.url.substring(0,form.url.indexOf("//")+2)+
+                                   form.url.substring(form.url.indexOf("//")+2,form.url.length).substring(
+                                                                                                0,form.url.substring(form.url.indexOf("//")+2,form.url.length).indexOf("/"))+
+                                   "/favicon.ico";
+                                   
+              }
                 urlCollectionapi.toedit(form).then(res=>{
                   if(res.successful){
                     togetList();

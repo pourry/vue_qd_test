@@ -42,20 +42,29 @@
          <div class="collectlistcss" v-for="item of treedata.list[0].children" :key="item.id">
             <span class="urltypecss">{{item.typename}}</span>
             <div class="urlshowcss">
-              <ul v-for="childitem of item.children" :key="childitem.id">
-                <li>名称：{{childitem.urlname}}</li>
-                <li>网址：
-                      <el-tooltip
-                        class="box-item"
-                        effect="dark"
-                        :content="childitem.url"
-                        placement="bottom-start"
-                      >
-                        <a :href="childitem.url"  target="_blank">{{childitem.url}}</a>
-                      </el-tooltip>
-                </li>
-                      
-              </ul>
+               <div v-for="childitem of item.children" :key="childitem.id">
+                               <div class="urlshowcss-imgcss">
+                                    <el-avatar   src="https://empty" >
+                                      <img
+                                        :src="childitem.urllogopath"
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlshowcss-url">
+                                  <li>名称：{{childitem.urlname}}</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="childitem.url"
+                                          placement="bottom-start"
+                                        >
+                                          <a :href="childitem.url"  target="_blank" @click="getFavicon($event,childitem)">{{childitem.url}}</a>
+                                        </el-tooltip>
+                                  </li>
+                                        
+                                </ul>
+               </div>
             </div>
          </div>
 
@@ -88,13 +97,27 @@ export default {
     onMounted(()=>{
       geturlTypeCollection();
     })
-  let getFavicon = function(url) {
-  let a = document.createElement('a')
-  a.href = url
-  return `${a.protocol}//${a.hostname}/favicon.ico`
+  let getFavicon = function(event,item) {
+      //请求获取logopath
+      let logourl =`${event.target.protocol}//${event.target.hostname}/favicon.ico`
+      
+      if(item.urllogopath != logourl){
+        //保存logo地址
+          tosavelogo({"id":item.id,
+              "urllogopath":logourl})
+        // 重新赋值
+        item.urllogopath = logourl;
+      }
+      
+      
   }
-// getFavicon('https://www.baidu.com/s?wd=js%20favicon.ico&rsv_spt=1&rsv_iqid=0xe90a78d7000ab990&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&rsv_dl=tb&oq=%25E5%25A6%2582%25E4%25BD%2595%25E8%258E%25B7%25E5%258F%2596favicon.ico&rsv_btype=t&inputT=1697&rsv_t=c92cDcLsEiY1ithFI2xdNgDjsJFipUVyppcywRIJFnYd5WND62XK1CWnTQi5hNPPxD3%2F&rsv_pq=98568fd304a58f6b&rsv_sug3=35&rsv_sug1=32&rsv_sug7=100&rsv_sug2=0&rsv_sug4=1697')
- 
+  let tosavelogo = function(data){
+    urlCollectionapi.tosavelogo(data).then(res =>{
+      if(res.successful){
+        return res.resultValue.urllogopath;
+      }
+    })
+  }
  let toshowTree = function(){
     if(showTree.css == "urlcollectoperateshowcss"){
       showTree.css = "urlcollectoperateshow"
@@ -291,7 +314,8 @@ return {showTree,
         removeurl,removeurlType,urlssurltype,editnode,
         editTypevisible,editvisible,
         editform,editTypeform,
-        changenode}
+        changenode,
+        tosavelogo}
 
   }
 }
@@ -342,7 +366,6 @@ return {showTree,
     /*justify-content: center;*/   /* 居中对齐 */
     background-color:rgba(106,241,230,0.2);
     font-size:0.5rem;
-   
 }
 .urltypecss{
   font-size: 1.25rem;
@@ -350,20 +373,33 @@ return {showTree,
   width:auto;
   border-radius: 0 5px 0 0;
 }
-.urlshowcss > ul{
+.urlshowcss > div{
     width:20%;
     height:auto;
     background-color:rgba(106,241,230,0.3);
     margin:1%;
     border-radius: 5px;
     padding:10px;
-    
+    display:flex;
     cursor: pointer;
 }
-.urlshowcss > ul:hover {
+.urlshowcss > div:hover {
   box-shadow: inset 0 0 100px 5px rgba(106,241,230,0.3);
 }
-.urlshowcss > ul >li{
+.urlshowcss-imgcss{
+  width:30%;
+}
+.urlshowcss-imgcss>.el-avatar{
+  width:100%;
+}
+.urlshowcss-url{
+  width:70%;
+  height:100%;
+  margin:0%;
+  padding:0%;
+  padding-left:5px;
+}
+.urlshowcss-url >li{
     white-space:nowrap; /*不让文字内容换行*/
     overflow:hidden;/*文字溢出的部分隐藏起来*/
     text-overflow:ellipsis; /*用...替代溢出的部分*/
