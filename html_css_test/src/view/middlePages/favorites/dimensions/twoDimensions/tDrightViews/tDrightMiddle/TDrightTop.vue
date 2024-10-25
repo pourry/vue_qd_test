@@ -78,7 +78,11 @@ export default {
                                             hasendLabel:undefined,
                                             address:undefined,
                                             notes:undefined,
-                                            alias:undefined
+                                            alias:undefined,
+                                            remindopen:undefined,
+                                            remindtime:undefined,
+                                            remindmsg:undefined,
+                                            share:undefined
                                             }
                                     }); 
      //重置
@@ -90,7 +94,11 @@ export default {
                               hasendLabel:undefined,
                               address:undefined,
                               notes:undefined,
-                              alias:undefined
+                              alias:undefined,
+                              remindopen:undefined,
+                              remindtime:undefined,
+                              remindmsg:undefined,
+                              share:undefined
                             }
      }
      //赋值

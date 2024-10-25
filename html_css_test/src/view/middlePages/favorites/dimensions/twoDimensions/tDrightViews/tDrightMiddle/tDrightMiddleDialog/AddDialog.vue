@@ -45,6 +45,44 @@
                   </el-col>
                 </el-row>
                 <el-row :gutter="20">
+                  <el-col :span="24">
+                    <el-form-item label="是否公开">
+                      <el-switch  v-model="addform.form.share"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="24">
+                    <el-form-item label="是否开启消息提醒">
+                      <el-switch  v-model="addform.form.remindopen"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20" v-if="addform.form.remindopen" >
+                  <el-col :span="18">
+                      <el-space fill>
+                        <el-alert type="info" show-icon :closable="false">
+                              <p>开启消息提醒 会根据通知时间对通知消息进行提醒，若未进行时间设置 则会一直在提醒中显示并不会过期</p>
+                        </el-alert>
+                              <el-form-item label="通知时间" >
+                                      <el-date-picker
+                                        v-model="addform.form.remindtime"
+                                        type="datetime"
+                                        placeholder="请选择时间"
+                                        format="YYYY-MM-DD hh:mm:ss"
+                                      />
+                              </el-form-item>
+                      </el-space>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20" v-if="addform.form.remindopen" >
+                  <el-col :span="24">
+                    <el-form-item label="通知消息" >
+                      <el-input v-model="addform.form.remindmsg" type="textarea"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
                   <el-col :span="19">
                     <el-upload action="#" list-type="picture-card" 
                     :auto-upload="false" 

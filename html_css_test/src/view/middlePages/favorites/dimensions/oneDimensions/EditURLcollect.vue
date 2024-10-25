@@ -1,13 +1,12 @@
 <template>
- <div class="addurlcss">
             <el-dialog
               v-model="dialogVisible.visible"
-              title="新增"
+              title="修改"
               width="50%"
               :modal="false"
               :lock-scroll="false"
               >
-                <el-form :model="form" :rules="rules"  label-width="60px" ref="editurlref">
+                <el-form :model="form" :rules="rules"  label-width="70px" ref="editurlref">
                     <el-form-item label="url名" prop="urlname">
                       <el-input v-model="form.urlname" />
                     </el-form-item>
@@ -16,6 +15,19 @@
                     </el-form-item>
                     <el-form-item label="详情" prop="notes">
                       <el-input v-model="form.notes" type="textarea"/>
+                    </el-form-item>
+                    <el-form-item label="是否公开">
+                      <el-switch  v-model="form.share"/>
+                        <el-popover
+                          placement="right"
+                          :width="200"
+                          trigger="hover"
+                          content="公开后其他用户可见"
+                        >
+                          <template #reference>
+                            <el-icon><InfoFilled /></el-icon>
+                          </template>
+                        </el-popover>
                     </el-form-item>
                 </el-form>
               <template #footer>
@@ -26,7 +38,6 @@
                 </span>
               </template>
             </el-dialog>
- </div>
 </template>
 
 <script>
@@ -60,6 +71,7 @@ export default {
       form.url = undefined;
       form.ssurltypeid = undefined;
       form.notes = undefined;
+      form.share =undefined;
     }
     let rules = {
         urlname:[
@@ -87,6 +99,7 @@ export default {
                                    "/favicon.ico";
                                    
               }
+
                 urlCollectionapi.toedit(form).then(res=>{
                   if(res.successful){
                     togetList();

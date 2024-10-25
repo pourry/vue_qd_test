@@ -1,5 +1,4 @@
 <template>
- <div class="addurlcss">
              <el-dialog
               v-model="dialogVisible.visible"
               title="新增"
@@ -22,7 +21,6 @@
                 </span>
               </template>
             </el-dialog>
- </div>
 </template>
 
 <script>

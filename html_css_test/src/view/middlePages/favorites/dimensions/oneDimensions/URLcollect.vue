@@ -44,7 +44,7 @@
             <div class="urlshowcss">
                <div v-for="childitem of item.children" :key="childitem.id">
                                <div class="urlshowcss-imgcss">
-                                    <el-avatar   src="https://empty" >
+                                    <el-avatar    >
                                       <img
                                         :src="childitem.urllogopath"
                                       />
@@ -169,7 +169,8 @@ let editform =reactive({
                         "urlname":undefined,
                         "url":undefined,
                         "ssurltypeid":undefined,
-                        "notes":undefined
+                        "notes":undefined,
+                        "share":undefined
                         });
 let editTypeform =reactive({"id":undefined,"typename":undefined});
 const editnode = function(data){
@@ -184,6 +185,7 @@ const editnode = function(data){
     editform.url = data.url;
     editform.ssurltypeid = data.ssurltypeid;
     editform.notes = data.notes;
+    editform.share = data.share;
   }
 }
 
