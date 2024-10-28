@@ -7,10 +7,11 @@
               {{showTree.msg}}
               </div>
               <div :class="showTree.css">
+
                 <el-tree
                   :allow-drop="allowDrop"
                   :allow-drag="allowDrag"
-                  :data="treedata.list"
+                  :data="treedatashow.list"
                   draggable
                   default-expand-all
                   :expand-on-click-node="false"
@@ -29,6 +30,12 @@
                           <span v-if="node.data.urlname">{{ node.data.urlname }}</span>
                           <span>
                             <el-icon v-if="!node.data.urlname" @click="append(data)"><Plus /></el-icon>
+                                              <el-input v-if="node.data.label"
+                                                v-model="selectofname"
+                                                style="width: 100px;height:20px;padding-bottom:5px;"
+                                                placeholder="查询节点"
+                                                @input="toselectNode"
+                                              />
                             <el-icon v-if="!node.data.label" style="margin-left: 8px" @click="editnode(data)"><Edit /></el-icon>
                             <el-icon v-if="!node.data.label" style="margin-left: 8px" @click="remove(node, data)"><Minus /></el-icon>
                           </span>
@@ -81,7 +88,7 @@ import AddURLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions
 import AddURLTypecollect from '@/view/middlePages/favorites/dimensions/oneDimensions/AddURLTypecollect.vue'
 import EditURLTypecollect from '@/view/middlePages/favorites/dimensions/oneDimensions/EditURLTypecollect.vue'
 import EditURLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions/EditURLcollect.vue'
-import {ref,reactive,onMounted} from 'vue'
+import {ref,reactive,onMounted,toRaw} from 'vue'
 import urlTypeCollectionapi from '@/api/urlTypeCollection'
 import urlCollectionapi from '@/api/urlCollection'
 import {ElMessage} from 'element-plus'
@@ -133,6 +140,8 @@ export default {
    urlTypeCollectionapi.geturltree().then(res =>{
     if(res.successful){
       treedata.list[0].children = res.resultValue;
+      console.log("------",toRaw(treedata).list)
+      treedatashow.list = toRaw(treedata).list
     }else{
       ElMessage({
                   message: res.resultValue,
@@ -141,6 +150,7 @@ export default {
     }
    })
  }
+ //作为存储
 let treedata = reactive({"list":[
   {
     id:'1',
@@ -149,7 +159,10 @@ let treedata = reactive({"list":[
     ],
   }
 ]})
+//作为展示
+let treedatashow =reactive({"list":[]}) 
 let urlssurltype = reactive({"ssurltypeid":undefined})
+
 const append = (data) => {
   console.log(data.typename)
   urlssurltype.ssurltypeid = data.id;
@@ -296,6 +309,33 @@ const allowDrag = (draggingNode) => {
   // console.log("dropNode",dropNode)
   return true;
 }
+//树的查询
+let selectofname = ref("");
+let treeRef = ref(null)
+let toselectNode = function(){
+  // treeRef.value!.filter(selectofname)
+  console.log("+++++",toRaw(treedata).list)
+  treedatashow.list = Object.assign({},toRaw(treedata).list);
+  console.log(treedatashow.list)
+  let tdata = treedatashow.list[0].children;
+  for(let i = 0; i<tdata.length;i++){
+      tdata[i].children = tdata[i].children.filter(item =>{
+      return item.urlname.indexOf(selectofname.value) > -1;
+    })
+  }
+  tdata = tdata.filter(item =>{
+    if(!item.children.length>0){
+      console.log(item.typename.indexOf(selectofname.value) > -1)
+      return item.typename.indexOf(selectofname.value) > -1;
+    }else{
+      return true;
+    }
+  })
+   treedatashow.list[0].children = tdata;
+    
+
+}
+
 
 let addvisible = reactive({visible:false});
 let addTypevisible = reactive({visible:false});
@@ -303,6 +343,7 @@ return {showTree,
         toshowTree,
         getFavicon,
         treedata,
+        treedatashow,
         handleDragStart,
         handleDragEnter,
         handleDragLeave,
@@ -317,7 +358,10 @@ return {showTree,
         editTypevisible,editvisible,
         editform,editTypeform,
         changenode,
-        tosavelogo}
+        tosavelogo,
+        selectofname,
+        toselectNode,
+        treeRef}
 
   }
 }
