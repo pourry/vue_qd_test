@@ -46,7 +46,7 @@
           </div>
          </div>
         
-         <div class="collectlistcss" v-for="item of treedatashow.list[0].children" :key="item.id">
+         <div class="collectlistcss" v-for="item of treedata.list[0].children" :key="item.id">
             <span class="urltypecss">{{item.typename}}</span>
             <div class="urlshowcss">
                <div v-for="childitem of item.children" :key="childitem.id">
@@ -88,7 +88,7 @@ import AddURLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions
 import AddURLTypecollect from '@/view/middlePages/favorites/dimensions/oneDimensions/AddURLTypecollect.vue'
 import EditURLTypecollect from '@/view/middlePages/favorites/dimensions/oneDimensions/EditURLTypecollect.vue'
 import EditURLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions/EditURLcollect.vue'
-import {ref,reactive,onMounted,toRaw} from 'vue'//toRaw 将响应式对象转变为普通对象 但只转化当前层
+import {ref,reactive,onMounted,toRaw} from 'vue'//toRaw 将响应式对象转变为普通对象
 import urlTypeCollectionapi from '@/api/urlTypeCollection'
 import urlCollectionapi from '@/api/urlCollection'
 import {ElMessage} from 'element-plus'
@@ -321,8 +321,8 @@ let selectofname = ref("");
 let treeRef = ref(null)
 let toselectNode = function(){
   // treeRef.value!.filter(selectofname)
-  console.log("+++++",toRaw(treedata).list)
-  treedatashow.list = toRaw(treedata).list;
+  console.log("+++++",toRaw(treedata.list[0].children))
+  treedatashow.list[0].children = toRaw(treedata.list[0].children);
   console.log(treedatashow.list)
   let tdata = treedatashow.list[0].children;
   for(let i = 0; i<tdata.length;i++){
