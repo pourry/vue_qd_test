@@ -50,6 +50,16 @@
             <span class="urltypecss">{{item.typename}}</span>
             <div class="urlshowcss">
                <div v-for="childitem of item.children" :key="childitem.id">
+               <span class="hasshareurl" v-if="childitem.share">
+                        <el-tooltip
+                          class="box-item"
+                          effect="dark"
+                          content="已分享"
+                          placement="bottom-start"
+                        >
+                          <el-icon class="hasshareicon"><Share /></el-icon>
+                        </el-tooltip>
+               </span>
                                <div class="urlshowcss-imgcss">
                                     <el-avatar    >
                                       <img
@@ -68,9 +78,10 @@
                                         >
                                           <a :href="childitem.url"  target="_blank" @click="getFavicon($event,childitem)">{{childitem.url}}</a>
                                         </el-tooltip>
-                                  </li>
-                                        
+                                  </li> 
                                 </ul>
+                                
+                                
                </div>
             </div>
          </div>
@@ -88,7 +99,7 @@ import AddURLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions
 import AddURLTypecollect from '@/view/middlePages/favorites/dimensions/oneDimensions/AddURLTypecollect.vue'
 import EditURLTypecollect from '@/view/middlePages/favorites/dimensions/oneDimensions/EditURLTypecollect.vue'
 import EditURLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions/EditURLcollect.vue'
-import {ref,reactive,onMounted,toRaw} from 'vue'//toRaw 将响应式对象转变为普通对象
+import {ref,reactive,onMounted,toRaw,markRaw} from 'vue'//toRaw 将响应式对象转变为普通对象
 import urlTypeCollectionapi from '@/api/urlTypeCollection'
 import urlCollectionapi from '@/api/urlCollection'
 import {ElMessage} from 'element-plus'
@@ -141,7 +152,7 @@ export default {
     if(res.successful){
       treedata.list[0].children = res.resultValue;
       
-      treedatashow.list = toRaw(treedata).list;
+      treedatashow.list = JSON.parse(JSON.stringify(treedata.list));//将这个响应式对象复制为一个普通对象
     }else{
       ElMessage({
                   message: res.resultValue,
@@ -321,9 +332,7 @@ let selectofname = ref("");
 let treeRef = ref(null)
 let toselectNode = function(){
   // treeRef.value!.filter(selectofname)
-  console.log("+++++",toRaw(treedata.list[0].children))
-  treedatashow.list[0].children = toRaw(treedata.list[0].children);
-  console.log(treedatashow.list)
+  treedatashow.list = JSON.parse(JSON.stringify(treedata.list));
   let tdata = treedatashow.list[0].children;
   for(let i = 0; i<tdata.length;i++){
     for(let j = 0; j < tdata[i].children.length;j++ ){
@@ -404,13 +413,15 @@ return {showTree,
   position:absolute;
   right:0%;
   display:none;
-  min-width:150px
+  min-width:150px;
+  z-index:1;
 }
 .urlcollectoperateshow{
   position:absolute;
   right:0%;
   display:block;
-  min-width:150px
+  min-width:150px;
+  z-index:1;
 }
 .urlshowcss{
     width:100%;
@@ -422,13 +433,14 @@ return {showTree,
     font-size:0.5rem;
 }
 .urltypecss{
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   background-color:rgba(106,241,230,0.2);
   width:auto;
   border-radius: 0 5px 0 0;
 }
 .urlshowcss > div{
-    width:20%;
+   position:relative;
+    width:15%;
     height:auto;
     background-color:rgba(106,241,230,0.3);
     margin:1%;
@@ -439,6 +451,22 @@ return {showTree,
 }
 .urlshowcss > div:hover {
   box-shadow: inset 0 0 100px 5px rgba(106,241,230,0.3);
+}
+.hasshareurl{
+  position:absolute;
+  left:0px;
+  bottom:0px;
+  width:30%;
+  height:30%;
+  display:flex;
+  align-items: center;
+  background-color: rgba(224,7,22,0.6);
+  clip-path: polygon(0 0, 0 100%, 50% 100%);
+  border-radius: 0 0 0 5px; 
+}
+.hasshareicon{
+  margin-top: 20%;
+  margin-left:3%;
 }
 .urlshowcss-imgcss{
   width:30%;
@@ -452,6 +480,7 @@ return {showTree,
   margin:0%;
   padding:0%;
   padding-left:5px;
+  display: grid; 
 }
 .urlshowcss-url >li{
     white-space:nowrap; /*不让文字内容换行*/

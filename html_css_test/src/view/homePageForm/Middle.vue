@@ -1,5 +1,5 @@
 <template>
-         <div class = 'operationcss'> <router-view></router-view> </div>
+         <div class='operationcss'> <router-view></router-view> </div>
 </template>
 
 <script>

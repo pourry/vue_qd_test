@@ -11,7 +11,7 @@ axios.defaults.timeout = 10000;
 //请求拦截器
 axios.interceptors.request.use(
     req =>{
-        console.log("axios请求拦截执行。。。。。",req,"--结束--")
+        // console.log("axios请求拦截执行。。。。。",req,"--结束--")
         //处理
         //config.headers
         let token = localStorage.getItem("Authorization");
@@ -26,7 +26,7 @@ axios.interceptors.request.use(
 //响应拦截器
 axios.interceptors.response.use(
     res =>{
-            console.log("axios响应拦截执行。。。。",res,"--结束--")
+            // console.log("axios响应拦截执行。。。。",res,"--结束--")
             if(res.data.code =="410"){
                 localStorage.removeItem('Authorization');
                 store.commit("SETTOKEN",{value:undefined});
