@@ -16,7 +16,7 @@
                       </div>
                       <div class="urlexportleft"><div><el-icon><ArrowLeftBold /></el-icon></div></div>
                       <div class="urlexportright"><div><el-icon><ArrowRightBold /></el-icon></div></div>
-                      <ul class="urlshareul">
+                      <ul class="urlshareul" id="urlshareul">
                        <li>
                                 <div  class="urlexportimg">
                                     <el-avatar src="https://empty" @error="errorHandler">
@@ -34,17 +34,209 @@
                                           :content="11111"
                                           placement="bottom-start"
                                         >
-                                          <a href="#"  target="_blank">url1111111111</a>
+                                          <a href="#"  target="_blank">11111111111</a>
                                         </el-tooltip>
                                   </li> 
                                 </ul>
                        </li>
-                       <li>2</li>
-                       <li>3</li>
-                       <li>4</li>
-                       <li>5</li>
-                       <li>6</li>
-                       <li>7</li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">22222222222</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">33333333333333</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">4444444444444</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">555555555555555</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">6666666666666</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">77777777777777777</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">888888888888</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">999999999999</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
+                       <li>
+                        <div  class="urlexportimg">
+                                    <el-avatar src="https://empty" @error="errorHandler">
+                                      <img
+                                        src="###" 
+                                      />
+                                    </el-avatar>
+                                </div>
+                                <ul class="urlexportmsg">
+                                  <li>名称：</li>
+                                  <li>网址：
+                                        <el-tooltip
+                                          class="box-item"
+                                          effect="dark"
+                                          :content="11111"
+                                          placement="bottom-start"
+                                        >
+                                          <a href="#"  target="_blank">101011010101011</a>
+                                        </el-tooltip>
+                                  </li> 
+                                </ul>
+                       </li>
                       </ul>
                     </div>
                     <div class="acgexport">
@@ -75,6 +267,7 @@ export default {
   },
   setup(){
     onMounted(()=>{
+      console.log(document.getElementById("urlshareul").scrollWidth)
     })
     let errorHandler = () => true
     return {errorHandler }
@@ -148,7 +341,7 @@ export default {
   height:80%;
   width:98%;
   list-style-type:none;
-  overflow: auto; 
+  overflow: hidden; 
   margin:0;
   padding:0;
   margin-left:1%;
@@ -185,18 +378,20 @@ export default {
 .urlexportleft{
   position: absolute;
   height:80%;
-
-  width:8%;
+  width:30px;
   display:flex;
   align-items:center;
 }
 .urlexportleft >div{
   width:100%;
   height:40%;
-  background-color:rgba(18,23,81,.3);
+  background-color:rgba(18,23,81,.0);
   cursor:pointer;
   display:flex;
   align-items:center;
+}
+.urlexportleft >div:hover{
+  background-color:rgba(18,23,81,.3);
 }
 .urlexportleft >div .el-icon{
   position:absolute;
@@ -206,16 +401,19 @@ export default {
   position:absolute;
   height:80%;
   right:0;
-  width:8%;
+  width:30px;
   display:flex;
   align-items:center;
 }
 .urlexportright >div{
   width:100%;
   height:40%;
-  background-color:rgba(18,23,81,.3);
+  background-color:rgba(18,23,81,.0);
   cursor:pointer;
   display:flex;
   align-items:center;
+}
+.urlexportright >div:hover{
+  background-color:rgba(18,23,81,.3);
 }
 </style>
