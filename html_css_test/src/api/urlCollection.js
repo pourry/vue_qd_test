@@ -18,6 +18,14 @@ urlCollectionapi.tosavelogo =function (data){
 urlCollectionapi.todelete =function (data){
     return axiospost("/urlCollection/todelete/"+data)
 }
+//查询分享出来的url 接口
+urlCollectionapi.urlshow =function (data){
+    return axiosget("/urlCollection/public/urlshow",data)
+}
+//查询热度的url 接口
+urlCollectionapi.urlhot =function (data){
+    return axiosget("/urlCollection/public/urlhot",data)
+}
 
 
 export default urlCollectionapi

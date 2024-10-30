@@ -2,6 +2,9 @@
     <div class='tdrightmiddlecss'>
       <div class='collectshowcss'>
          <div :class="item.css" @click="tochangeselect(item)" v-for="item in msgList.list" ::key="item.id" >
+                <span class="hasshareurl" v-if="item.share">
+                    <el-icon class="hasshareicon">已分享</el-icon>
+                </span>
            <el-image class="clickimgcss" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined"/>
             <el-popover
             :popper-style="{width:'auto'}"
@@ -234,6 +237,23 @@ export default {
 .animationmsgdetailcss{
    list-style-type: none;
 
+}
+.hasshareurl{
+  position:absolute;
+  left:0px;
+  bottom:0px;
+  width:30%;
+  height:30%;
+  display:flex;
+  align-items: center;
+  background-color: rgba(255,0,0,0.8) !important;
+  clip-path: polygon(0 0, 0 100%, 50% 100%);
+  border-radius: 0 0 0 5px; 
+  z-index:1;
+}
+.hasshareicon{
+  margin-top: 20%;
+  margin-left:3%;
 }
 
 </style>

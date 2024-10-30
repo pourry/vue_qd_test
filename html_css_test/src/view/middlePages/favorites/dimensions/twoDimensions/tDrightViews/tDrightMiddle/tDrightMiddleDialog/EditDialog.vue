@@ -43,7 +43,14 @@
                     </el-form-item>
                   </el-col>
                 </el-row>  
-                                <el-row :gutter="20">
+                <el-row :gutter="20">
+                  <el-col :span="24">
+                    <el-form-item label="是否公开">
+                      <el-switch  v-model="editform.form.share"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
                   <el-col :span="19">
                     <el-upload action="#" list-type="picture-card" 
                     :auto-upload="false" 

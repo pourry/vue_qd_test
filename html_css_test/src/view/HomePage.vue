@@ -37,7 +37,7 @@ export default {
   border: solid white 5px;
   margin: 0 0 0 -5px ;
   border-radius: 10px;
-  background-image: url(../assets/homePage/83066660_p0.png);
+  /*background-image: url(../assets/homePage/83066660_p0.png);*/
   background-repeat: no-repeat; 
   background-position: center center; /* 水平垂直居中 */
   background-size: cover;

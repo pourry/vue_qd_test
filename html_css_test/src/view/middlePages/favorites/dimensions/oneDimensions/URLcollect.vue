@@ -460,7 +460,7 @@ return {showTree,
   height:30%;
   display:flex;
   align-items: center;
-  background-color: rgba(224,7,22,0.6);
+  background-color: rgba(255,0,0,0.8);
   clip-path: polygon(0 0, 0 100%, 50% 100%);
   border-radius: 0 0 0 5px; 
 }
