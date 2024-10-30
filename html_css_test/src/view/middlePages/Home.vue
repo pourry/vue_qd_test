@@ -18,6 +18,7 @@
                       <div :class="scoll.rightcss"><div  @click="scrollToLeft"><el-icon><ArrowRightBold /></el-icon></div></div>
                       <ul class="urlshareul" id="urlshareul">
                        <li v-for="item of urlList.list" :key="item.id">
+
                                 <div  class="urlexportimg">
                                     <el-avatar>
                                       <img
@@ -101,6 +102,7 @@ export default {
       //  console.log(document.getElementById("urlshareul").offsetWidth); //滑块的长度
       togeturlshow();
       togeturlhot();
+
     })
 
     //   url 展示 ---------------------------------开始-----------------------------------------------
