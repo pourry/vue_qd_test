@@ -44,23 +44,94 @@
                     </div>
                     <div class="acgexport">
                       展示acg
-                      <div class="animationexport">
-                      动画
-                      <ul>
-                       <li>1</li>
-                       <li>2</li>
-                       <li>3</li>
-                      </ul>
+                      <div class="exportmsg">
+                          <div class="exportmsgtitle">
+                            <el-icon><Aim /></el-icon>
+                            动画
+                          </div>
+                          <ul>
+                          <li  v-for="item of acgList.animationList" :key="item.id">
+                                <ul class="exportmsgdetails">
+                                <li>名称：{{item.name}}</li>
+                                </ul>
+                                <el-image class="exportmsgimg" :src="item.pictureURL" >
+                                        <template #error>
+                                            <div class="exportmsgimg-slot">
+                                              <el-icon><Picture /></el-icon>
+                                            </div>
+                                          </template>
+                                </el-image>
+                          </li>
+                          </ul>
                       </div>
-                      <div>漫画</div>
-                      <div>小说</div>
-                      <div>游戏</div>
+                      <div class="exportmsg">
+                          <div class="exportmsgtitle">
+                            <el-icon><Aim /></el-icon>
+                            漫画
+                          </div>
+                          <ul>
+                          <li  v-for="item of acgList.comicList" :key="item.id">
+                                <ul class="exportmsgdetails">
+                                <li>名称：{{item.name}}</li>
+                                </ul>
+                                <el-image class="exportmsgimg" :src="item.pictureURL" >
+                                        <template #error>
+                                            <div class="exportmsgimg-slot">
+                                              <el-icon><Picture /></el-icon>
+                                            </div>
+                                          </template>
+                                </el-image>
+                          </li>
+                          </ul>
+                      </div>
+                      <div class="exportmsg">
+                                                 <div class="exportmsgtitle">
+                            <el-icon><Aim /></el-icon>
+                            小说
+                          </div>
+                          <ul>
+                          <li  v-for="item of acgList.novelList" :key="item.id">
+                                <ul class="exportmsgdetails">
+                                <li>名称：{{item.name}}</li>
+                                </ul>
+                                <el-image class="exportmsgimg" :src="item.pictureURL" >
+                                        <template #error>
+                                            <div class="exportmsgimg-slot">
+                                              <el-icon><Picture /></el-icon>
+                                            </div>
+                                          </template>
+                                </el-image>
+                          </li>
+                          </ul>
+                      </div>
+                      <div class="exportmsg">
+                          <div class="exportmsgtitle">
+                            <el-icon><Aim /></el-icon>
+                            游戏
+                          </div>
+                          <ul>
+                          <li  v-for="item of acgList.gameList" :key="item.id">
+                                <ul class="exportmsgdetails">
+                                <li>名称：{{item.name}}</li>
+                                </ul>
+                                <el-image class="exportmsgimg" :src="item.pictureURL" >
+                                        <template #error>
+                                            <div class="exportmsgimg-slot">
+                                              <el-icon><Picture /></el-icon>
+                                            </div>
+                                          </template>
+                                </el-image>
+                          </li>
+                          </ul>
+                      </div>
                     </div>
            </div>
            <div class="exportmiddle">
            </div>
            <div class="exportright">
-            <div class="rdphtitle">热度排行</div>
+            <div class="rdphtitle">
+            <el-icon><Histogram /></el-icon>
+            热度排行</div>
               <el-tabs v-model="activeName" class="demo-tabs rdphbody" @tab-click="handleClick" >
                 <el-tab-pane label="网址" name="urlShare"  class="rdphlist">
                   <ul>
@@ -91,6 +162,7 @@
 <script>
 import { ref,reactive,onMounted } from 'vue';
 import urlCollectionapi from '@/api/urlCollection'
+import acgapi from '@/api/acg'
 export default {
   name: 'Home',
   components: {
@@ -102,6 +174,7 @@ export default {
       //  console.log(document.getElementById("urlshareul").offsetWidth); //滑块的长度
       togeturlshow();
       togeturlhot();
+      getacgList();
 
     })
 
@@ -162,6 +235,21 @@ export default {
     let tourl = function(url){
       window.open(url, '_blank');
     }
+
+    let acgList = reactive({"animationList":[],
+                            "comicList":[],
+                            "novelList":[],
+                            "gameList":[]})
+    let getacgList =function(){
+       acgapi.getshowAce().then(res=>{
+        if(res.successful){
+          acgList.animationList = res.resultValue.animations;
+          acgList.comicList = res.resultValue.comics;
+          acgList.novelList = res.resultValue.novels;
+          acgList.gameList = res.resultValue.games;
+        }
+       })
+    }
     return {
             scoll,
             scrollToLeft,
@@ -172,7 +260,9 @@ export default {
             handleClick,
             urlhotList,
             togeturlhot,
-            tourl }
+            tourl,
+            acgList,
+            getacgList }
   }
   
 }
@@ -366,11 +456,64 @@ export default {
 
 .acgexport{
   width:100%;
-  height:40%
+  height:50%
 }
-.animationexport{
+.exportmsg{
   width:100%;
   height:33%;
   border: solid 1px red;
+}
+.exportmsgtitle{
+  width:100%;
+  height:20%;
+  font-size:1.5rem;
+}
+.exportmsg>ul{
+  width:100%;
+  height:80%;
+  display:flex;
+  flex-wrap:wrap;
+  
+  margin:0;
+  padding:0;
+}
+.exportmsg> ul>li{
+  position:relative;
+  height:48.2%;
+  width:19.2%;
+  margin:0.2%;
+  list-style-type: none;
+  display:flex;
+}
+.exportmsg>ul>li>div{
+  height:auto;
+  width:100%;
+}
+.exportmsgimg{
+  height:100%;
+  width:100%;
+}
+.exportmsgimg-slot{
+  width:100%;
+  height:100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--el-fill-color-light);
+  color: var(--el-text-color-secondary);
+}
+.exportmsgdetails{
+  position:absolute;
+  width:100%;
+  right:0;
+  bottom:0;
+  z-index:1;
+
+}
+.exportmsgdetails>li{
+  background-color:rgba(18,23,81,.2);
+  white-space:nowrap; /*不让文字内容换行*/
+  overflow:hidden;/*文字溢出的部分隐藏起来*/
+  text-overflow:ellipsis; /*用...替代溢出的部分*/
 }
 </style>
