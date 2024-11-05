@@ -247,35 +247,6 @@ export default {
    overflow: auto;
 }
 
-/*  滑滚动宽高  */
-.msgcss::-webkit-scrollbar{
-    width:10px;
-    height:10px;
-}
-/*滑块的样式*/
-.msgcss::-webkit-scrollbar-thumb{
-    background-color:rgba(18,23,81,.3);
-    border-radius:10px;
-    -webkit-box-shadow:inset1px1px0rgba(0,0,0,.1);
-}
-/*鼠标悬浮在该类指向的控件上时滑块的样式*/
-.msgcss:hover::-webkit-scrollbar-thumb{
-    background-color:rgba(18,23,81,.5);
-    border-radius:10px;
-    -webkit-box-shadow:inset1px1px0rgba(0,0,0,.1);
-}
-/*正常时候的主干部分*/
-.msgcss::-webkit-scrollbar-track{
-border-radius:10px;
--webkit-box-shadow:inset006pxrgba(0,0,0,0);
-background-color:rgba(255,255,255,0.1);
-}
-/*鼠标悬浮在滚动条上的主干部分*/
-.msgcss::-webkit-scrollbar-track:hover{
--webkit-box-shadow:inset006pxrgba(0,0,0,.4);
-background-color:rgba(255,255,255,.3);
-}
-
 
   .wrapper:hover {
     box-shadow: 0 0 40px rgba(255,255,255,0.5);

@@ -11,7 +11,7 @@
                       <el-input v-model="form.urlname" />
                     </el-form-item>
                     <el-form-item label="url" prop="url">
-                      <el-input v-model="form.url" />
+                      <el-input v-model="form.url" placeholder="例：https://www.baidu.com/"/>
                     </el-form-item>
                     <el-form-item label="详情" prop="notes">
                       <el-input v-model="form.notes" type="textarea"/>
@@ -99,10 +99,13 @@ export default {
       addurlref.value.validate((valid) => {
             if (valid) {
               if(form.url){
-                form.urllogopath = form.url.substring(0,form.url.indexOf("//")+2)+
+                if(form.url.indexOf("//") != -1){
+                                   form.urllogopath = form.url.substring(0,form.url.indexOf("//")+2)+
                                    form.url.substring(form.url.indexOf("//")+2,form.url.length).substring(
                                                                                                 0,form.url.substring(form.url.indexOf("//")+2,form.url.length).indexOf("/"))+
                                    "/favicon.ico";
+                }
+
               }
 
               form.ssurltypeid = urlssurltype.ssurltypeid

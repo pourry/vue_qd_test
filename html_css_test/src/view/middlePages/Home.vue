@@ -43,88 +43,93 @@
                       </ul>
                     </div>
                     <div class="acgexport">
-                      展示acg
-                      <div class="exportmsg">
-                          <div class="exportmsgtitle">
-                            <el-icon><Aim /></el-icon>
-                            动画
+                     <div class="acgexporttitle">
+                       展示acg
+                     </div>
+                     <div class="acgexportbody">
+                          <div class="exportmsg">
+                              <div class="exportmsgtitle">
+                                <el-icon><Aim /></el-icon>
+                                动画
+                              </div>
+                              <ul>
+                              <li  v-for="item of acgList.animationList" :key="item.id">
+                                    <ul class="exportmsgdetails">
+                                    <li>名称：{{item.name}}</li>
+                                    </ul>
+                                    <el-image class="exportmsgimg" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" >
+                                            <template #error>
+                                                <div class="exportmsgimg-slot">
+                                                  <el-icon><Picture /></el-icon>
+                                                </div>
+                                              </template>
+                                    </el-image>
+                              </li>
+                              </ul>
                           </div>
-                          <ul>
-                          <li  v-for="item of acgList.animationList" :key="item.id">
-                                <ul class="exportmsgdetails">
-                                <li>名称：{{item.name}}</li>
-                                </ul>
-                                <el-image class="exportmsgimg" :src="item.pictureURL" >
-                                        <template #error>
-                                            <div class="exportmsgimg-slot">
-                                              <el-icon><Picture /></el-icon>
-                                            </div>
-                                          </template>
-                                </el-image>
-                          </li>
-                          </ul>
-                      </div>
-                      <div class="exportmsg">
-                          <div class="exportmsgtitle">
-                            <el-icon><Aim /></el-icon>
-                            漫画
+                          <div class="exportmsg">
+                              <div class="exportmsgtitle">
+                                <el-icon><Aim /></el-icon>
+                                漫画
+                              </div>
+                              <ul>
+                              <li  v-for="item of acgList.comicList" :key="item.id">
+                                    <ul class="exportmsgdetails">
+                                    <li>名称：{{item.name}}</li>
+                                    </ul>
+                                    <el-image class="exportmsgimg" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" >
+                                            <template #error>
+                                                <div class="exportmsgimg-slot">
+                                                  <el-icon><Picture /></el-icon>
+                                                </div>
+                                              </template>
+                                    </el-image>
+                              </li>
+                              </ul>
                           </div>
-                          <ul>
-                          <li  v-for="item of acgList.comicList" :key="item.id">
-                                <ul class="exportmsgdetails">
-                                <li>名称：{{item.name}}</li>
-                                </ul>
-                                <el-image class="exportmsgimg" :src="item.pictureURL" >
-                                        <template #error>
-                                            <div class="exportmsgimg-slot">
-                                              <el-icon><Picture /></el-icon>
-                                            </div>
-                                          </template>
-                                </el-image>
-                          </li>
-                          </ul>
-                      </div>
-                      <div class="exportmsg">
-                                                 <div class="exportmsgtitle">
-                            <el-icon><Aim /></el-icon>
-                            小说
+                          <div class="exportmsg">
+                                                    <div class="exportmsgtitle">
+                                <el-icon><Aim /></el-icon>
+                                小说
+                              </div>
+                              <ul>
+                              <li  v-for="item of acgList.novelList" :key="item.id">
+                                    <ul class="exportmsgdetails">
+                                    <li>名称：{{item.name}}</li>
+                                    </ul>
+                                    <el-image class="exportmsgimg" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" >
+                                            <template #error>
+                                                <div class="exportmsgimg-slot">
+                                                  <el-icon><Picture /></el-icon>
+                                                </div>
+                                              </template>
+                                    </el-image>
+                              </li>
+                              </ul>
                           </div>
-                          <ul>
-                          <li  v-for="item of acgList.novelList" :key="item.id">
-                                <ul class="exportmsgdetails">
-                                <li>名称：{{item.name}}</li>
-                                </ul>
-                                <el-image class="exportmsgimg" :src="item.pictureURL" >
-                                        <template #error>
-                                            <div class="exportmsgimg-slot">
-                                              <el-icon><Picture /></el-icon>
-                                            </div>
-                                          </template>
-                                </el-image>
-                          </li>
-                          </ul>
-                      </div>
-                      <div class="exportmsg">
-                          <div class="exportmsgtitle">
-                            <el-icon><Aim /></el-icon>
-                            游戏
+                          <div class="exportmsg">
+                              <div class="exportmsgtitle">
+                                <el-icon><Aim /></el-icon>
+                                游戏
+                              </div>
+                              <ul>
+                              <li  v-for="item of acgList.gameList" :key="item.id">
+                                    <ul class="exportmsgdetails">
+                                    <li>名称：{{item.name}}</li>
+                                    </ul>
+                                    <el-image class="exportmsgimg" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" >
+                                            <template #error>
+                                                <div class="exportmsgimg-slot">
+                                                  <el-icon><Picture /></el-icon>
+                                                </div>
+                                              </template>
+                                    </el-image>
+                              </li>
+                              </ul>
                           </div>
-                          <ul>
-                          <li  v-for="item of acgList.gameList" :key="item.id">
-                                <ul class="exportmsgdetails">
-                                <li>名称：{{item.name}}</li>
-                                </ul>
-                                <el-image class="exportmsgimg" :src="item.pictureURL" >
-                                        <template #error>
-                                            <div class="exportmsgimg-slot">
-                                              <el-icon><Picture /></el-icon>
-                                            </div>
-                                          </template>
-                                </el-image>
-                          </li>
-                          </ul>
-                      </div>
-                    </div>
+                        </div>
+                     </div>
+                      
            </div>
            <div class="exportmiddle">
            </div>
@@ -136,20 +141,21 @@
                 <el-tab-pane label="网址" name="urlShare"  class="rdphlist">
                   <ul>
                    <li v-for="item of urlhotList.list" :key="item.urllogopath">
-                     {{item.index}}.
+                     <div   style="width:auto;">{{item.index}}.</div>
                       <el-avatar shape="square" :size="20">
                         <img
                           :src="item.urllogopath" 
                         />
                       </el-avatar>
-                      <span @click="tourl(item.url)">{{item.url}}</span>
+                      <div @click="tourl(item.url)">{{item.url}}</div>
                    </li>
                   </ul>
 
                 </el-tab-pane>
-                <el-tab-pane label="Config" name="second">Config</el-tab-pane>
-                <el-tab-pane label="Role" name="third">Role</el-tab-pane>
-                <el-tab-pane label="Task" name="fourth">Task</el-tab-pane>
+                <el-tab-pane label="动画" name="动画">Animation</el-tab-pane>
+                <el-tab-pane label="漫画" name="Comic">Comic</el-tab-pane>
+                <el-tab-pane label="小说" name="Novel">Novel</el-tab-pane>
+                <el-tab-pane label="游戏" name="Game">Game</el-tab-pane>
               </el-tabs>
            
            </div>
@@ -160,7 +166,7 @@
 </template>
 
 <script>
-import { ref,reactive,onMounted } from 'vue';
+import { ref,reactive,onMounted,onUnmounted} from 'vue';
 import urlCollectionapi from '@/api/urlCollection'
 import acgapi from '@/api/acg'
 export default {
@@ -175,7 +181,12 @@ export default {
       togeturlshow();
       togeturlhot();
       getacgList();
+      automaticscroll();
 
+    })
+    onUnmounted(()=>{
+      //销毁定时器
+      clearInterval(timer.value);
     })
 
     //   url 展示 ---------------------------------开始-----------------------------------------------
@@ -184,6 +195,9 @@ export default {
                           "rightcss":"urlexportright"})
     let scrollToLeft = function () {
        let urlshareul = document.getElementById("urlshareul");
+      //  urlshareul.scrollIntoView({
+      //      behavior: 'smooth' // 平滑滚动
+      //   });
        scoll.scollValue = scoll.scollValue + 100;
        //scrollWidth  滚动条的 长度   offsetWidth 滑块的长度
        if((urlshareul.scrollWidth -  scoll.scollValue- urlshareul.offsetWidth ) <= 0){
@@ -192,6 +206,7 @@ export default {
        } else if(scoll.scollValue  >= 0){
         scoll.leftcss = "urlexportleft";
        }
+
        urlshareul.scrollLeft =  scoll.scollValue;
     }
         let scrollToRight = function () {
@@ -212,6 +227,21 @@ export default {
           urlList.list = res.resultValue;
          }
       })
+    }
+    let timer = ref("");
+    let automaticscroll = function(){
+      //每3秒 向右移动100
+      timer.value =setInterval(function() {
+        scoll.scollValue = scoll.scollValue + 100;
+         let urlshareul = document.getElementById("urlshareul");
+         
+         if((urlshareul.scrollWidth -  scoll.scollValue- urlshareul.offsetWidth ) <= 0){
+            urlshareul.scrollLeft = 0;
+            scoll.scollValue = 0;
+         }else{
+          scrollToLeft();
+         }
+       }, 10000)
     }
     //   url 展示 ---------------------------------------结束-----------------------------------------
 
@@ -262,7 +292,8 @@ export default {
             togeturlhot,
             tourl,
             acgList,
-            getacgList }
+            getacgList,
+            automaticscroll }
   }
   
 }
@@ -338,6 +369,7 @@ export default {
   margin:0;
   padding:0;
   margin-left:1%;
+  scroll-behavior: smooth; /*平滑滚动*/
 }
 
 .urlshareul > li{
@@ -347,6 +379,7 @@ export default {
   margin-left:0.5%;
   margin-right:0.5%;
   background-color:rgba(106,241,230,0.2);
+  cursor:pointer;
   
 }
 .urlshareul > li:hover{
@@ -438,13 +471,21 @@ export default {
 }
 .rdphlist ul{
   padding:0;
+  height:100%;
 }
 .rdphlist ul li {
-  margin:4%;
+  height:3.3%;
   white-space:nowrap; /*不让文字内容换行*/
   overflow:hidden;/*文字溢出的部分隐藏起来*/
   text-overflow:ellipsis; /*用...替代溢出的部分*/
-  
+  display:flex;
+  align-items:center;
+  cursor:pointer;
+}
+.rdphlist ul li >div:nth-child(3){
+white-space:nowrap; /*不让文字内容换行*/
+  overflow:hidden;/*文字溢出的部分隐藏起来*/
+  text-overflow:ellipsis; /*用...替代溢出的部分*/
 }
 .rdphlist ul li:hover {
   background-color:rgba(18,23,81,.2);
@@ -456,12 +497,21 @@ export default {
 
 .acgexport{
   width:100%;
-  height:50%
+  height:60%;
+}
+.acgexporttitle{
+  width:100%;
+  height:5%;
+  font-size:1.5rem;
+}
+.acgexportbody{
+  width:100%;
+  height:95%;
+    border: solid 1px green;
 }
 .exportmsg{
   width:100%;
-  height:33%;
-  border: solid 1px red;
+  height:25%;
 }
 .exportmsgtitle{
   width:100%;
@@ -484,6 +534,13 @@ export default {
   margin:0.2%;
   list-style-type: none;
   display:flex;
+  transition: all 0.1s;
+  cursor:pointer;
+}
+.exportmsg> ul>li:hover{
+  transform:scale(1.2); /*scale 定义 2D 缩放转换。*/
+  
+  z-index:999;
 }
 .exportmsg>ul>li>div{
   height:auto;

@@ -1,10 +1,11 @@
 <template>
     <div class="urlcollectcss">
          <div class="urlcollectoperatecss">
+
           <div>
-              <div @click="toshowTree">
-              <el-icon><Menu /></el-icon>
-              {{showTree.msg}}
+              <div @click="toshowTree" class="urlcollectoperatecss-cz">
+                <div><el-icon ><Menu /></el-icon></div>
+                <div>{{showTree.msg}}</div>
               </div>
               <div :class="showTree.css">
 
@@ -44,46 +45,58 @@
                 </el-tree>
               </div>
           </div>
+              <div >
+               <el-input
+                  v-model="selectofname"
+                  style="width: 240px:"
+                  @input="toselectNode"
+                  size="small"
+                  placeholder="输入查询内容"
+                  suffix-icon="Search"
+                />
+              </div>
          </div>
         
-         <div class="collectlistcss" v-for="item of treedata.list[0].children" :key="item.id">
-            <span class="urltypecss">{{item.typename}}</span>
-            <div class="urlshowcss">
-               <div v-for="childitem of item.children" :key="childitem.id">
-               <span class="hasshareurl" v-if="childitem.share">
-                        <el-tooltip
-                          class="box-item"
-                          effect="dark"
-                          content="已分享"
-                          placement="bottom-start"
-                        >
-                          <el-icon class="hasshareicon"><Share /></el-icon>
-                        </el-tooltip>
-               </span>
-                               <div class="urlshowcss-imgcss">
-                                    <el-avatar    >
-                                      <img
-                                        :src="childitem.urllogopath"
-                                      />
-                                    </el-avatar>
-                                </div>
-                                <ul class="urlshowcss-url">
-                                  <li>名称：{{childitem.urlname}}</li>
-                                  <li>网址：
-                                        <el-tooltip
-                                          class="box-item"
-                                          effect="dark"
-                                          :content="childitem.url"
-                                          placement="bottom-start"
-                                        >
-                                          <a :href="childitem.url"  target="_blank" @click="getFavicon($event,childitem)">{{childitem.url}}</a>
-                                        </el-tooltip>
-                                  </li> 
-                                </ul>
-                                
-                                
-               </div>
-            </div>
+         <div class="collectlistbody">
+                   <div class="collectlistcss" v-for="item of treedatashow.list[0].children" :key="item.id">
+                      <span class="urltypecss">{{item.typename}}</span>
+                      <div class="urlshowcss">
+                        <div v-for="childitem of item.children" :key="childitem.id">
+                        <span class="hasshareurl" v-if="childitem.share">
+                                  <el-tooltip
+                                    class="box-item"
+                                    effect="dark"
+                                    content="已分享"
+                                    placement="bottom-start"
+                                  >
+                                    <el-icon class="hasshareicon"><Share /></el-icon>
+                                  </el-tooltip>
+                        </span>
+                                        <div class="urlshowcss-imgcss">
+                                              <el-avatar    >
+                                                <img
+                                                  :src="childitem.urllogopath"
+                                                />
+                                              </el-avatar>
+                                          </div>
+                                          <ul class="urlshowcss-url">
+                                            <li>名称：{{childitem.urlname}}</li>
+                                            <li>网址：
+                                                  <el-tooltip
+                                                    class="box-item"
+                                                    effect="dark"
+                                                    :content="childitem.url"
+                                                    placement="bottom-start"
+                                                  >
+                                                    <a :href="childitem.url"  target="_blank" @click="getFavicon($event,childitem)">{{childitem.url}}</a>
+                                                  </el-tooltip>
+                                            </li> 
+                                          </ul>
+                                          
+                                          
+                        </div>
+                      </div>
+                  </div>
          </div>
 
          <AddURLcollect :addvisible="addvisible"  @getList="geturlTypeCollection" :urlssurltype="urlssurltype"></AddURLcollect>
@@ -336,7 +349,7 @@ let toselectNode = function(){
   let tdata = treedatashow.list[0].children;
   for(let i = 0; i<tdata.length;i++){
     for(let j = 0; j < tdata[i].children.length;j++ ){
-      if(tdata[i].children[j].urlname.indexOf(selectofname.value) == -1){
+      if(tdata[i].children[j].urlname.toUpperCase().indexOf(selectofname.value.toUpperCase()) == -1){
         tdata[i].children.splice(j, 1)
         j--;
       }
@@ -390,21 +403,48 @@ return {showTree,
     width:100%;
     height:100%;
 }
+.collectlistbody{
+  width:100%;
+  height:98%;
+  overflow:auto;
+}
+
 .collectlistcss{
     width:98%;
     margin:1%;
 }
 .urlcollectoperatecss{
+  height:2%;
   width:100%;
   position: relative;
   display:flex;
   flex-direction: row-reverse;
-  
+  font-size:1rem;
 }
-.urlcollectoperatecss>div{
+.urlcollectoperatecss >div{
   cursor:pointer;
   position: relative;
-  right:2%;
+  
+  margin-left:2%;
+
+}
+.urlcollectoperatecss-cz{
+   display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.urlcollectoperatecss-cz>div{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.el-tree{
+  height:80vh;
+  overflow:auto;
+  background-color:rgba(203,233,231);
+  border: solid 1px rgba(43,150,225);
+  border-radius:5px;
 }
 .urlcollectoperatecss>div:hover .urlcollectoperateshowcss{
   display:block;
@@ -451,6 +491,7 @@ return {showTree,
 }
 .urlshowcss > div:hover {
   box-shadow: inset 0 0 100px 5px rgba(106,241,230,0.3);
+  transform:scale(1.1);
 }
 .hasshareurl{
   position:absolute;
