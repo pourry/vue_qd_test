@@ -141,13 +141,16 @@
                 <el-tab-pane label="网址" name="urlShare"  class="rdphlist">
                   <ul>
                    <li v-for="item of urlhotList.list" :key="item.urllogopath">
-                     <div   style="width:auto;">{{item.index}}.</div>
-                      <el-avatar shape="square" :size="20">
-                        <img
-                          :src="item.urllogopath" 
-                        />
-                      </el-avatar>
-                      <div @click="tourl(item.url)">{{item.url}}</div>
+                     <div   >{{item.index}}.</div>
+                      <div @click="tourl(item.url)">
+                          <el-avatar shape="square" :size="20">
+                            <img
+                              :src="item.urllogopath" 
+                            />
+                          </el-avatar>
+                          {{item.url}}
+                      </div>
+                      <div>{{item.countpath}}</div>
                    </li>
                   </ul>
 
@@ -383,6 +386,8 @@ export default {
   
 }
 .urlshareul > li:hover{
+  transform:scale(1.1);
+  transition: all 0.1s;
   background-color:rgba(106,241,230,0.6);
   
 }
@@ -472,9 +477,11 @@ export default {
 .rdphlist ul{
   padding:0;
   height:100%;
+  width:100%;
 }
 .rdphlist ul li {
   height:3.3%;
+  width:100%;
   white-space:nowrap; /*不让文字内容换行*/
   overflow:hidden;/*文字溢出的部分隐藏起来*/
   text-overflow:ellipsis; /*用...替代溢出的部分*/
@@ -482,7 +489,13 @@ export default {
   align-items:center;
   cursor:pointer;
 }
-.rdphlist ul li >div:nth-child(3){
+.rdphlist ul li >div{
+  width:30px;
+  text-align:right;
+}
+.rdphlist ul li >div:nth-child(2){
+  width:80%;
+  text-align:left;
 white-space:nowrap; /*不让文字内容换行*/
   overflow:hidden;/*文字溢出的部分隐藏起来*/
   text-overflow:ellipsis; /*用...替代溢出的部分*/
