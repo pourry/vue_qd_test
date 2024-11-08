@@ -510,7 +510,7 @@ white-space:nowrap; /*不让文字内容换行*/
 
 .acgexport{
   width:100%;
-  height:60%;
+  height:90%;
 }
 .acgexporttitle{
   width:100%;
