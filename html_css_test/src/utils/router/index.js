@@ -1,7 +1,7 @@
 import { createRouter,createWebHistory } from 'vue-router'
 
 import Login from '@/view/middlePages/Login.vue'
-import UserSelf from '@/view/middlePages/UserSelf.vue'
+import UserSelf from '@/view/middlePages/selfs/UserSelf.vue'
 import Favorites from '@/view/middlePages/favorites/Favorites.vue'
 import Home from '@/view/middlePages/Home.vue'
 import HomePage from '@/view/HomePage.vue'
@@ -21,6 +21,9 @@ import Novel from '@/view/middlePages/favorites/dimensions/twoDimensions/Novel.v
 import Game from '@/view/middlePages/favorites/dimensions/twoDimensions/Game.vue'
 
 import TVplay from '@/view/middlePages/favorites/dimensions/threeDimensions/TVplay.vue'
+
+import ApplyFor from '@/view/middlePages/selfs/flowableControl/ApplyFor.vue'
+import MyMsg from '@/view/middlePages/selfs/flowableControl/MyMsg.vue'
 
 const routes = [
 
@@ -119,7 +122,21 @@ const routes = [
          //我的
          path: '/userSelf',
          name: 'UserSelf',
-         component: UserSelf
+         component: UserSelf,
+         children : [
+            {
+               //我的信息
+               path: '/userSelf/myMsg',
+               name: 'MyMsg',
+               component: MyMsg,
+            },
+            {
+               //我的申请
+               path: '/userSelf/applyFor',
+               name: 'ApplyFor',
+               component: ApplyFor,
+            },
+         ]
       },
       {
          //登录页面
