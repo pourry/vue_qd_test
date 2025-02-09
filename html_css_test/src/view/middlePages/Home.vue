@@ -127,7 +127,23 @@
                               </li>
                               </ul>
                           </div>
+                          <div class="exportmsg">
+                            <div class="exportmsgtitle exportmsgtitleflx">
+                              <div>1</div>
+                              <div>2</div>
+                              <div>3</div>
+                            </div>
+                            <div class="exportmsgtableflx">
+                              <div class="scollborder"></div>
+                              <div>
+                                <div>111111111111111111111111111111111111</div>
+                              </div>
+                              <div><div>22222</div></div>
+                              <div><div>33333</div></div>
+                            </div>
+                          </div>
                         </div>
+                        
                      </div>
                       
            </div>
@@ -523,14 +539,69 @@ white-space:nowrap; /*不让文字内容换行*/
     border: solid 1px green;
 }
 .exportmsg{
+  position: relative;
   width:100%;
-  height:25%;
+  height:20%;
 }
 .exportmsgtitle{
   width:100%;
   height:20%;
   font-size:1.5rem;
 }
+.exportmsgtitleflx{
+  display: flex;
+  height: 15%;
+  justify-content: space-between;
+}
+.exportmsgtitleflx>div{
+  width:30%;
+  cursor: pointer;
+  background-color: red;
+}
+.exportmsgtableflx{
+  position: relative;
+  display: flex;
+  height: 85%;
+  justify-content: space-between;
+  
+}
+.exportmsgtableflx>div{
+
+  width: 30%;
+  height: 100%;
+  cursor: pointer;
+  border: solid 1px green;
+ 
+}
+.exportmsgtableflx>div>div{
+  
+  height: 100%;
+  cursor: pointer;
+  width: 100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.scollborder{
+  position: absolute;
+  width: 30%;
+  border: solid 1px red !important;
+  /* left: 50%;
+  transform: translate(-50%, 0); */
+  /* left: calc(100%/3); */
+  transform-origin: 0 0;
+}
+
+/* .exportmsgtableflx>div>div:hover{
+  position: relative;
+  cursor: pointer;
+  background-color: rgb(0, 225, 255);
+  width: 150%;
+  border: solid 1px red;
+  z-index: 9999;
+  margin-left: -25%;
+} */
+
+
 .exportmsg>ul{
   width:100%;
   height:80%;
