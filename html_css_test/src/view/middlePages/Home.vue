@@ -129,9 +129,9 @@
                           </div>
                           <div class="exportmsg">
                             <div class="exportmsgtitle exportmsgtitleflx">
-                              <div>1</div>
-                              <div>2</div>
-                              <div>3</div>
+                              <div  @click="toselectdiv(1)">1</div>
+                              <div @click="toselectdiv(2)">2</div>
+                              <div  @click="toselectdiv(3)">3</div>
                             </div>
                             <div class="exportmsgtableflx">
                               <div class="scollborder"></div>
@@ -188,6 +188,7 @@
 import { ref,reactive,onMounted,onUnmounted} from 'vue';
 import urlCollectionapi from '@/api/urlCollection'
 import acgapi from '@/api/acg'
+import $ from 'jquery' 
 export default {
   name: 'Home',
   components: {
@@ -299,6 +300,21 @@ export default {
         }
        })
     }
+
+    let toselectdiv = function(index){
+      let width = parseInt($('.scollborder').css("width"));
+      let scoll =  parseInt($('.exportmsgtableflx').css("width"));
+      if(index == 1){
+        $('.scollborder').css("left","0px")
+      }
+     else if(index == 2){
+      $('.scollborder').css("left",(scoll/2-width/2)+"px")
+     }else{
+      $('.scollborder').css("left",(scoll-width)+"px")
+      
+     }
+     
+    }
     return {
             scoll,
             scrollToLeft,
@@ -312,7 +328,8 @@ export default {
             tourl,
             acgList,
             getacgList,
-            automaticscroll }
+            automaticscroll,
+            toselectdiv }
   }
   
 }
@@ -585,10 +602,13 @@ white-space:nowrap; /*不让文字内容换行*/
   position: absolute;
   width: 30%;
   border: solid 1px red !important;
+
   /* left: 50%;
   transform: translate(-50%, 0); */
   /* left: calc(100%/3); */
-  transform-origin: 0 0;
+  /* transform-origin: 0 0; */
+  left: 0;
+  transition: all 1s;
 }
 
 /* .exportmsgtableflx>div>div:hover{
