@@ -16,6 +16,10 @@
                   <el-icon></el-icon>
                   <span>我的申请</span>
                 </el-menu-item>
+                <el-menu-item index="3"  route="/userSelf/test" >
+                  <el-icon></el-icon>
+                  <span>代码测试场</span>
+                </el-menu-item>
               </el-menu>
 
         </div>

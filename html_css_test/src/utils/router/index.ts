@@ -1,4 +1,4 @@
-import { createRouter,createWebHistory } from 'vue-router'
+import { createRouter,createWebHistory,RouteRecordRaw } from 'vue-router'
 
 import Login from '@/view/middlePages/Login.vue'
 import UserSelf from '@/view/middlePages/selfs/UserSelf.vue'
@@ -24,8 +24,9 @@ import TVplay from '@/view/middlePages/favorites/dimensions/threeDimensions/TVpl
 
 import ApplyFor from '@/view/middlePages/selfs/flowableControl/ApplyFor.vue'
 import MyMsg from '@/view/middlePages/selfs/flowableControl/MyMsg.vue'
+import Test from '@/view/middlePages/selfs/flowableControl/Test.vue'
 
-const routes = [
+const routes : Array<RouteRecordRaw> = [
 
  {
     path: '/homePage',
@@ -135,6 +136,12 @@ const routes = [
                path: '/userSelf/applyFor',
                name: 'ApplyFor',
                component: ApplyFor,
+            },
+            {
+               //我的申请
+               path: '/userSelf/test',
+               name: 'Test',
+               component: Test,
             },
          ]
       },

@@ -13,7 +13,7 @@
     "babel-polyfill": "^6.26.0",
     "core-js": "^3.8.3",
     "element-plus": "^2.8.2",
-    "element-ui": "^2.15.14",
+    "jquery": "^4.0.0",
     "sm-crypto": "^0.3.13",
     "vue": "^3.2.26",
     "vue-router": "^4.4.3",
@@ -23,11 +23,15 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
     "@vue/cli-service": "~5.0.8",
-    "eslint": "^7.32.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-vue": "^8.0.3",
+    "typescript": "^5.9.3",
     "unplugin-auto-import": "^0.18.3",
     "unplugin-vue-components": "^0.27.4"
   },
@@ -37,19 +41,51 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/vue3-essential"
+      "plugin:vue/vue3-essential",
+      "plugin:@typescript-eslint/recommended"
     ],
     "parserOptions": {
-      "parser": "@babel/eslint-parser"
+      "ecmaVersion": 2020,
+      "parser": "@typescript-eslint/parser"
     },
+    "plugins": [
+      "@typescript-eslint"
+    ],
     "rules": {
       "generator-star-spacing": "off",
       "no-tabs": "off",
       "no-unused-vars": "off",
       "no-console": "off",
       "no-irregular-whitespace": "off",
-      "no-debugger": "off"
-    }
+      "no-debugger": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-var-requires": "off"
+    },
+    "overrides": [
+      {
+        "files": ["*.js", "*.jsx"],
+        "parser": "@babel/eslint-parser",
+        "parserOptions": {
+          "requireConfigFile": false
+        },
+        "rules": {
+          "@typescript-eslint/no-var-requires": "off"
+        }
+      },
+      {
+        "files": ["*.ts", "*.tsx"],
+        "parser": "@typescript-eslint/parser"
+      },
+      {
+        "files": ["*.vue"],
+        "parser": "vue-eslint-parser",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        }
+      }
+    ]
   },
   "browserslist": [
     "> 1%",

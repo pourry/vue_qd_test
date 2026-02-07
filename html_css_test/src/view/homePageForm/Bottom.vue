@@ -15,7 +15,7 @@
             <a href="#" style="margin-right: 12px;">关于我们</a>
             <a href="#" style="margin-right: 12px;">服务</a>
             <a href="#" style="margin-right: 12px;">新闻</a>
-            <a href="#">联系我们</a>
+            <a href="#"  @click="handleClick">联系我们</a>
           </div>
         </div>
          
@@ -26,16 +26,15 @@
     
 </template>
 
-<script>
-export default {
-  name: 'Bottom',
-  components: {
-  },
-  methods: {
+<script setup lang="ts">
 
-  },
-
+function handleClick(): void {
+  console.log('clicked');
+  // emit('update:count', '42') // 错误：参数类型不匹配
 }
+
+
+
 </script>
 
 <style>
