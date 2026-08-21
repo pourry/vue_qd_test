@@ -136,57 +136,60 @@ export default {
    display: flex;
    justify-content:center;
    align-items: center;
+   background: var(--theme-bg-page);
 }
 .tdrightmiddlecss >div{
    display:flex;
-   flex-wrap: wrap;  /*可换行*/
-   align-content: flex-start; /*从左到右*/
-   justify-content: center;   /* 居中对齐 */
+   flex-wrap: wrap;
+   align-content: flex-start;
+   justify-content: center;
    height:98%;
    width:98%;
    overflow:auto;
-   
+
 }
 
 .collectshowcss >div{
-   position:relative;    /*absolute（绝对）  如果上级没有定位 时会往上找  最终会以html 为基准*/
-   height:25%;
-   width:20rem;
+   position:relative;
+   height: auto;
+   min-height: 200px;
+   width: 200px;
    padding: 0.5%;
    margin: 0.5%;
    cursor: pointer;
-   
+   flex: 0 0 auto;
 }
 .unselectedcss {
    box-shadow: none;
    background: transparent;
 }
 .selectedcss{
-   box-shadow: inset 0 0 100px 5px #e0f5fc;
-   background-color: rgba(50,234,63,0.7);
+   box-shadow: inset 0 0 100px 5px var(--theme-primary-light);
+   background-color: var(--theme-primary-bg-hover);
 }
 .collectshowcss >div:hover {
-  box-shadow: inset 0 0 100px 5px #e0f5fc;
+  box-shadow: inset 0 0 100px 5px var(--theme-primary-light);
 }
 .collectshowcss >div:active {
-  background-color: rgba(50,234,63,0.7);
+  background-color: var(--theme-primary-bg-hover);
 }
 .collectshowcss div>.el-image{
   position:relative;
   height:100%;
+  min-height: 180px;
   width:100%;
-  background-color:rgba(255,255,255,0.5)
+  background-color: var(--theme-bg-middle);
 }
 .collectshowcss div>span{
   position:absolute;
-  background-color:rgba(106,241,230,0.7);
+  background-color: var(--theme-accent-light);
+  color: var(--theme-text-primary);
   width:50%;
   height:30%;
   right:0%;
   bottom:0%;
 }
 .clickimgcss:hover{
-  /* border: solid 1px red; */
   margin-top: -0.5%;
   margin-left: -0.5%;
   height: 101% !important;
@@ -195,12 +198,6 @@ export default {
   -webkit-transition: width 0.4s, height 0.4s,  margin-top 0.4s, margin-left 0.4s;
 }
 .clickimgcss{
-  /* margin-top: 0%;
-  margin-left: 0%;
-  height: 100% !important;
-  width: 100% !important;
-  transition: width 0.4s, height 0.4s, margin-top 0.4s, margin-left 0.4s;
-  -webkit-transition: width 0.4s, height 0.4s,  margin-top 0.4s, margin-left 0.4s; */
 }
 ::v-deep .el-image__inner{
   width: 100%;
@@ -209,7 +206,6 @@ export default {
   height: 100%;
   transition: width 0.2s, height 0.2s, margin-top 0.2s, margin-left 0.2s;
   -webkit-transition: width 0.2s, height 0.2s,  margin-top 0.2s, margin-left 0.2s;
-  /* webkit-, -ms- 或 -moz- 前的数字为支持该前缀属性的第一个浏览器版本号。 */
 }
 ::v-deep .el-image__inner:hover{
   width: 120%;
@@ -218,7 +214,6 @@ export default {
   height: 120%;
   transition: width 0.2s, height 0.2s, margin-top 0.2s, margin-left 0.2s;
   -webkit-transition: width 0.2s, height 0.2s,  margin-top 0.2s, margin-left 0.2s;
-  /* webkit-, -ms- 或 -moz- 前的数字为支持该前缀属性的第一个浏览器版本号。 */
 }
 .animationmsg{
   height:100%;
@@ -230,9 +225,9 @@ export default {
   padding: 5px;
   height:20%;
   width:90%;
-  white-space:nowrap; /*不让文字内容换行*/
-  overflow:hidden;/*文字溢出的部分隐藏起来*/
-  text-overflow:ellipsis; /*用...替代溢出的部分*/
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .animationmsgdetailcss{
    list-style-type: none;
@@ -246,9 +241,9 @@ export default {
   height:30%;
   display:flex;
   align-items: center;
-  background-color: rgba(255,0,0,0.8) !important;
+  background-color: var(--theme-danger) !important;
   clip-path: polygon(0 0, 0 100%, 50% 100%);
-  border-radius: 0 0 0 5px; 
+  border-radius: 0 0 0 5px;
   z-index:1;
 }
 .hasshareicon{
@@ -262,12 +257,17 @@ export default {
 /*popover 专用*/
 
 .el-popover.el-popper {
-  background-color:rgba(106,241,230,0.7) !important;
-  color: black;
-  
+  background-color: var(--theme-accent-light) !important;
+  color: var(--theme-text-primary);
+  border: 1px solid var(--theme-border);
 }
 .el-popover__title {
- color: black;
+ color: var(--theme-text-primary);
+ font-weight: 600;
+}
+
+.el-popover__content {
+  color: var(--theme-text-regular);
 }
 
 </style>

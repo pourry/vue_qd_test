@@ -62,6 +62,9 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    background: var(--theme-bg-card);
+    padding: var(--theme-spacing-sm);
+    border-top: 1px solid var(--theme-border);
 }
 .paginationcss{
     
@@ -73,10 +76,24 @@ export default {
   margin-bottom: 16px;
 }
 ::v-deep .el-pagination__total{
-  color: white;
+  color: var(--theme-text-regular);
 }
 ::v-deep .el-pagination__jump{
-  color: white;
+  color: var(--theme-text-regular);
+}
+::v-deep .el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
+  background-color: var(--theme-primary);
+}
+::v-deep .el-pagination.is-background .btn-next,
+::v-deep .el-pagination.is-background .btn-prev,
+::v-deep .el-pagination.is-background .el-pager li {
+  background-color: var(--theme-bg-middle);
+  color: var(--theme-text-regular);
+}
+::v-deep .el-pagination.is-background .btn-next:hover,
+::v-deep .el-pagination.is-background .btn-prev:hover,
+::v-deep .el-pagination.is-background .el-pager li:hover {
+  color: var(--theme-primary);
 }
 
 </style>

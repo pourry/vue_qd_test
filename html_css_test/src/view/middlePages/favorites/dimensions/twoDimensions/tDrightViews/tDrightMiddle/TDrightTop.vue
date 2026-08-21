@@ -1,27 +1,21 @@
 <template>
     <div class='tdrighttopcss'>
-      <el-row :gutter="20" style='margin:0;'>
-        <el-col :span="6">
-           <el-button class="tdaddbut" type="primary" :span="2" size="large" @click="totdaddmenushow">{{tdaddmenushow.name}}</el-button>
-           <el-button type="primary" :span="2" size="large" @click="totdeditmenushow">{{tdeditmenushow.name}}</el-button>
-           <el-button type="primary" :span="2" size="large"   @click="totddel">删除</el-button>
-        </el-col>
-        <el-col :span="6" style="z-index:-1"></el-col>
-        <el-col :span="12">
-            <div class="TDserchcss">
-              <el-input
-                v-model="searchTd"
-                class="w-50 m-2"
-                size="large"
-                placeholder="请输入名称"
-                suffix-icon="Search"
-                :clearable="true"
-                @keyup.enter="tosearch"
-                />
-            <el-button type="primary" icon="Search" size="large"   @click="tosearch" />
-            </div>
-        </el-col>
-      </el-row>
+      <div class="toolbar-left">
+        <el-button class="tdaddbut" type="primary" @click="totdaddmenushow">{{tdaddmenushow.name}}</el-button>
+        <el-button type="primary" @click="totdeditmenushow">{{tdeditmenushow.name}}</el-button>
+        <el-button type="danger" @click="totddel">删除</el-button>
+      </div>
+      <div class="toolbar-right">
+        <div class="TDserchcss">
+          <el-input
+            v-model="searchTd"
+            placeholder="请输入名称"
+            :clearable="true"
+            @keyup.enter="tosearch"
+          />
+          <el-button type="primary" icon="Search" @click="tosearch" />
+        </div>
+      </div>
 
       <!-- 添加 -->
      <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :hasendoptions="hasendoptions" :addform="addandeditform" @toadd="toadd" @tosearch="tosearch"></AddDialog>
@@ -262,30 +256,92 @@ export default {
     width:100%;
     height:100%;
     position:relative;
+    padding: var(--theme-spacing-sm) var(--theme-spacing-md);
+    box-sizing: border-box;
+    background: var(--theme-bg-card);
+    border-bottom: 1px solid var(--theme-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--theme-spacing-md);
 }
-.el-row {
-  width:100%;
-  position:absolute;
-  bottom:10%;
-}
-.el-row:last-child {
-  margin-bottom: 0;
-}
-.el-col {
-  border-radius: 4px;
-  /*border: solid green 1px;*/
+
+.toolbar-left {
   display: flex;
-
+  align-items: center;
+  gap: var(--theme-spacing-sm);
+  flex-shrink: 0;
 }
 
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-end;
 }
+
 .TDserchcss{
-  padding-left: 30%;
   display: flex;
-  gap: 10%; /*网格行与列之间的间隙*/
+  gap: var(--theme-spacing-sm);
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+}
+.TDserchcss :deep(.el-input){
+  flex: 1;
+}
+
+/* 工具栏按钮样式 */
+.tdrighttopcss :deep(.el-button){
+  border-radius: var(--theme-radius-md);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.tdrighttopcss :deep(.el-button:hover){
+  transform: translateY(-1px);
+  box-shadow: var(--theme-shadow-sm);
+}
+.tdrighttopcss :deep(.el-button--primary){
+  background-color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
+.tdrighttopcss :deep(.el-button--primary:hover){
+  background-color: var(--theme-primary-dark);
+  border-color: var(--theme-primary-dark);
+}
+.tdrighttopcss :deep(.el-button--danger){
+  background-color: var(--theme-danger);
+  border-color: var(--theme-danger);
+}
+.tdrighttopcss :deep(.el-button--danger:hover){
+  opacity: 0.9;
+}
+
+/* 搜索框样式 */
+.TDserchcss :deep(.el-input__wrapper){
+  border-radius: var(--theme-radius-md);
+  box-shadow: 0 0 0 1px var(--theme-border) inset;
+  transition: all 0.2s ease;
+}
+.TDserchcss :deep(.el-input__wrapper:hover){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset;
+}
+.TDserchcss :deep(.el-input__wrapper.is-focus){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset;
+}
+.TDserchcss :deep(.el-input__inner){
+  color: var(--theme-text-primary);
+}
+
+/* 添加/修改按钮特殊样式 */
+.tdaddbut{
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.tdaddbut:hover{
+  background: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-primary) 100%) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
 .tdaddhiddencss{
@@ -294,8 +350,11 @@ export default {
 
 .tdaddshowcss{
   display: block;
-  
+  animation: slideDown 0.25s ease-out;
 }
-
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 </style>

@@ -5,6 +5,7 @@ import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
+import '@/assets/themes.css'
 import store from './utils/store'
 
 import router from './utils/router'

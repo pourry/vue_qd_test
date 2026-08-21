@@ -70,27 +70,60 @@ const handleClose = (key, keyPath) => {
    display: flex;
 }
 .leftdiv{
-  /* background-color: red; */
-  width:20%;
-  height:100%;
+  width: 200px;
+  height: 100%;
   overflow: auto;
-  box-shadow: inset 0 0 10px 5px #e0f5fc;
+  background: var(--theme-bg-card);
+  border-right: 1px solid var(--theme-border);
+  padding: 16px 0;
 }
 .rightdiv {
-  width: 80%;
+  flex: 1;
   height: 100%;
-  box-shadow: inset 0 0 10px 5px #e0f5fc;
+  background: var(--theme-bg-page);
+  padding: 16px;
+  overflow: auto;
 }
 ::v-deep .el-menu-css{
  overflow: auto;
  height: auto;
 }
 ::v-deep .el-menu {
-  background-color: rgba(249,255,255,0.5);
+  background-color: transparent !important;
   height: 100%;
+  border-right: none !important;
 }
-.el-menu-item.is-active{
+::v-deep .el-menu-item,
+::v-deep .el-sub-menu__title {
+  color: var(--theme-text-regular);
+  border-radius: 6px;
+  margin: 2px 8px;
+  height: 40px;
+  line-height: 40px;
+  transition: all 0.2s ease;
 }
-
-
+::v-deep .el-menu-item:hover,
+::v-deep .el-sub-menu__title:hover {
+  background-color: var(--theme-primary-light) !important;
+  color: var(--theme-primary) !important;
+}
+::v-deep .el-menu-item.is-active {
+  background-color: var(--theme-primary) !important;
+  color: var(--theme-text-light) !important;
+}
+::v-deep .el-menu-item.is-active:hover {
+  background-color: var(--theme-primary-dark) !important;
+}
+::v-deep .el-menu .el-menu-item.is-active i{
+  color: var(--theme-text-light) !important;
+}
+::v-deep .el-sub-menu .el-menu-item {
+  padding-left: 48px !important;
+  min-width: auto !important;
+}
+::v-deep .el-menu-item .el-icon,
+::v-deep .el-sub-menu__title .el-icon {
+  margin-right: 8px;
+  color: inherit;
+}
 </style>

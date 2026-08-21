@@ -8,7 +8,7 @@ import type { ApiResponse, PageResult } from '@/types/global'
  * @param format 格式化字符串
  * @returns 格式化后的日期字符串
  */
-export function formatDate(date: Date | string | number, format: string = 'YYYY-MM-DD HH:mm:ss'): string {
+export function formatDate(date: Date | string | number, format = 'YYYY-MM-DD HH:mm:ss'): string {
   const d = new Date(date)
   const year = d.getFullYear()
   const month = String(d.getMonth() + 1).padStart(2, '0')
@@ -128,7 +128,7 @@ export function handleApiError(error: any): string {
  * @param length 长度
  * @returns 随机字符串
  */
-export function generateRandomString(length: number = 8): string {
+export function generateRandomString(length = 8): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
   for (let i = 0; i < length; i++) {

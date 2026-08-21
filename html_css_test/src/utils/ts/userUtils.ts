@@ -33,7 +33,7 @@ export function validatePasswordStrength(password: string): {
   score: number
 } {
   let score = 0
-  let message = ''
+  const message = ''
 
   if (password.length < 6) {
     return { level: 'weak', message: '密码长度至少6位', score: 0 }
@@ -169,7 +169,7 @@ export function formatUserDisplayName(user: User): string {
  * @param defaultAvatar 默认头像URL
  * @returns 头像URL
  */
-export function getUserAvatarUrl(user: User, defaultAvatar: string = '/src/assets/logo.png'): string {
+export function getUserAvatarUrl(user: User, defaultAvatar = '/src/assets/logo.png'): string {
   return user.avatar || defaultAvatar
 }
 

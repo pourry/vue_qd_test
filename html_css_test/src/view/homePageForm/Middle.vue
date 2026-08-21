@@ -12,7 +12,7 @@ export default {
 
 <style scoped>
 .operationcss {
-   height:100%;
    width:100%;
+   min-height: 55vh;
 }
 </style>

@@ -126,17 +126,22 @@ export default {
 .tdrightcss{
    height:100%;
    width:100%;
+   display: flex;
+   flex-direction: column;
 }
 .tdtopcss{
-   height:5%;
+   min-height: 56px;
    width:100%;
+   flex-shrink: 0;
 }
 .tdmiddlecss{
-   height:90%;
+   flex: 1;
    width:100%;
+   overflow: auto;
 }
 .tdbottomcss{
-   height:5%;
+   min-height: 50px;
    width:100%;
+   flex-shrink: 0;
 }
 </style>

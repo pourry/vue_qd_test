@@ -1,8 +1,10 @@
 <template>
     <div class="overalllayout" >
-        <Top class='topcss'></Top>
-        <Middle class='middlecss' ></Middle>
-        <Bottom class='bottomcss' ></Bottom>
+        <div class='topcss'><Top /></div>
+        <div class='main-scroll'>
+          <div class='middlecss'><Middle /></div>
+          <div class='bottomcss'><Bottom /></div>
+        </div>
         
         <!-- Chat widget -->
         <ShowChats />
@@ -33,35 +35,61 @@ export default {
    height: 100%; 
    width: 100%;
    position:relative;
+   background-color: var(--theme-bg-page);
+   display: flex;
+   flex-direction: column;
 }
 .topcss {
-  height: 5%;
-  background-color: #CCD3DB;
-  border-radius: 10px 10px 0 0;
+  height: 56px;
+  background: linear-gradient(180deg, var(--theme-bg-top) 0%, rgba(255,255,255,0.98) 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  z-index: 100;
+  flex-shrink: 0;
+  overflow: visible;
+  position: relative;
+}
+.topcss::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--theme-border-light) 20%, 
+    var(--theme-border-light) 80%, 
+    transparent 100%);
+}
+.main-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .middlecss {
-  height: 80%;
-  background-color: #E7EBED;
-  border: solid white 5px;
-  margin: 0 0 0 -5px ;
-  border-radius: 10px;
-  /*background-image: url(../assets/homePage/83066660_p0.png);*/
-  background-repeat: no-repeat; 
-  background-position: center center; /* 水平垂直居中 */
-  background-size: cover;
-  
+  background-color: var(--theme-bg-middle);
+  position: relative;
+  min-height: 60vh;
 }
 .bottomcss{
-  height: 15%;
-  background-color: #292B43;
-  border-radius: 0 0 10px 10px;
+  background-color: var(--theme-bg-bottom);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
 }
 
-
-/*  当窗口最小为600px 使用以下样式 */
-@media (max-width: 550px) {
-  .overalllayout {
-      width:550px
-  }
+/* 中间区域与顶/底的连接样式 */
+.middlecss::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--theme-border) 20%, 
+    var(--theme-border) 80%, 
+    transparent 100%);
 }
 </style>

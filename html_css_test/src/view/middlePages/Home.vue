@@ -341,9 +341,10 @@ export default {
   height:100%;
   padding-left:1%;
   padding-right:1%;
+  box-sizing: border-box;
 }
 .el-carousel__item h3 {
-  color: #475669;
+  color: var(--theme-text-regular);
   opacity: 0.75;
   line-height: 200px;
   margin: 0;
@@ -351,25 +352,35 @@ export default {
 }
 
 .el-carousel__item:nth-child(2n) {
-  background-color: #99a9bf;
+  background-color: var(--theme-primary-light);
 }
 
 .el-carousel__item:nth-child(2n + 1) {
-  background-color: #d3dce6;
+  background-color: var(--theme-bg-middle);
 }
 .zmdcss{
   height:20%;
   width:98%;
-  overflow:hidden
+  overflow:hidden;
+  border-radius: var(--theme-radius-lg);
+  box-shadow: var(--theme-shadow-card);
+  background: var(--theme-bg-card);
+  padding: var(--theme-spacing-sm);
+  box-sizing: border-box;
+  margin-bottom: var(--theme-spacing-md);
 }
 .export{
-  height:80%;
+  height:78%;
   width:98%;
   display:flex;
+  gap: var(--theme-spacing-md);
 }
 .exportleft{
   height:100%;
   width:65%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-spacing-md);
 }
 .exportmiddle{
   height:100%;
@@ -378,163 +389,203 @@ export default {
 .exportright{
   height:100%;
   width:32%;
-  border:solid 1px red;
-  
+  border:1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg);
+  background: var(--theme-bg-card);
+  padding: var(--theme-spacing-md);
+  box-sizing: border-box;
+  box-shadow: var(--theme-shadow-card);
+  overflow: hidden;
 }
 .urlexport{
-  height:10%;
+  height:35%;
   width:100%;
   position: relative;
-  border:solid 1px red;
+  border:1px solid var(--theme-border);
+  border-radius: var(--theme-radius-md);
+  background: var(--theme-bg-card);
+  padding: var(--theme-spacing-sm);
+  box-sizing: border-box;
+  box-shadow: var(--theme-shadow-card);
 }
 .urlexporttitle{
-  font-size:1.5rem;
-  position: reactive;
-  height:20%;
+  font-size: 1rem;
+  font-weight: 600;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: var(--theme-spacing-xs);
+  color: var(--theme-text-primary);
 }
 
 .urlshareul{
-  position: reactive;
   display: flex; 
-  align-content: flex-start; /*从左到右*/
-  align-items: center;  /*上下居中*/
-  height:80%;
-  width:98%;
+  align-content: flex-start;
+  align-items: center;
+  height: calc(100% - 28px);
+  width: 100%;
   list-style-type:none;
-  overflow: hidden; 
+  overflow-x: auto;
+  overflow-y: hidden;
   margin:0;
-  padding:0;
-  margin-left:1%;
-  scroll-behavior: smooth; /*平滑滚动*/
+  padding: 0;
+  scroll-behavior: smooth;
 }
 
 .urlshareul > li{
-  width:6rem;
-  height:80%;
-  border:solid 1px red;
-  margin-left:0.5%;
-  margin-right:0.5%;
-  background-color:rgba(106,241,230,0.2);
+  min-width: 120px;
+  height: calc(100% - 8px);
+  border:1px solid var(--theme-border);
+  margin: 4px;
+  background-color: var(--theme-primary-light);
   cursor:pointer;
-  
+  border-radius: var(--theme-radius-md);
+  overflow: hidden;
+  transition: all 0.2s ease;
 }
 .urlshareul > li:hover{
-  transform:scale(1.1);
-  transition: all 0.1s;
-  background-color:rgba(106,241,230,0.6);
-  
+  transform:translateY(-2px);
+  box-shadow: var(--theme-shadow-md);
+  border-color: var(--theme-primary);
 }
 .urlexportimg{
   width: 100%;
-  height:50%;
+  height:40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 4px;
 }
 .urlexportmsg{
   width:100%;
   margin:0;
-  padding:0;
-  height:50%;
+  padding: 4px 8px;
+  height: 55%;
   list-style-type: none;
+  font-size: 12px;
 }
 .urlexportmsg > li{
-  font-size:0.8rem;
-  height:50%;
-  white-space:nowrap; /*不让文字内容换行*/
-  overflow:hidden;/*文字溢出的部分隐藏起来*/
-  text-overflow:ellipsis; /*用...替代溢出的部分*/
+  height: 50%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color: var(--theme-text-regular);
 }
 
 .urlexportleft{
   position: absolute;
-  height:80%;
-  width:30px;
+  height:100%;
+  width:24px;
   display:flex;
   align-items:center;
+  justify-content: center;
   
 }
 .urlexportlefthidden{
   display:none;
 }
 .urlexportleft >div{
-  width:100%;
-  height:40%;
-  background-color:rgba(18,23,81,.0);
+  width:24px;
+  height:24px;
+  background-color: var(--theme-bg-card);
+  border-radius: 50%;
   cursor:pointer;
   display:flex;
   align-items:center;
+  justify-content: center;
+  border: 1px solid var(--theme-border);
+  transition: all 0.2s;
 }
 .urlexportleft >div:hover{
-  background-color:rgba(18,23,81,.3);
-}
-.urlexportleft >div .el-icon{
-  
-  position:absolute;
-  right:0px;
+  background-color: var(--theme-primary);
+  color: var(--theme-text-light);
+  border-color: var(--theme-primary);
 }
 .urlexportright{
   position:absolute;
-  height:80%;
+  height:100%;
   right:0;
-  width:30px;
+  width:24px;
   display:flex;
   align-items:center;
+  justify-content: center;
 }
 .urlexportrighthidden{
   display:none;
 }
 .urlexportright >div{
-  width:100%;
-  height:40%;
-  background-color:rgba(18,23,81,.0);
+  width:24px;
+  height:24px;
+  background-color: var(--theme-bg-card);
+  border-radius: 50%;
   cursor:pointer;
   display:flex;
   align-items:center;
+  justify-content: center;
+  border: 1px solid var(--theme-border);
+  transition: all 0.2s;
 }
 .urlexportright >div:hover{
-  background-color:rgba(18,23,81,.3);
+  background-color: var(--theme-primary);
+  color: var(--theme-text-light);
+  border-color: var(--theme-primary);
 }
 /* 网址收藏展示 ----------------------------------------------------------完毕 */
 .rdphtitle{
   width:100%;
-  height:2%;
-  font-size:1.5rem;
+  height: 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--theme-spacing-xs);
+  color: var(--theme-text-primary);
 }
 .rdphbody{
   width:100%;
-  height:98%;
+  height: calc(100% - 32px);
 }
 .rdphlist{
   height:100%;
   width:100%;
-  border: solid 1px red;
+  border: none;
 }
 .rdphlist ul{
   padding:0;
   height:100%;
   width:100%;
+  list-style: none;
 }
 .rdphlist ul li {
-  height:3.3%;
-  width:100%;
-  white-space:nowrap; /*不让文字内容换行*/
-  overflow:hidden;/*文字溢出的部分隐藏起来*/
-  text-overflow:ellipsis; /*用...替代溢出的部分*/
+  height: 36px;
+  width: 100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
   display:flex;
   align-items:center;
   cursor:pointer;
+  padding: 4px 8px;
+  border-radius: var(--theme-radius-sm);
+  transition: background-color 0.2s;
+  color: var(--theme-text-regular);
+  font-size: 13px;
 }
 .rdphlist ul li >div{
   width:30px;
   text-align:right;
+  flex-shrink: 0;
 }
 .rdphlist ul li >div:nth-child(2){
-  width:80%;
+  flex: 1;
   text-align:left;
-white-space:nowrap; /*不让文字内容换行*/
-  overflow:hidden;/*文字溢出的部分隐藏起来*/
-  text-overflow:ellipsis; /*用...替代溢出的部分*/
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .rdphlist ul li:hover {
-  background-color:rgba(18,23,81,.2);
+  background-color: var(--theme-primary-bg);
+  color: var(--theme-primary);
 }
 .rdphlist ul li span{
   cursor:pointer;
@@ -543,107 +594,137 @@ white-space:nowrap; /*不让文字内容换行*/
 
 .acgexport{
   width:100%;
-  height:90%;
+  height:62%;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-md);
+  background: var(--theme-bg-card);
+  padding: var(--theme-spacing-sm);
+  box-sizing: border-box;
+  box-shadow: var(--theme-shadow-card);
+  overflow: hidden;
 }
 .acgexporttitle{
   width:100%;
-  height:5%;
-  font-size:1.5rem;
+  height: 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--theme-spacing-xs);
+  color: var(--theme-text-primary);
 }
 .acgexportbody{
   width:100%;
-  height:95%;
-    border: solid 1px green;
+  height: calc(100% - 28px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--theme-spacing-sm);
+  overflow-y: auto;
 }
 .exportmsg{
   position: relative;
-  width:100%;
-  height:20%;
+  flex: 1;
+  min-width: 45%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
 }
 .exportmsgtitle{
   width:100%;
-  height:20%;
-  font-size:1.5rem;
+  height: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--theme-text-regular);
 }
 .exportmsgtitleflx{
   display: flex;
-  height: 15%;
+  height: 24px;
   justify-content: space-between;
+  gap: 4px;
 }
 .exportmsgtitleflx>div{
-  width:30%;
+  flex: 1;
   cursor: pointer;
-  background-color: red;
+  background-color: var(--theme-primary-bg);
+  color: var(--theme-primary);
+  border-radius: var(--theme-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+.exportmsgtitleflx>div:hover{
+  background-color: var(--theme-primary);
+  color: var(--theme-text-light);
 }
 .exportmsgtableflx{
   position: relative;
   display: flex;
-  height: 85%;
+  height: calc(100% - 28px);
   justify-content: space-between;
-  
+  gap: 4px;
 }
 .exportmsgtableflx>div{
-
-  width: 30%;
+  flex: 1;
   height: 100%;
   cursor: pointer;
-  border: solid 1px green;
- 
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-sm);
+  overflow: hidden;
+  position: relative;
 }
 .exportmsgtableflx>div>div{
-  
   height: 100%;
-  cursor: pointer;
   width: 100%;
   overflow:hidden;
   text-overflow:ellipsis;
+  padding: 4px;
+  box-sizing: border-box;
+  font-size: 12px;
 }
 .scollborder{
   position: absolute;
-  width: 30%;
-  border: solid 1px red !important;
-
-  /* left: 50%;
-  transform: translate(-50%, 0); */
-  /* left: calc(100%/3); */
-  /* transform-origin: 0 0; */
+  width: 33.33%;
+  border: solid 2px var(--theme-primary) !important;
   left: 0;
-  transition: all 1s;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--theme-radius-sm);
+  transition: all 0.3s ease;
+  pointer-events: none;
 }
-
-/* .exportmsgtableflx>div>div:hover{
-  position: relative;
-  cursor: pointer;
-  background-color: rgb(0, 225, 255);
-  width: 150%;
-  border: solid 1px red;
-  z-index: 9999;
-  margin-left: -25%;
-} */
-
 
 .exportmsg>ul{
   width:100%;
-  height:80%;
+  height: calc(100% - 28px);
   display:flex;
   flex-wrap:wrap;
-  
+  gap: 4px;
   margin:0;
   padding:0;
+  list-style: none;
+  overflow-y: auto;
 }
 .exportmsg> ul>li{
   position:relative;
-  height:48.2%;
-  width:19.2%;
-  margin:0.2%;
-  list-style-type: none;
-  display:flex;
-  transition: all 0.1s;
+  height: 100px;
+  flex: 1 1 calc(50% - 4px);
+  margin:0;
   cursor:pointer;
+  border-radius: var(--theme-radius-sm);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  background: var(--theme-bg-card);
+  border: 1px solid var(--theme-border);
 }
 .exportmsg> ul>li:hover{
-  transform:scale(1.2); /*scale 定义 2D 缩放转换。*/
-  
+  transform:translateY(-2px);
+  box-shadow: var(--theme-shadow-md);
+  border-color: var(--theme-primary);
   z-index:999;
 }
 .exportmsg>ul>li>div{
@@ -660,8 +741,8 @@ white-space:nowrap; /*不让文字内容换行*/
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--el-fill-color-light);
-  color: var(--el-text-color-secondary);
+  background: var(--theme-primary-light);
+  color: var(--theme-text-secondary);
 }
 .exportmsgdetails{
   position:absolute;
@@ -669,12 +750,16 @@ white-space:nowrap; /*不让文字内容换行*/
   right:0;
   bottom:0;
   z-index:1;
-
+  padding: 4px 6px;
+  box-sizing: border-box;
 }
 .exportmsgdetails>li{
-  background-color:rgba(18,23,81,.2);
-  white-space:nowrap; /*不让文字内容换行*/
-  overflow:hidden;/*文字溢出的部分隐藏起来*/
-  text-overflow:ellipsis; /*用...替代溢出的部分*/
+  background-color: rgba(0,0,0,0.6);
+  color: var(--theme-text-light);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size: 11px;
+  border-radius: var(--theme-radius-sm);
 }
 </style>

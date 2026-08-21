@@ -238,9 +238,15 @@ export default {
   width: 100%;  
   height: auto;
   z-index: 100;
-  border-radius: 0 0 10px 10px;
-  background-color: rgba(249,255,255,0.99);
-  
+  border-radius: 0 0 var(--theme-radius-lg) var(--theme-radius-lg);
+  background-color: var(--theme-bg-card);
+  box-shadow: var(--theme-shadow-lg);
+  border-top: 1px solid var(--theme-border);
+  animation: slideDown 0.25s ease-out;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .tdformcss{
   margin-top: 10px;
@@ -250,13 +256,65 @@ export default {
   display:flex;
   justify-content:center;
   align-items:center;
+  padding: var(--theme-spacing-sm);
 }
 .el-form{
   height:100%;
-  width:80%;
+  width:85%;
 }
-
+.el-form-item{
+  margin-bottom: 12px;
+}
+.el-form-item :deep(.el-form-item__label){
+  color: var(--theme-text-regular);
+  font-weight: 500;
+}
+.el-form-item :deep(.el-input__wrapper){
+  box-shadow: 0 0 0 1px var(--theme-border) inset;
+  transition: box-shadow 0.2s ease;
+}
+.el-form-item :deep(.el-input__wrapper:hover){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset;
+}
+.el-form-item :deep(.el-input__wrapper.is-focus){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset;
+}
+.el-form-item :deep(.el-textarea__inner){
+  border-color: var(--theme-border);
+  transition: border-color 0.2s ease;
+}
+.el-form-item :deep(.el-textarea__inner:hover){
+  border-color: var(--theme-primary);
+}
+.el-form-item :deep(.el-textarea__inner:focus){
+  border-color: var(--theme-primary);
+}
+.el-form-item :deep(.el-select .el-select__wrapper){
+  box-shadow: 0 0 0 1px var(--theme-border) inset;
+  transition: box-shadow 0.2s ease;
+}
+.el-form-item :deep(.el-select .el-select__wrapper:hover){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset;
+}
+.el-form-item :deep(.el-select .el-select__wrapper.is-focused){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset;
+}
+.el-form-item :deep(.el-switch.is-checked .el-switch__core){
+  background-color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
 .buttomcss{
+  display: flex;
+  gap: var(--theme-spacing-sm);
+  justify-content: flex-end;
+}
+.buttomcss :deep(.el-button--primary){
+  background-color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
+.buttomcss :deep(.el-button--primary:hover){
+  background-color: var(--theme-primary-dark);
+  border-color: var(--theme-primary-dark);
 }
 .showimgcss{
   height:100%;

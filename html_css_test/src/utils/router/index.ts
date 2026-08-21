@@ -32,6 +32,7 @@ const routes : Array<RouteRecordRaw> = [
     path: '/homePage',
     name: 'HomePage',
     component: HomePage,
+    redirect: '/home',
     children : [
       {
          //次元收藏夹首页
@@ -44,6 +45,7 @@ const routes : Array<RouteRecordRaw> = [
          path: '/favorites',
          name: 'Favorites',
          component: Favorites,
+         redirect: '/twoDimensions',
          children : [
             // {
             //    //一次元
@@ -70,6 +72,7 @@ const routes : Array<RouteRecordRaw> = [
                path: '/twoDimensions',
                name: 'TwoDimensions',
                component: TwoDimensions,
+               redirect: '/twoDimensions/animation',
                children : [
                   {
                      //动画
@@ -102,6 +105,7 @@ const routes : Array<RouteRecordRaw> = [
                path: '/threeDimensions',
                name: 'ThreeDimensions',
                component: ThreeDimensions,
+               redirect: '/tVplay',
                children: [
                   {
                      //电视剧
@@ -124,6 +128,7 @@ const routes : Array<RouteRecordRaw> = [
          path: '/userSelf',
          name: 'UserSelf',
          component: UserSelf,
+         redirect: '/userSelf/myMsg',
          children : [
             {
                //我的信息

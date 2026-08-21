@@ -18,9 +18,7 @@
                       </div>
 
                       <div class="row">
-                
-
-                        <a onclick="forgotman()">找回密码</a>
+                        <a onclick="forgotman()">忘记密码？</a>
                       </div>
 
                       <div class="loginbutcss">
@@ -28,7 +26,7 @@
                         <span id="loginfalsespan" class="loginfalse"></span>
                       </div>
                       <div class="signup-link">
-                        <p>没有账号? <a href="#" @click="toSignUp()">去创建-></a></p>
+                        <p>没有账号? <a href="#" @click="toSignUp()">立即注册</a></p>
                       </div>
                     </div>
                 </div>
@@ -58,7 +56,7 @@ export default {
         passwordisshow.value = true;
       } else {
         passwordField.type = 'password';
-         passwordisshow.value = false;
+        passwordisshow.value = false;
       }
   }
 
@@ -105,9 +103,8 @@ export default {
   }
 
   let keyDown = function(e) {
-      // 回车则执行登录方法，enter键的ASCII是13
       if (e.keyCode === 13) {
-        loginBrungle() // 需要执行的方法方法
+        loginBrungle()
       }
     }
   
@@ -127,22 +124,13 @@ export default {
 </script>
 
 <style scoped>
-.loginbutcss{
- height:100%;
- width:100%;
- display:grid;
- place-items:center;
-}
-.loginfalse{
-  color: #eb2525;
-}
 .loginpage {
    height:100%;
    width:100%;
-   /*display: grid; 
-   place-items: center;
-   grid-template-rows: 5% 80%; 
-   */
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background: linear-gradient(135deg, var(--theme-bg-page) 0%, var(--theme-primary-light) 100%);
 }
 .loginpagechilds{
    width:100%;
@@ -153,51 +141,61 @@ export default {
 }
 
 .wrapper {
-  width: 50%;
-  height:55%;
-  background: rgba(62, 64, 77, 0.5);
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
+  width: 420px;
+  padding: 48px 40px;
+  background: var(--theme-bg-card);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(15px); /*背景添加滤镜  模糊*/
+  transition: box-shadow 0.3s;
+}
+
+.wrapper:hover {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
 }
 
 .formcss{
    width: 100%;
-   height: 100%;
-   display: grid; 
-   place-items: center;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
 }
 
-  .wrapper:hover {
-    box-shadow: 0 0 40px rgba(255,255,255,0.5);
-    background: rgba(62, 64, 77, 0.5);
-  }
-
 .wrapper h1 {
-  font-size: 2em;
-  color: #fff;
+  font-size: 28px;
+  color: var(--theme-text-primary);
   text-align: center;
+  margin-bottom: 32px;
+  font-weight: 600;
 }
 
 .wrapper .input-box {
   position: relative;
-  width: 90%;
-  margin: 30px 0;
-  border-bottom: 2px solid #fff;
+  width: 100%;
+  margin: 16px 0;
+  border-bottom: 2px solid var(--theme-border);
+  transition: border-color 0.3s;
+}
+
+.wrapper .input-box:focus-within {
+  border-bottom-color: var(--theme-primary);
 }
 
 .wrapper .input-box input {
   width: 100%;
-  height: 50px;
+  height: 44px;
   background: transparent;
   outline: none;
   border: none;
-  font-size: 1em;
-  color: #fff;
+  font-size: 15px;
+  color: var(--theme-text-primary);
   padding: 0 40px 0 5px;
+}
+
+.wrapper .input-box input::placeholder {
+  color: var(--theme-text-secondary);
 }
 
 .wrapper .input-box label {
@@ -205,89 +203,115 @@ export default {
   top: 50%;
   left: 5px;
   transform: translateY(-50%);
-  font-size: 1em;
-  color: #fff;
+  font-size: 14px;
+  color: var(--theme-text-secondary);
   pointer-events: none;
-  transition: 0.5s;
+  transition: 0.3s;
 }
 
 .wrapper .input-box > span{
    position: absolute;
-   top: 60px;
-   color: #eb2525;
-
+   top: 52px;
+   color: var(--theme-danger);
+   font-size: 12px;
 }
 
 .wrapper .input-box input:focus ~ label,
 .wrapper .input-box input:valid ~ label {
-  top: -5px;
+  top: -20px;
+  font-size: 12px;
+  color: var(--theme-primary);
 }
 
 .wrapper .input-box .icon {
   position: absolute;
   right: 8px;
-  color: #fff;
-  font-size: 1.2em;
-  width:5%;
-  height:5%;
-  top: 30%;
+  color: var(--theme-text-secondary);
+  font-size: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.wrapper .input-box .icon:hover {
+  color: var(--theme-primary);
 }
 
 .wrapper .row {
-  margin: -15px 0 15px;
-  font-size: 0.9em;
-  color: #fff;
+  margin: 8px 0 20px;
+  font-size: 13px;
   display: flex;
-  justify-content: space-between;
-}
-
-.wrapper .row label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .wrapper .row a {
-  color: #fff;
+  color: var(--theme-primary);
   text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s;
 }
 
-.wrapper .options a:hover {
-  text-decoration: underline;
+.wrapper .row a:hover {
+  color: var(--theme-primary-dark);
 }
 
 .wrapper .btn {
-  width: 40%;
-  height: 40px;
-  background: #fff;
+  width: 100%;
+  height: 44px;
+  background: var(--theme-primary);
+  color: var(--theme-text-light);
   outline: none;
   border: none;
-  border-radius: 40px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1em;
+  font-size: 16px;
   font-weight: 500;
-  color: #000;
-  margin-top: 10px;
+  margin-top: 12px;
+  transition: all 0.3s;
 }
-  
-  .btn:hover {
-    background: #ffffea;
-  }
+
+.wrapper .btn:hover {
+  background: var(--theme-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 130, 244, 0.3);
+}
+
+.wrapper .btn:active {
+  transform: translateY(0);
+}
+
+.loginbutcss{
+ width:100%;
+ display:flex;
+ flex-direction: column;
+ align-items: center;
+}
+
+.loginfalse{
+  color: var(--theme-danger);
+  font-size: 13px;
+  margin-top: 8px;
+}
 
 .wrapper .signup-link {
-  font-size: 0.9em;
-  color: #fff;
+  font-size: 14px;
+  color: var(--theme-text-secondary);
   text-align: center;
-  margin: 25px 0 10px;
+  margin: 20px 0 0;
 }
 
 .wrapper .signup-link a {
-  color: #fff;
+  color: var(--theme-primary);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s;
 }
 
 .wrapper .signup-link a:hover {
+  color: var(--theme-primary-dark);
   text-decoration: underline;
 }
 
