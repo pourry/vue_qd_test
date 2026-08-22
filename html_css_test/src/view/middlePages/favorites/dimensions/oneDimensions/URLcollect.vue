@@ -26,42 +26,59 @@
                 >
                       <template #default="{ node, data }">
                         <span class="custom-tree-node">
-                          <span v-if="node.data.label">{{ node.data.label }}</span>
-                          <span v-if="node.data.typename">{{ node.data.typename }}</span>
-                          <span v-if="node.data.urlname">{{ node.data.urlname }}</span>
-                          <span>
-                            <el-icon v-if="!node.data.urlname" @click="append(data)"><Plus /></el-icon>
-                                              <el-input v-if="node.data.label"
-                                                v-model="selectofname"
-                                                style="width: 100px;height:20px;padding-bottom:5px;"
-                                                placeholder="查询节点"
-                                                @input="toselectNode"
-                                              />
-                            <el-icon v-if="!node.data.label" style="margin-left: 8px" @click="editnode(data)"><Edit /></el-icon>
-                            <el-icon v-if="!node.data.label" style="margin-left: 8px" @click="remove(node, data)"><Minus /></el-icon>
+                          <span class="tree-node-label" v-if="node.data.label">{{ node.data.label }}</span>
+                          <span class="tree-node-label" v-if="node.data.typename">{{ node.data.typename }}</span>
+                          <span class="tree-node-label" v-if="node.data.urlname">{{ node.data.urlname }}</span>
+                          <span class="tree-node-actions">
+                            <el-icon v-if="!node.data.urlname" class="tree-action-icon" @click="append(data)"><Plus /></el-icon>
+                            <el-input v-if="node.data.label"
+                              v-model="selectofname"
+              class="tree-search-input"
+              size="small"
+              placeholder="查询节点"
+              @input="toselectNode"
+            />
+                            <el-icon v-if="!node.data.label" class="tree-action-icon" @click="editnode(data)"><Edit /></el-icon>
+                            <el-icon v-if="!node.data.label" class="tree-action-icon" @click="remove(node, data)"><Minus /></el-icon>
                           </span>
                         </span>
                       </template>
                 </el-tree>
               </div>
           </div>
-              <div >
+              <div class="search-box">
                <el-input
                   v-model="selectofname"
-                  style="width: 240px:"
+                  style="width: 240px"
                   @input="toselectNode"
                   size="small"
                   placeholder="输入查询内容"
-                  suffix-icon="Search"
+                  :suffix-icon="Search"
                 />
+              </div>
+              <div @click="toggleSortMode" :class="['urlcollectoperatecss-cz', { 'sort-active': sortMode }]">
+                <div><el-icon><Rank /></el-icon></div>
+                <div>{{ sortMode ? '完成排序' : '排序模式' }}</div>
+              </div>
+              <div @click="toggleAddMode" :class="['urlcollectoperatecss-cz', { 'sort-active': addMode }]">
+                <div><el-icon><CirclePlus /></el-icon></div>
+                <div>{{ addMode ? '完成编辑' : '增加修改' }}</div>
               </div>
          </div>
         
          <div class="collectlistbody">
                    <div class="collectlistcss" v-for="item of treedatashow.list[0].children" :key="item.id">
-                      <span class="urltypecss">{{item.typename}}</span>
+                      <span :class="['urltypecss', { 'editable-title': addMode }]" @click="addMode && editnode(item)">{{item.typename}}</span>
                       <div class="urlshowcss">
-                        <div v-for="childitem of item.children" :key="childitem.id">
+                        <div v-for="childitem of item.children" :key="childitem.id"
+                          :draggable="sortMode"
+                          @click="onCardClick($event, childitem)"
+                          @dragstart="handleCardDragStart($event, childitem)"
+                          @dragover.prevent="handleCardDragOver($event, childitem)"
+                          @dragleave="handleCardDragLeave($event)"
+                          @drop.prevent="handleCardDrop($event, childitem, item)"
+                          :class="['url-card', { 'sort-mode': sortMode, 'edit-mode': addMode, 'drag-over-top': dragOverId === childitem.id && dragOverPos === 'top', 'drag-over-bottom': dragOverId === childitem.id && dragOverPos === 'bottom' }]"
+                        >
                         <span class="hasshareurl" v-if="childitem.share">
                                   <el-tooltip
                                     class="box-item"
@@ -88,14 +105,34 @@
                                                     :content="childitem.url"
                                                     placement="bottom-start"
                                                   >
-                                                    <a :href="childitem.url"  target="_blank" @click="getFavicon($event,childitem)">{{childitem.url}}</a>
+                                                    <a :href="(addMode || sortMode) ? 'javascript:void(0)' : childitem.url"  target="_blank" @click="getFavicon($event,childitem)">{{childitem.url}}</a>
                                                   </el-tooltip>
-                                            </li> 
+                                            </li>
+                                            <li v-if="childitem.notes" class="url-notes">
+                                                  <el-tooltip
+                                                    class="box-item"
+                                                    effect="dark"
+                                                    :content="childitem.notes"
+                                                    placement="bottom-start"
+                                                  >
+                                                    <span>备注：{{childitem.notes}}</span>
+                                                  </el-tooltip>
+                                            </li>
                                           </ul>
-                                          
+                                          <el-icon v-if="addMode" class="card-edit-icon"><Edit /></el-icon>
                                           
                         </div>
+                        <!-- 增加模式：每个分类末尾添加网址 -->
+                        <div v-if="addMode" class="url-card add-url-card" @click="append(item)">
+                          <el-icon class="add-card-icon"><Plus /></el-icon>
+                          <span class="add-card-text">添加网址</span>
+                        </div>
                       </div>
+                  </div>
+                  <!-- 增加模式：最底部添加分类 -->
+                  <div v-if="addMode" class="add-type-btn" @click="appendType">
+                    <el-icon><Plus /></el-icon>
+                    <span>添加分类</span>
                   </div>
          </div>
 
@@ -317,11 +354,13 @@ const handleDrop = (
 }
 let changenode = function(data){
   urlTypeCollectionapi.tochange(data).then(res=>{
-    if(!res.successful){
-            ElMessage({
-                  message: res.resultValue,
-                  type: 'warning',
-                })
+    if(res.successful){
+      geturlTypeCollection();
+    }else{
+      ElMessage({
+        message: res.resultValue,
+        type: 'warning',
+      })
     }
   })
 }
@@ -366,6 +405,92 @@ let toselectNode = function(){
 
 }
 
+// ===== 卡片拖拽排序 =====
+let sortMode = ref(false)
+let addMode = ref(false)
+let dragItem = null
+let dragOverId = ref('')
+let dragOverPos = ref('')
+const toggleSortMode = function(){
+  sortMode.value = !sortMode.value
+  if(!sortMode.value){
+    dragOverId.value = ''
+    dragOverPos.value = ''
+  }
+}
+const handleCardDragStart = function(e, item){
+  dragItem = item
+  e.dataTransfer.effectAllowed = 'move'
+  // Firefox 需要设置 dataTransfer 数据才能触发拖拽
+  e.dataTransfer.setData('text/plain', item.id)
+}
+const handleCardDragOver = function(e, item){
+  if(!dragItem || dragItem.id === item.id){
+    return
+  }
+  // 只允许同类型拖拽
+  if(dragItem.ssurltypeid !== item.ssurltypeid){
+    return
+  }
+  e.dataTransfer.dropEffect = 'move'
+  const rect = e.currentTarget.getBoundingClientRect()
+  const midY = rect.top + rect.height / 2
+  if(e.clientY < midY){
+    dragOverId.value = item.id
+    dragOverPos.value = 'top'
+  }else{
+    dragOverId.value = item.id
+    dragOverPos.value = 'bottom'
+  }
+}
+const handleCardDragLeave = function(e, item){
+  if(dragOverId.value === item.id){
+    dragOverId.value = ''
+    dragOverPos.value = ''
+  }
+}
+const handleCardDrop = function(e, dropItem, parent){
+  if(!dragItem || dragItem.id === dropItem.id){
+    dragOverId.value = ''
+    dragOverPos.value = ''
+    return
+  }
+  // 只允许同类型拖拽
+  if(dragItem.ssurltypeid !== dropItem.ssurltypeid){
+    ElMessage({ message: '只能在同一分类内排序', type: 'warning' })
+    dragOverId.value = ''
+    dragOverPos.value = ''
+    dragItem = null
+    return
+  }
+  let dropType = dragOverPos.value === 'top' ? 'before' : 'after'
+  changenode({
+    "dropid": dropItem.id,
+    "dragid": dragItem.id,
+    "dropType": dropType
+  })
+  dragItem = null
+  dragOverId.value = ''
+  dragOverPos.value = ''
+}
+// ===== 增加修改模式 =====
+const toggleAddMode = function(){
+  addMode.value = !addMode.value
+}
+const appendType = function(){
+  addTypevisible.visible = true
+}
+const onCardClick = function(e, item){
+  if(addMode.value){
+    e.preventDefault()
+    e.stopPropagation()
+    editnode(item)
+  }else if(sortMode.value){
+    e.preventDefault()
+    e.stopPropagation()
+  }
+}
+
 
 let addvisible = reactive({visible:false});
 let addTypevisible = reactive({visible:false});
@@ -391,7 +516,19 @@ return {showTree,
         tosavelogo,
         selectofname,
         toselectNode,
-        treeRef}
+        treeRef,
+        sortMode,
+        addMode,
+        dragOverId,
+        dragOverPos,
+        toggleSortMode,
+        handleCardDragStart,
+        handleCardDragOver,
+        handleCardDragLeave,
+        handleCardDrop,
+        toggleAddMode,
+        appendType,
+        onCardClick}
 
   }
 }
@@ -402,130 +539,397 @@ return {showTree,
     position: relative;
     width:100%;
     height:100%;
-}
-.collectlistbody{
-  width:100%;
-  height:98%;
-  overflow:auto;
+    padding: 12px;
+    background-color: var(--theme-bg-middle);
 }
 
-.collectlistcss{
-    width:98%;
-    margin:1%;
-}
+/* ===== 操作栏 ===== */
 .urlcollectoperatecss{
-  height:2%;
   width:100%;
   position: relative;
   display:flex;
   flex-direction: row-reverse;
-  font-size:1rem;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
 }
-.urlcollectoperatecss >div{
+.urlcollectoperatecss > div{
   cursor:pointer;
   position: relative;
-  
-  margin-left:2%;
-
+  margin-left:8px;
 }
 .urlcollectoperatecss-cz{
-   display:flex;
+  display:flex;
   justify-content:center;
   align-items:center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: var(--theme-radius-md);
+  background: var(--theme-primary-bg);
+  color: var(--theme-primary);
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
-.urlcollectoperatecss-cz>div{
+.urlcollectoperatecss-cz:hover{
+  background: var(--theme-primary-bg-hover);
+}
+.urlcollectoperatecss-cz > div{
   display:flex;
   justify-content:center;
   align-items:center;
 }
 
+/* ===== 树面板 ===== */
 .el-tree{
-  height:80vh;
+  height: auto;
+  max-height: 60vh;
   overflow:auto;
-  background-color:rgba(203,233,231);
-  border: solid 1px rgba(43,150,225);
-  border-radius:5px;
-}
-.urlcollectoperatecss>div:hover .urlcollectoperateshowcss{
-  display:block;
+  background: var(--theme-bg-card);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-md);
+  box-shadow: var(--theme-shadow-sm);
+  padding: 8px;
 }
 .urlcollectoperateshowcss{
   position:absolute;
   right:0%;
   display:none;
-  min-width:150px;
-  z-index:1;
+  min-width:200px;
+  z-index:10;
 }
 .urlcollectoperateshow{
   position:absolute;
   right:0%;
   display:block;
-  min-width:150px;
-  z-index:1;
+  min-width:200px;
+  z-index:10;
 }
+.urlcollectoperatecss > div:hover .urlcollectoperateshowcss{
+  display:block;
+}
+
+/* ===== 列表区域 ===== */
+.collectlistbody{
+  width:100%;
+  height: calc(100% - 60px);
+  overflow:auto;
+}
+.collectlistcss{
+    width:100%;
+    margin-bottom: 16px;
+}
+
+/* ===== 分类标题 ===== */
+.urltypecss{
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--theme-primary);
+  background: var(--theme-primary-bg);
+  width: auto;
+  display: inline-block;
+  padding: 4px 16px;
+  border-radius: var(--theme-radius-md);
+  margin-bottom: 8px;
+}
+
+/* ===== URL 列表容器 ===== */
 .urlshowcss{
     width:100%;
     display:flex;
-    flex-wrap: wrap;  /*可换行*/
-    align-content: flex-start; /*从左到右*/
-    /*justify-content: center;*/   /* 居中对齐 */
-    background-color:rgba(106,241,230,0.2);
-    font-size:0.5rem;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 8px;
+    font-size: 13px;
 }
-.urltypecss{
-  font-size: 1.4rem;
-  background-color:rgba(106,241,230,0.2);
-  width:auto;
-  border-radius: 0 5px 0 0;
-}
+
+/* ===== URL 卡片 ===== */
 .urlshowcss > div{
-   position:relative;
-    width:15%;
-    height:auto;
-    background-color:rgba(106,241,230,0.3);
-    margin:1%;
-    border-radius: 5px;
-    padding:10px;
+    position:relative;
+    width: 220px;
+    height: auto;
+    background: var(--theme-bg-card);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--theme-radius-md);
+    padding: 12px;
     display:flex;
     cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .urlshowcss > div:hover {
-  box-shadow: inset 0 0 100px 5px rgba(106,241,230,0.3);
-  transform:scale(1.1);
+    border-color: var(--theme-primary);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
 }
+
+/* ===== 排序模式样式 ===== */
+.url-card.sort-mode{
+  cursor: grab;
+  border-style: dashed;
+  border-color: var(--theme-border);
+}
+.url-card.sort-mode:hover{
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px var(--theme-primary-shadow);
+}
+.url-card.sort-mode:active{
+  cursor: grabbing;
+  opacity: 0.6;
+}
+.url-card.drag-over-top{
+  border-top: 3px solid var(--theme-primary);
+  margin-top: -2px;
+}
+.url-card.drag-over-bottom{
+  border-bottom: 3px solid var(--theme-primary);
+  margin-bottom: -2px;
+}
+.url-card.drag-over-top,
+.url-card.drag-over-bottom{
+  background: var(--theme-primary-bg);
+  border-color: var(--theme-primary);
+}
+
+/* ===== 排序按钮激活状态 ===== */
+.urlcollectoperatecss-cz.sort-active{
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-light) 100%);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--theme-primary-shadow);
+}
+
+/* ===== 增加模式：添加网址卡片 ===== */
+.add-url-card{
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: 2px dashed var(--theme-primary) !important;
+  background: var(--theme-primary-bg) !important;
+  color: var(--theme-primary);
+  min-height: 80px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.add-url-card:hover{
+  background: var(--theme-primary-bg-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--theme-primary-shadow);
+}
+.add-card-icon{
+  font-size: 28px;
+}
+.add-card-text{
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ===== 增加模式：添加分类按钮 ===== */
+.add-type-btn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 200px;
+  margin: 16px auto;
+  padding: 12px 24px;
+  border: 2px dashed var(--theme-border);
+  border-radius: var(--theme-radius-md);
+  background: var(--theme-bg-card);
+  color: var(--theme-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+.add-type-btn:hover{
+  border-color: var(--theme-primary);
+  color: var(--theme-primary);
+  background: var(--theme-primary-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== 增加修改模式：卡片编辑状态 ===== */
+.url-card.edit-mode{
+  cursor: pointer;
+  position: relative;
+}
+.url-card.edit-mode:hover{
+  border-color: var(--theme-warning, #e6a23c);
+  box-shadow: 0 6px 20px rgba(230, 162, 60, 0.2);
+}
+.card-edit-icon{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 16px;
+  color: var(--theme-text-secondary);
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+.url-card.edit-mode:hover .card-edit-icon{
+  opacity: 1;
+  color: var(--theme-warning, #e6a23c);
+}
+
+/* ===== 增加修改模式：分类标题可编辑 ===== */
+.urltypecss.editable-title{
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.urltypecss.editable-title:hover{
+  background: var(--theme-primary-bg-hover);
+  color: var(--theme-primary-dark);
+  text-decoration: underline;
+}
+
+/* ===== 已分享标记 ===== */
 .hasshareurl{
   position:absolute;
   left:0px;
-  bottom:0px;
-  width:30%;
-  height:30%;
+  top:0px;
+  width:28px;
+  height:28px;
   display:flex;
   align-items: center;
-  background-color: rgba(255,0,0,0.8);
-  clip-path: polygon(0 0, 0 100%, 50% 100%);
-  border-radius: 0 0 0 5px; 
+  justify-content: center;
+  background: var(--theme-primary);
+  border-radius: 8px 0 8px 0;
 }
 .hasshareicon{
-  margin-top: 20%;
-  margin-left:3%;
+  color: #fff;
+  font-size: 14px;
 }
+
+/* ===== 头像区域 ===== */
 .urlshowcss-imgcss{
-  width:30%;
+  width:40px;
+  flex-shrink: 0;
+  margin-right: 10px;
 }
-.urlshowcss-imgcss>.el-avatar{
-  width:100%;
+.urlshowcss-imgcss > .el-avatar{
+  width:40px;
+  height: 40px;
+  border-radius: var(--theme-radius-sm);
+  border: 1px solid var(--theme-border-light);
 }
+
+/* ===== URL 信息区域 ===== */
 .urlshowcss-url{
-  width:70%;
+  width: calc(100% - 50px);
   height:100%;
-  margin:0%;
-  padding:0%;
-  padding-left:5px;
-  display: grid; 
+  margin:0;
+  padding:0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
 }
-.urlshowcss-url >li{
-    white-space:nowrap; /*不让文字内容换行*/
-    overflow:hidden;/*文字溢出的部分隐藏起来*/
-    text-overflow:ellipsis; /*用...替代溢出的部分*/
+.urlshowcss-url > li{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size: 13px;
+    color: var(--theme-text-regular);
+}
+.urlshowcss-url > li:first-child{
+    font-weight: 600;
+    color: var(--theme-text-primary);
+}
+.urlshowcss-url .url-notes{
+    color: var(--theme-text-secondary);
+    font-size: 12px;
+    font-style: italic;
+}
+.urlshowcss-url a{
+  color: var(--theme-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.urlshowcss-url a:hover{
+  text-decoration: underline;
+}
+
+/* ===== 树节点操作图标 ===== */
+.custom-tree-node{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.tree-node-label{
+  font-weight: 500;
+  color: var(--theme-text-primary);
+}
+.tree-node-actions{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+}
+.tree-action-icon{
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: var(--theme-radius-sm);
+  color: var(--theme-text-secondary);
+  transition: all 0.2s ease;
+}
+.tree-action-icon:hover{
+  color: var(--theme-primary);
+  background: var(--theme-primary-bg);
+  transform: scale(1.15);
+}
+
+/* ===== 树内搜索框 ===== */
+.tree-search-input{
+  width: 120px;
+}
+.tree-search-input :deep(.el-input__wrapper){
+  border-radius: var(--theme-radius-sm);
+  box-shadow: 0 0 0 1px var(--theme-border) inset;
+  transition: box-shadow 0.2s ease;
+}
+.tree-search-input :deep(.el-input__wrapper:hover){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset;
+}
+.tree-search-input :deep(.el-input__wrapper.is-focus){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset, 0 0 0 3px var(--theme-primary-bg) inset;
+}
+
+/* ===== 树整体样式覆盖 ===== */
+:deep(.el-tree-node__content){
+  height: 36px;
+  border-radius: var(--theme-radius-sm);
+  transition: background 0.2s ease;
+}
+:deep(.el-tree-node__content:hover){
+  background: var(--theme-primary-bg);
+}
+:deep(.el-tree-node.is-current > .el-tree-node__content){
+  background: var(--theme-primary-bg);
+}
+:deep(.el-tree__drop-indicator){
+  height: 2px;
+  background: var(--theme-primary);
+}
+:deep(.el-tree-node.is-drop-inner > .el-tree-node__content){
+  background: var(--theme-primary-bg-hover);
+}
+
+/* ===== 搜索框 ===== */
+.search-box{
+  flex-shrink: 0;
+}
+.search-box :deep(.el-input__wrapper){
+  border-radius: var(--theme-radius-md);
+  box-shadow: 0 0 0 1px var(--theme-border) inset;
+  transition: box-shadow 0.2s ease;
+}
+.search-box :deep(.el-input__wrapper:hover){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset;
+}
+.search-box :deep(.el-input__wrapper.is-focus){
+  box-shadow: 0 0 0 1px var(--theme-primary) inset, 0 0 0 3px var(--theme-primary-bg) inset;
 }
 </style>

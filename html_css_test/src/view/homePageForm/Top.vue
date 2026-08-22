@@ -34,17 +34,16 @@
            <el-icon><User /></el-icon>
            <span>我的</span>
          </div>
-         <div  v-if="haslogin" >
-           <div class="tchead">
-            <div class="tccss" @click="toquite">
-              <el-icon><SwitchButton /></el-icon>
-              <span>退出</span>
-            </div>
-            <ul  class="tc_li" >
-              <li @click="tologin"><el-icon><User /></el-icon>重新登录</li>
-            </ul>
+         <div v-if="haslogin" class="tchead">
+           <div :class="['tccss', 'nav-btn', { active: toggleControl }]" @click="toggleControl = !toggleControl">
+             <el-icon><Setting /></el-icon>
+             <span>控制</span>
            </div>
-          </div>
+           <ul v-show="toggleControl" class="tc_li" @click.stop>
+             <li @click="tologin"><el-icon><User /></el-icon>重新登录</li>
+             <li @click="toquite"><el-icon><SwitchButton /></el-icon>退出</li>
+           </ul>
+         </div>
          <div v-if="!haslogin" class="nav-btn login-btn" @click="tologin">
           <el-icon><User /></el-icon>
           <span>登录</span>
@@ -69,6 +68,7 @@ export default {
 
     // 主题相关
     const togglePanel = ref(false)
+    const toggleControl = ref(false)
     const themeList = THEME_LIST
     const currentTheme = computed(() => store.getters.getTheme)
 
@@ -102,6 +102,7 @@ export default {
      )
     //退出
     let toquite = function(){
+      toggleControl.value = false
       nextTick(()=>{
         haslogin.value = false;
       })
@@ -120,6 +121,7 @@ export default {
       router.push("/userSelf")
     }
     let tologin = function(){
+      toggleControl.value = false
       router.push("/login")
     }
 
@@ -133,6 +135,7 @@ export default {
            haslogin,
            toquite,
            togglePanel,
+           toggleControl,
            themeList,
            currentTheme,
            handleChangeTheme,
@@ -285,7 +288,16 @@ export default {
   background: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-primary) 100%);
 }
 
-/* ===== 退出按钮下拉箭头 ===== */
+/* ===== 控制按钮容器 ===== */
+.tchead{
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ===== 控制按钮下拉箭头 ===== */
 .tccss::after {
   content: '';
   display: inline-block;
@@ -297,16 +309,8 @@ export default {
   border-top: 5px solid currentColor;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.tchead:hover .tccss::after {
+.tccss.active::after {
   transform: rotate(180deg);
-}
-
-/* ===== 退出下拉菜单容器 ===== */
-.tchead{
-  height:100%;
-  position: relative;
-  display: flex;
-  align-items: center;
 }
 
 /* ===== 退出下拉菜单 ===== */
@@ -315,7 +319,6 @@ export default {
    top: 100%;
    right: 0;
    margin-top: 8px;
-   display: none;
    list-style-type: none;
    padding: 8px;
    margin: 0;
@@ -362,14 +365,6 @@ export default {
 }
 .tc_li li + li {
   margin-top: 2px;
-}
-
-/* 显示下拉菜单 */
-.tccss:hover + .tc_li{
-  display: block;
-}
-.tc_li:hover {
-  display: block;
 }
 
 /* ===== 主题切换器（特殊样式） ===== */
