@@ -25,6 +25,8 @@ import TVplay from '@/view/middlePages/favorites/dimensions/threeDimensions/TVpl
 import ApplyFor from '@/view/middlePages/selfs/flowableControl/ApplyFor.vue'
 import MyMsg from '@/view/middlePages/selfs/flowableControl/MyMsg.vue'
 import Test from '@/view/middlePages/selfs/flowableControl/Test.vue'
+import CarouselControl from '@/view/middlePages/selfs/CarouselControl.vue'
+import FooterControl from '@/view/middlePages/selfs/FooterControl.vue'
 
 const routes : Array<RouteRecordRaw> = [
 
@@ -143,10 +145,22 @@ const routes : Array<RouteRecordRaw> = [
                component: ApplyFor,
             },
             {
-               //我的申请
+               //代码测试场
                path: '/userSelf/test',
                name: 'Test',
                component: Test,
+            },
+            {
+               //走马灯控制
+               path: '/userSelf/carousel',
+               name: 'CarouselControl',
+               component: CarouselControl,
+            },
+            {
+               //底部内容控制
+               path: '/userSelf/footer',
+               name: 'FooterControl',
+               component: FooterControl,
             },
          ]
       },

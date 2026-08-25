@@ -301,6 +301,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import userInfoApi from '@/api/userInfo'
 
 // 标签页配置
 const tabs = [
@@ -311,23 +312,25 @@ const tabs = [
 ]
 
 const activeTab = ref('basic')
+const loading = ref(false)
+const uploading = ref(false)
 
-// 响应式数据
+// 响应式数据（字段名映射后端 SysUser）
 const userInfo = reactive({
-  id: 1,
-  username: 'testuser',
-  nickname: '测试用户',
-  email: 'test@example.com',
-  phone: '13800138000',
-  birthday: '1990-01-01',
-  gender: 'male',
+  id: '',
+  username: '',
+  nickname: '',       // 后端 nickName
+  email: '',
+  phone: '',
+  birthday: '',
+  gender: '',
   avatar: '',
   emailNotification: true,
   profilePublic: false,
   autoSave: true,
   darkMode: false,
-  createTime: '2023-01-01T00:00:00.000Z',
-  updateTime: new Date().toISOString()
+  createTime: '',
+  updateTime: ''
 })
 
 const passwordForm = reactive({
@@ -366,13 +369,44 @@ let originalUserInfo: any = {}
 
 // 方法
 const formatDate = (dateString: string) => {
+  if (!dateString) return '-'
   return new Date(dateString).toLocaleString('zh-CN')
+}
+
+/** 加载当前用户信息 */
+const loadUserInfo = async () => {
+  loading.value = true
+  try {
+    const res: any = await userInfoApi.query()
+    if (res.code === 200) {
+      const data = res.resultValue
+      if (data) {
+        // 字段映射：后端 nickName → 前端 nickname
+        userInfo.id = data.id || ''
+        userInfo.username = data.username || ''
+        userInfo.nickname = data.nickName || ''
+        userInfo.email = data.email || ''
+        userInfo.phone = data.phone || ''
+        userInfo.birthday = data.birthday || ''
+        userInfo.gender = data.gender || ''
+        userInfo.avatar = data.avatar || ''
+        userInfo.createTime = data.createTime || ''
+        userInfo.updateTime = data.updateTime || ''
+      }
+    } else {
+      ElMessage.error(res.resultValue || '获取用户信息失败')
+    }
+  } catch (err: any) {
+    ElMessage.error('获取用户信息失败，请检查网络')
+  } finally {
+    loading.value = false
+  }
 }
 
 const toggleEdit = (type: 'basic' | 'password') => {
   editMode[type] = true
   clearErrors()
-  
+
   if (type === 'basic') {
     originalUserInfo = { ...userInfo }
   } else if (type === 'password') {
@@ -383,7 +417,7 @@ const toggleEdit = (type: 'basic' | 'password') => {
 const cancelEdit = (type: 'basic' | 'password') => {
   editMode[type] = false
   clearErrors()
-  
+
   if (type === 'basic') {
     Object.assign(userInfo, originalUserInfo)
   } else if (type === 'password') {
@@ -400,10 +434,7 @@ const validateBasicInfo = (): boolean => {
     isValid = false
   }
 
-  if (!userInfo.email?.trim()) {
-    errors.email = '邮箱不能为空'
-    isValid = false
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.email)) {
+  if (userInfo.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.email)) {
     errors.email = '邮箱格式不正确'
     isValid = false
   }
@@ -450,27 +481,64 @@ const clearErrors = () => {
   })
 }
 
-const saveBasicInfo = () => {
+/** 保存基本信息 */
+const saveBasicInfo = async () => {
   if (!validateBasicInfo()) return
-  
-  ElMessage.success('基本信息保存成功')
-  editMode.basic = false
-  originalUserInfo = { ...userInfo }
-  userInfo.updateTime = new Date().toISOString()
+
+  loading.value = true
+  try {
+    // 前端 nickname → 后端 nickName
+    const params = {
+      nickName: userInfo.nickname,
+      email: userInfo.email,
+      phone: userInfo.phone,
+      birthday: userInfo.birthday,
+      gender: userInfo.gender
+    }
+    const res: any = await userInfoApi.updateInfo(params)
+    if (res.code === 200) {
+      ElMessage.success('基本信息保存成功')
+      editMode.basic = false
+      originalUserInfo = { ...userInfo }
+      // 刷新最新信息
+      await loadUserInfo()
+    } else {
+      ElMessage.error(res.resultValue || '保存失败')
+    }
+  } catch (err: any) {
+    ElMessage.error('保存失败，请检查网络')
+  } finally {
+    loading.value = false
+  }
 }
 
-const changePassword = () => {
+/** 修改密码 */
+const changePassword = async () => {
   if (!validatePassword()) return
-  
-  ElMessage.success('密码修改成功')
-  editMode.password = false
-  Object.assign(passwordForm, { currentPassword: '', newPassword: '', confirmPassword: '' })
-  userInfo.updateTime = new Date().toISOString()
+
+  loading.value = true
+  try {
+    const params = {
+      currentPassword: passwordForm.currentPassword,
+      newPassword: passwordForm.newPassword
+    }
+    const res: any = await userInfoApi.changePassword(params)
+    if (res.code === 200) {
+      ElMessage.success('密码修改成功')
+      editMode.password = false
+      Object.assign(passwordForm, { currentPassword: '', newPassword: '', confirmPassword: '' })
+    } else {
+      ElMessage.error(res.resultValue || '密码修改失败')
+    }
+  } catch (err: any) {
+    ElMessage.error('密码修改失败，请检查网络')
+  } finally {
+    loading.value = false
+  }
 }
 
 const saveSettings = () => {
   ElMessage.success('设置保存成功')
-  userInfo.updateTime = new Date().toISOString()
 }
 
 const togglePassword = (type: 'current' | 'new' | 'confirm') => {
@@ -481,21 +549,38 @@ const changeAvatar = () => {
   avatarInput.value?.click()
 }
 
-const handleAvatarChange = (event: Event) => {
+/** 上传头像 */
+const handleAvatarChange = async (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
-  if (file) {
-    if (file.size > 2 * 1024 * 1024) {
-      ElMessage.error('头像文件大小不能超过2MB')
-      return
-    }
+  if (!file) return
 
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      userInfo.avatar = e.target?.result as string
+  if (file.size > 5 * 1024 * 1024) {
+    ElMessage.error('头像文件大小不能超过5MB')
+    return
+  }
+
+  const formData = new FormData()
+  formData.append('file', file)
+
+  uploading.value = true
+  try {
+    const res: any = await userInfoApi.uploadAvatar(formData)
+    if (res.code === 200) {
+      // 后端返回头像URL在 resultValue 中
+      const avatarUrl = res.resultValue
+      userInfo.avatar = avatarUrl
       ElMessage.success('头像上传成功')
-      userInfo.updateTime = new Date().toISOString()
+    } else {
+      ElMessage.error(res.resultValue || '头像上传失败')
     }
-    reader.readAsDataURL(file)
+  } catch (err: any) {
+    ElMessage.error('头像上传失败，请检查网络')
+  } finally {
+    uploading.value = false
+    // 重置input，避免同一文件无法触发change
+    if (avatarInput.value) {
+      avatarInput.value.value = ''
+    }
   }
 }
 
@@ -504,14 +589,15 @@ const deleteAccount = () => {
     ElMessage.error('请输入密码确认')
     return
   }
-  
+
   ElMessage.success('账户删除成功')
   showDeleteConfirm.value = false
 }
 
-// 初始化
-onMounted(() => {
+// 初始化：加载用户信息
+onMounted(async () => {
   originalUserInfo = { ...userInfo }
+  await loadUserInfo()
 })
 </script>
 

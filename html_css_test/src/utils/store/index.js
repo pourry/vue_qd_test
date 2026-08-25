@@ -9,6 +9,7 @@ export const THEME_LIST = [
   { key: 'orange', name: '日落橙', color: '#FA541C' },
   { key: 'rose',   name: '玫红',   color: '#EB2F96' },
   { key: 'cyan',   name: '青蓝',   color: '#13C2C2' },
+  { key: 'dark',   name: '灰黑',   color: '#818CF8' },
 ]
 
 // 从 localStorage 读取或使用默认

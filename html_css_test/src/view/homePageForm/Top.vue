@@ -154,8 +154,11 @@ export default {
   gap: 8px;
   max-width: 100%;
   overflow: visible;
-  background: linear-gradient(180deg, var(--theme-bg-top) 0%, rgba(255,255,255,0.98) 100%);
+  background: var(--theme-bg-top);
   border-bottom: 1px solid var(--theme-border-lighter);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 10;
 }
 
 /* ===== 左侧 Logo 区域 ===== */
@@ -184,7 +187,7 @@ export default {
   align-items: center;
   gap: 8px;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-accent) 100%);
+  background: linear-gradient(135deg, var(--theme-primary) 0%, #a78bfa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -200,7 +203,7 @@ export default {
   font-size: 20px;
   color: var(--theme-primary);
   -webkit-text-fill-color: var(--theme-primary);
-  filter: drop-shadow(0 2px 4px var(--theme-primary-shadow));
+  filter: drop-shadow(0 2px 6px var(--theme-primary-shadow));
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .leftdiv:hover .logo-icon {
@@ -223,7 +226,7 @@ export default {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 
 /* ===== 统一样式：基础按钮 ===== */
@@ -244,6 +247,7 @@ export default {
   white-space: nowrap;
   position: relative;
   gap: 6px;
+  border: 1px solid transparent;
 }
 
 /* 悬停状态 - 所有按钮统一 */
@@ -251,10 +255,11 @@ export default {
 .nav-btn:hover,
 .tccss:hover,
 .theme-switcher:hover {
-  background: var(--theme-primary-bg);
-  color: var(--theme-primary);
+  background: var(--theme-bg-hover);
+  color: var(--theme-text-primary);
+  border-color: var(--theme-border-light);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* 点击状态 */
@@ -263,15 +268,16 @@ export default {
 .tccss:active,
 .theme-switcher:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  background: var(--theme-bg-active);
 }
 
 /* ===== 导航按钮选中状态 ===== */
 .nav-btn.active {
   background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
   color: #fff;
-  box-shadow: 0 4px 14px var(--theme-primary-shadow);
+  box-shadow: 0 4px 16px var(--theme-primary-shadow);
   transform: translateY(-1px);
+  border-color: transparent;
 }
 .nav-btn.active::before {
   content: '';
@@ -279,13 +285,15 @@ export default {
   bottom: -1px;
   left: 50%;
   transform: translateX(-50%);
-  width: 20px;
+  width: 24px;
   height: 3px;
-  background: var(--theme-primary);
+  background: #fff;
   border-radius: 2px 2px 0 0;
+  box-shadow: 0 0 8px var(--theme-primary-shadow);
 }
 .nav-btn.active:hover {
   background: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-primary) 100%);
+  box-shadow: 0 6px 20px var(--theme-primary-shadow);
 }
 
 /* ===== 控制按钮容器 ===== */
@@ -318,16 +326,16 @@ export default {
    position: absolute;
    top: 100%;
    right: 0;
-   margin-top: 8px;
+   margin-top: 10px;
    list-style-type: none;
    padding: 8px;
    margin: 0;
-   min-width: 140px;
+   min-width: 150px;
    text-align:center;
    background: var(--theme-bg-card);
    border: 1px solid var(--theme-border);
    border-radius: var(--theme-radius-lg);
-   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
    overflow: hidden;
    z-index: 999;
    animation: dropDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -357,6 +365,7 @@ export default {
   border-radius: var(--theme-radius-md);
   transition: all 0.2s ease;
   cursor: pointer;
+  gap: 8px;
 }
 .tc_li li:hover{
   background: var(--theme-primary-bg);
@@ -364,7 +373,13 @@ export default {
   font-weight: 500;
 }
 .tc_li li + li {
-  margin-top: 2px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--theme-border-lighter);
+}
+.tc_li li + li:first-of-type {
+  border-top: none;
+  padding-top: 0;
 }
 
 /* ===== 主题切换器（特殊样式） ===== */
@@ -382,14 +397,14 @@ export default {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 8px;
-  padding: 8px;
-  min-width: 180px;
+  margin-top: 10px;
+  padding: 10px;
+  min-width: 190px;
   list-style: none;
   background: var(--theme-bg-card);
   border: 1px solid var(--theme-border);
   border-radius: var(--theme-radius-lg);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   z-index: 999;
   animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: top right;
@@ -440,13 +455,14 @@ export default {
   background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
   color: #fff;
   font-weight: 500;
-  box-shadow: 0 2px 8px var(--theme-primary-shadow);
+  box-shadow: 0 2px 10px var(--theme-primary-shadow);
+  border-color: transparent;
 }
 .login-btn:hover {
   background: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-primary) 100%);
   color: #fff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px var(--theme-primary-shadow);
+  box-shadow: 0 4px 16px var(--theme-primary-shadow);
 }
 
 /* ===== 响应式优化 ===== */

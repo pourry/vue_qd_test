@@ -64,11 +64,52 @@
                 <div><el-icon><CirclePlus /></el-icon></div>
                 <div>{{ addMode ? '完成编辑' : '增加修改' }}</div>
               </div>
+              <!-- 验证网址可用性按钮 -->
+              <div @click="toggleValidateMode" :class="['urlcollectoperatecss-cz', { 'sort-active': validateMode || validating }]">
+                <div><el-icon :class="{ 'is-loading': validating }"><Connection /></el-icon></div>
+                <div>{{ validating ? '验证中...' : (validateMode ? '完成选择' : (validateResults ? '重新验证' : '验证可用性')) }}</div>
+              </div>
          </div>
-        
+         
+         <!-- 选择验证工具栏 -->
+         <div v-if="validateMode" class="validate-toolbar">
+           <div class="validate-toolbar-left">
+             <el-checkbox 
+               :model-value="isAllSelected" 
+               :indeterminate="isIndeterminate"
+               @change="(val) => toggleSelectAll(val)">
+               全选
+             </el-checkbox>
+             <span class="validate-selected-count">已选 {{ selectedUrls.length }} 项</span>
+           </div>
+           <div class="validate-toolbar-right">
+             <el-button size="small" type="primary" :loading="validating" :disabled="selectedUrls.length === 0" @click="validateSelectedUrls">
+               验证选中
+             </el-button>
+             <el-button size="small" @click="clearSelection">清空选择</el-button>
+           </div>
+         </div>
+
+         <!-- 验证结果统计 -->
+         <div v-if="validateResults" class="validate-summary">
+           <el-tag type="success" size="small">可用: {{ validateResults.availableCount }}</el-tag>
+           <el-tag type="danger" size="small">不可用: {{ validateResults.unavailableCount }}</el-tag>
+           <el-tag type="info" size="small">总计: {{ validateResults.total }}</el-tag>
+           <el-button size="small" text @click="validateResults = null">关闭</el-button>
+         </div>
+
          <div class="collectlistbody">
                    <div class="collectlistcss" v-for="item of treedatashow.list[0].children" :key="item.id">
-                      <span :class="['urltypecss', { 'editable-title': addMode }]" @click="addMode && editnode(item)">{{item.typename}}</span>
+                      <div class="urltypecss-wrapper">
+                        <span :class="['urltypecss', { 'editable-title': addMode }]" @click="addMode && editnode(item)">{{item.typename}}</span>
+                        <el-checkbox 
+                          v-if="validateMode"
+                          :model-value="isCategoryAllSelected(item)"
+                          :indeterminate="isCategoryIndeterminate(item)"
+                          @change="(val) => toggleCategorySelectAll(item, val)">
+                          全选
+                        </el-checkbox>
+                      </div>
                       <div class="urlshowcss">
                         <div v-for="childitem of item.children" :key="childitem.id"
                           :draggable="sortMode"
@@ -77,8 +118,23 @@
                           @dragover.prevent="handleCardDragOver($event, childitem)"
                           @dragleave="handleCardDragLeave($event)"
                           @drop.prevent="handleCardDrop($event, childitem, item)"
-                          :class="['url-card', { 'sort-mode': sortMode, 'edit-mode': addMode, 'drag-over-top': dragOverId === childitem.id && dragOverPos === 'top', 'drag-over-bottom': dragOverId === childitem.id && dragOverPos === 'bottom' }]"
+                          :class="['url-card', { 'sort-mode': sortMode, 'edit-mode': addMode, 'drag-over-top': dragOverId === childitem.id && dragOverPos === 'top', 'drag-over-bottom': dragOverId === childitem.id && dragOverPos === 'bottom', 'validate-mode': validateMode, 'selected-card': validateMode && isUrlSelected(childitem.id) }, getValidateStatusClass(childitem.id)]"
                         >
+                        <!-- 选择模式复选框 -->
+                        <el-checkbox 
+                          v-if="validateMode"
+                          class="card-checkbox"
+                          :model-value="isUrlSelected(childitem.id)"
+                          @click.stop
+                          @change="() => toggleUrlSelect(childitem)">
+                        </el-checkbox>
+                        <!-- 验证状态标记 -->
+                        <span v-if="validateResults && getValidateResult(childitem.id)" 
+                          :class="['validate-badge', getValidateResult(childitem.id).available ? 'available' : 'unavailable']"
+                          :title="getValidateResult(childitem.id).message">
+                          <el-icon v-if="getValidateResult(childitem.id).available"><CircleCheckFilled /></el-icon>
+                          <el-icon v-else><CircleCloseFilled /></el-icon>
+                        </span>
                         <span class="hasshareurl" v-if="childitem.share">
                                   <el-tooltip
                                     class="box-item"
@@ -488,7 +544,204 @@ const onCardClick = function(e, item){
   }else if(sortMode.value){
     e.preventDefault()
     e.stopPropagation()
+  }else if(validateMode.value){
+    // 选择模式下点击卡片切换选择
+    e.preventDefault()
+    e.stopPropagation()
+    toggleUrlSelect(item)
   }
+}
+
+// ===== 网址可用性验证 =====
+const validating = ref(false)
+const validateResults = ref(null)
+const validateResultMap = ref({})
+const validateMode = ref(false)
+const selectedUrls = ref([])
+
+// 切换验证模式
+const toggleValidateMode = function(){
+  validateMode.value = !validateMode.value
+  if(!validateMode.value){
+    selectedUrls.value = []
+  }
+}
+
+// 获取所有网址
+const getAllUrls = function(){
+  const urls = []
+  const list = treedatashow.list[0].children
+  for(let i = 0; i < list.length; i++){
+    const children = list[i].children || []
+    for(let j = 0; j < children.length; j++){
+      if(children[j].url){
+        urls.push(children[j])
+      }
+    }
+  }
+  return urls
+}
+
+// 判断网址是否选中
+const isUrlSelected = function(id){
+  return selectedUrls.value.some(item => item.id === id)
+}
+
+// 切换网址选中状态
+const toggleUrlSelect = function(item){
+  const index = selectedUrls.value.findIndex(i => i.id === item.id)
+  if(index > -1){
+    selectedUrls.value.splice(index, 1)
+  }else{
+    selectedUrls.value.push(item)
+  }
+}
+
+// 全选状态
+const isAllSelected = ref(false)
+const isIndeterminate = ref(false)
+
+// 更新全选状态
+const updateSelectAllState = function(){
+  const allUrls = getAllUrls()
+  if(allUrls.length === 0){
+    isAllSelected.value = false
+    isIndeterminate.value = false
+    return
+  }
+  const selectedCount = selectedUrls.value.length
+  isAllSelected.value = selectedCount === allUrls.length
+  isIndeterminate.value = selectedCount > 0 && selectedCount < allUrls.length
+}
+
+// 全选/取消全选
+const toggleSelectAll = function(val){
+  if(val){
+    const allUrls = getAllUrls()
+    selectedUrls.value = [...allUrls]
+  }else{
+    selectedUrls.value = []
+  }
+  updateSelectAllState()
+}
+
+// 分类全选状态
+const isCategoryAllSelected = function(category){
+  const children = category.children || []
+  if(children.length === 0) return false
+  return children.every(child => selectedUrls.value.some(s => s.id === child.id))
+}
+
+// 分类半选状态
+const isCategoryIndeterminate = function(category){
+  const children = category.children || []
+  if(children.length === 0) return false
+  const selectedCount = children.filter(child => selectedUrls.value.some(s => s.id === child.id)).length
+  return selectedCount > 0 && selectedCount < children.length
+}
+
+// 切换分类全选
+const toggleCategorySelectAll = function(category, val){
+  const children = category.children || []
+  if(val){
+    // 添加该分类下所有未选中的
+    children.forEach(child => {
+      if(!selectedUrls.value.some(s => s.id === child.id)){
+        selectedUrls.value.push(child)
+      }
+    })
+  }else{
+    // 移除该分类下所有
+    selectedUrls.value = selectedUrls.value.filter(s => !children.some(c => c.id === s.id))
+  }
+  updateSelectAllState()
+}
+
+// 清空选择
+const clearSelection = function(){
+  selectedUrls.value = []
+  updateSelectAllState()
+}
+
+// 验证选中的网址
+const validateSelectedUrls = async function(){
+  if(validating.value) return
+  if(selectedUrls.value.length === 0){
+    ElMessage({ message: '请先选择要验证的网址', type: 'warning' })
+    return
+  }
+  
+  const urls = selectedUrls.value.map(item => ({
+    id: item.id,
+    url: item.url,
+    urlname: item.urlname
+  }))
+  
+  validating.value = true
+  validateResults.value = null
+  validateResultMap.value = {}
+  
+  try{
+    const res = await urlCollectionapi.validateUrls(urls)
+    if(res.successful){
+      const data = res.resultValue
+      const resultList = data.results || []
+      const map = {}
+      
+      resultList.forEach(item => {
+        map[item.id] = item
+      })
+      
+      validateResultMap.value = map
+      validateResults.value = {
+        availableCount: data.availableCount,
+        unavailableCount: data.unavailableCount,
+        total: data.total
+      }
+      
+      const availCount = data.availableCount
+      const unavailCount = data.unavailableCount
+      ElMessage({ 
+        message: `验证完成：可用 ${availCount} 个，不可用 ${unavailCount} 个`, 
+        type: availCount > unavailCount ? 'success' : 'warning' 
+      })
+    }else{
+      ElMessage({ message: res.resultValue || '验证失败', type: 'error' })
+    }
+  }catch(error){
+    ElMessage({ message: '验证请求失败，请检查网络', type: 'error' })
+  }finally{
+    validating.value = false
+  }
+}
+
+// 验证所有网址（兼容旧方法）
+const validateAllUrls = async function(){
+  if(validating.value) return
+  
+  const allUrls = getAllUrls()
+  if(allUrls.length === 0){
+    ElMessage({ message: '没有可验证的网址', type: 'warning' })
+    return
+  }
+  
+  // 进入选择模式并全选
+  validateMode.value = true
+  selectedUrls.value = [...allUrls]
+  updateSelectAllState()
+  
+  // 直接执行验证
+  await validateSelectedUrls()
+}
+
+const getValidateResult = function(id){
+  return validateResultMap.value[id] || null
+}
+
+const getValidateStatusClass = function(id){
+  const result = validateResultMap.value[id]
+  if(!result) return ''
+  return result.available ? 'card-available' : 'card-unavailable'
 }
 
 
@@ -528,7 +781,26 @@ return {showTree,
         handleCardDrop,
         toggleAddMode,
         appendType,
-        onCardClick}
+        onCardClick,
+        // 验证相关
+        validating,
+        validateResults,
+        validateMode,
+        selectedUrls,
+        isAllSelected,
+        isIndeterminate,
+        toggleValidateMode,
+        toggleSelectAll,
+        toggleCategorySelectAll,
+        toggleUrlSelect,
+        validateAllUrls,
+        validateSelectedUrls,
+        clearSelection,
+        isUrlSelected,
+        isCategoryAllSelected,
+        isCategoryIndeterminate,
+        getValidateResult,
+        getValidateStatusClass}
 
   }
 }
@@ -931,5 +1203,164 @@ return {showTree,
 }
 .search-box :deep(.el-input__wrapper.is-focus){
   box-shadow: 0 0 0 1px var(--theme-primary) inset, 0 0 0 3px var(--theme-primary-bg) inset;
+}
+
+/* ===== 验证结果统计 ===== */
+.validate-summary{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  margin-bottom: 12px;
+  background: var(--theme-bg-card);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-md);
+  box-shadow: var(--theme-shadow-sm);
+  animation: fadeInSlide 0.3s ease;
+}
+.validate-summary .el-tag{
+  font-weight: 500;
+}
+.validate-summary .el-button{
+  margin-left: auto;
+}
+
+/* ===== 验证状态标记 ===== */
+.validate-badge{
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  z-index: 10;
+  animation: badgePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.validate-badge.available{
+  background: #67c23a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(103, 194, 58, 0.4);
+}
+.validate-badge.unavailable{
+  background: #f56c6c;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(245, 108, 108, 0.4);
+}
+
+/* ===== 卡片状态样式 ===== */
+.url-card.card-available{
+  border-color: #67c23a !important;
+  box-shadow: 0 0 12px rgba(103, 194, 58, 0.15);
+}
+.url-card.card-available:hover{
+  border-color: #5daf34 !important;
+  box-shadow: 0 6px 20px rgba(103, 194, 58, 0.25);
+}
+.url-card.card-unavailable{
+  border-color: #f56c6c !important;
+  background: linear-gradient(to right, rgba(245, 108, 108, 0.05), var(--theme-bg-card));
+}
+.url-card.card-unavailable:hover{
+  border-color: #e65656 !important;
+  box-shadow: 0 6px 20px rgba(245, 108, 108, 0.2);
+}
+.url-card.card-unavailable .urlshowcss-url{
+  opacity: 0.8;
+}
+
+/* ===== 动画 ===== */
+@keyframes fadeInSlide{
+  from{
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes badgePop{
+  0%{
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  50%{
+    transform: scale(1.2) rotate(10deg);
+  }
+  100%{
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* ===== 选择验证工具栏 ===== */
+.validate-toolbar{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  background: var(--theme-primary-bg);
+  border: 1px solid var(--theme-primary);
+  border-radius: var(--theme-radius-md);
+  animation: fadeInSlide 0.3s ease;
+}
+.validate-toolbar-left{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.validate-toolbar-right{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.validate-selected-count{
+  font-size: 13px;
+  color: var(--theme-primary);
+  font-weight: 500;
+}
+
+/* ===== 分类标题包装器 ===== */
+.urltypecss-wrapper{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.urltypecss-wrapper .el-checkbox{
+  font-size: 12px;
+}
+
+/* ===== 选择模式下的卡片样式 ===== */
+.url-card.validate-mode{
+  cursor: pointer;
+}
+.url-card.selected-card{
+  border-color: var(--theme-primary) !important;
+  background: var(--theme-primary-bg);
+  box-shadow: 0 0 0 2px var(--theme-primary-light);
+}
+.url-card .card-checkbox{
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 5;
+  background: var(--theme-bg-card);
+  border-radius: 4px;
+  padding: 2px;
+}
+.url-card.validate-mode .urlshowcss-imgcss{
+  padding-left: 28px;
+}
+
+/* ===== 已选卡片高亮 ===== */
+.url-card.selected-card:hover{
+  border-color: var(--theme-primary) !important;
+  box-shadow: 0 4px 16px var(--theme-primary-shadow);
 }
 </style>

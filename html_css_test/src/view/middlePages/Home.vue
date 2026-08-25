@@ -1,11 +1,18 @@
 <template>
     <div class="zycss">
         <div class="zmdcss">
-             <el-carousel :interval="4000" type="card"  height="200px" >
-                <el-carousel-item v-for="item in 6" :key="item">
-                  <h3 text="2xl" justify="center">{{ item }}</h3>
+             <el-carousel :interval="4000" type="card" height="200px" v-if="carouselList.length > 0">
+                <el-carousel-item v-for="item in carouselList" :key="item.id" @click="onCarouselClick(item)">
+                  <div class="carousel-item-inner">
+                    <img v-if="item.pictureUrl" :src="item.pictureUrl" :alt="item.title" class="carousel-img" />
+                    <div class="carousel-title" v-if="item.title">{{ item.title }}</div>
+                  </div>
                 </el-carousel-item>
               </el-carousel>
+              <div class="carousel-placeholder" v-else>
+                <h3>欢迎使用首页</h3>
+                <p>请到「我的 → 走马灯控制」添加轮播图</p>
+              </div>
         </div>
         <div class="export">
            <div class="exportleft">
@@ -171,10 +178,66 @@
                   </ul>
 
                 </el-tab-pane>
-                <el-tab-pane label="动画" name="动画">Animation</el-tab-pane>
-                <el-tab-pane label="漫画" name="Comic">Comic</el-tab-pane>
-                <el-tab-pane label="小说" name="Novel">Novel</el-tab-pane>
-                <el-tab-pane label="游戏" name="Game">Game</el-tab-pane>
+                <el-tab-pane label="动画" name="animation" class="rdphlist">
+                  <ul v-if="animationHotList.list.length > 0">
+                    <li v-for="item of animationHotList.list" :key="item.index">
+                      <div>{{item.index}}.</div>
+                      <div @click="tourl(item.address)">
+                        <el-avatar shape="square" :size="20" v-if="item.pictureUrl">
+                          <img :src="item.pictureUrl" />
+                        </el-avatar>
+                        <span v-else class="no-img">🎬</span>
+                        {{item.name}}
+                      </div>
+                    </li>
+                  </ul>
+                  <div v-else class="rdph-empty">暂无动画数据</div>
+                </el-tab-pane>
+                <el-tab-pane label="漫画" name="comic" class="rdphlist">
+                  <ul v-if="comicHotList.list.length > 0">
+                    <li v-for="item of comicHotList.list" :key="item.index">
+                      <div>{{item.index}}.</div>
+                      <div @click="tourl(item.address)">
+                        <el-avatar shape="square" :size="20" v-if="item.pictureUrl">
+                          <img :src="item.pictureUrl" />
+                        </el-avatar>
+                        <span v-else class="no-img">📖</span>
+                        {{item.name}}
+                      </div>
+                    </li>
+                  </ul>
+                  <div v-else class="rdph-empty">暂无漫画数据</div>
+                </el-tab-pane>
+                <el-tab-pane label="小说" name="novel" class="rdphlist">
+                  <ul v-if="novelHotList.list.length > 0">
+                    <li v-for="item of novelHotList.list" :key="item.index">
+                      <div>{{item.index}}.</div>
+                      <div @click="tourl(item.address)">
+                        <el-avatar shape="square" :size="20" v-if="item.pictureUrl">
+                          <img :src="item.pictureUrl" />
+                        </el-avatar>
+                        <span v-else class="no-img">📚</span>
+                        {{item.name}}
+                      </div>
+                    </li>
+                  </ul>
+                  <div v-else class="rdph-empty">暂无小说数据</div>
+                </el-tab-pane>
+                <el-tab-pane label="游戏" name="game" class="rdphlist">
+                  <ul v-if="gameHotList.list.length > 0">
+                    <li v-for="item of gameHotList.list" :key="item.index">
+                      <div>{{item.index}}.</div>
+                      <div @click="tourl(item.address)">
+                        <el-avatar shape="square" :size="20" v-if="item.pictureUrl">
+                          <img :src="item.pictureUrl" />
+                        </el-avatar>
+                        <span v-else class="no-img">🎮</span>
+                        {{item.name}}
+                      </div>
+                    </li>
+                  </ul>
+                  <div v-else class="rdph-empty">暂无游戏数据</div>
+                </el-tab-pane>
               </el-tabs>
            
            </div>
@@ -188,12 +251,35 @@
 import { ref,reactive,onMounted,onUnmounted} from 'vue';
 import urlCollectionapi from '@/api/urlCollection'
 import acgapi from '@/api/acg'
+import carouselapi from '@/api/carousel'
 import $ from 'jquery' 
 export default {
   name: 'Home',
   components: {
   },
   setup(){
+    //   走马灯数据 ---------------------------------开始-----------------------------------------------
+    let carouselList = ref([])
+
+    /** 从后端加载启用的走马灯数据 */
+    const loadCarouselData = function() {
+      carouselapi.queryenabled().then(res => {
+        if (res.successful) {
+          carouselList.value = res.resultValue || []
+        }
+      }).catch(() => {
+        carouselList.value = []
+      })
+    }
+
+    /** 点击走马灯项跳转 */
+    const onCarouselClick = function(item) {
+      if (item.linkUrl) {
+        window.open(item.linkUrl, '_blank')
+      }
+    }
+    //   走马灯数据 ---------------------------------结束-----------------------------------------------
+
     onMounted(()=>{
       //  console.log(document.getElementById("urlshareul").scrollWidth); //获取滚动条长度
       //  console.log(document.getElementById("urlshareul").clientWidth); //获取元素长度
@@ -202,7 +288,7 @@ export default {
       togeturlhot();
       getacgList();
       automaticscroll();
-
+      loadCarouselData();
     })
     onUnmounted(()=>{
       //销毁定时器
@@ -267,23 +353,50 @@ export default {
 
     let activeName = ref('urlShare')
     let urlhotList = reactive({"list":[]})
+    let animationHotList = reactive({"list":[]})
+    let comicHotList = reactive({"list":[]})
+    let novelHotList = reactive({"list":[]})
+    let gameHotList = reactive({"list":[]})
+    let hotAceLoaded = ref(false)
 
     let handleClick = (tab, event) => {
       console.log(tab, event)
-      if(tab.props.name == "urlShare"){
-         togeturlhot();
+      const name = tab.props.name
+      if (name === "urlShare") {
+        togeturlhot();
+      } else if (!hotAceLoaded.value) {
+        // 首次点击ACG标签时统一加载所有ACG热度数据
+        loadHotAce();
       }
     }
 
     let togeturlhot = function(){
         urlCollectionapi.urlhot().then(res=>{
           if(res.successful){
-            urlhotList.list = res.resultValue
+            // 添加排行序号
+            urlhotList.list = (res.resultValue || []).map((item, idx) => {
+              return { ...item, index: idx + 1 }
+            })
           }
         })
     }
+
+    /** 加载ACG热度排行数据 */
+    let loadHotAce = function(){
+      acgapi.gethotAce().then(res => {
+        if(res.successful && res.resultValue){
+          animationHotList.list = res.resultValue.animations || []
+          comicHotList.list = res.resultValue.comics || []
+          novelHotList.list = res.resultValue.novels || []
+          gameHotList.list = res.resultValue.games || []
+          hotAceLoaded.value = true
+        }
+      })
+    }
     let tourl = function(url){
-      window.open(url, '_blank');
+      if (url) {
+        window.open(url, '_blank');
+      }
     }
 
     let acgList = reactive({"animationList":[],
@@ -313,8 +426,9 @@ export default {
       $('.scollborder').css("left",(scoll-width)+"px")
       
      }
-     
-    }
+
+    }  // closes toselectdiv
+
     return {
             scoll,
             scrollToLeft,
@@ -325,11 +439,19 @@ export default {
             handleClick,
             urlhotList,
             togeturlhot,
+            animationHotList,
+            comicHotList,
+            novelHotList,
+            gameHotList,
+            loadHotAce,
             tourl,
             acgList,
             getacgList,
             automaticscroll,
-            toselectdiv }
+            toselectdiv,
+            carouselList,
+            loadCarouselData,
+            onCarouselClick }
   }
   
 }
@@ -343,12 +465,57 @@ export default {
   padding-right:1%;
   box-sizing: border-box;
 }
+/* ===== 走马灯样式 ===== */
 .el-carousel__item h3 {
   color: var(--theme-text-regular);
   opacity: 0.75;
   line-height: 200px;
   margin: 0;
   text-align: center;
+}
+.carousel-item-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: var(--theme-radius-md);
+}
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.carousel-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 16px 12px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+}
+.carousel-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--theme-bg-middle);
+  color: var(--theme-text-secondary);
+  border-radius: var(--theme-radius-md);
+}
+.carousel-placeholder h3 {
+  color: var(--theme-text-primary);
+  font-size: 18px;
+  margin: 0;
+}
+.carousel-placeholder p {
+  margin: 0;
+  font-size: 13px;
 }
 
 .el-carousel__item:nth-child(2n) {
@@ -589,6 +756,20 @@ export default {
 }
 .rdphlist ul li span{
   cursor:pointer;
+}
+.rdphlist .no-img{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+.rdph-empty{
+  text-align: center;
+  color: var(--theme-text-placeholder);
+  padding: 40px 0;
+  font-size: 13px;
 }
 /* 网址热度排行展示 ----------------------------------------------------------完毕 */
 

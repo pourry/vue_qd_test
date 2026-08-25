@@ -1,36 +1,88 @@
 <template>
     <div class="footer">
       <div class="footer-content">
-        <div class="footer-section">
-          <h3 class="footer-title">次元收藏夹</h3>
-          <p class="footer-desc">欢迎来到次元收藏夹，这里是你收藏网址、动画、漫画、小说、游戏的专属空间。</p>
+        <!-- 简介板块 -->
+        <div class="footer-section" v-if="introSection">
+          <h3 class="footer-title">{{ introSection.title }}</h3>
+          <p class="footer-desc">{{ introSection.content }}</p>
         </div>
-        <div class="footer-section">
+
+        <!-- 快速链接板块 -->
+        <div class="footer-section" v-if="linkList.length > 0">
           <h4 class="footer-subtitle">快速链接</h4>
           <div class="footer-links">
-            <a href="#" class="footer-link">首页</a>
-            <a href="#" class="footer-link">关于我们</a>
-            <a href="#" class="footer-link">收藏夹</a>
-            <a href="#" class="footer-link">我的</a>
+            <a v-for="link in linkList" :key="link.id" :href="link.url || '#'" class="footer-link"
+               @click.prevent="handleLinkClick(link)">
+              {{ link.name }}
+            </a>
           </div>
         </div>
-        <div class="footer-section">
-          <h4 class="footer-subtitle">联系方式</h4>
-          <p class="footer-info">邮箱：example@example.com</p>
-          <p class="footer-info">电话：123-456-7890</p>
+
+        <!-- 联系方式板块 -->
+        <div class="footer-section" v-if="contactSection">
+          <h4 class="footer-subtitle">{{ contactSection.title }}</h4>
+          <p class="footer-info" v-for="(line, index) in contactLines" :key="index">{{ line }}</p>
         </div>
       </div>
+
       <div class="footer-bottom">
-        <p>备案号：浙ICP备12345678号-1</p>
-        <p>版权所有 © 2024 次元收藏夹</p>
+        <!-- 备案信息 -->
+        <p v-if="recordSection">{{ recordSection.content }}</p>
+        <p>版权所有 © {{ currentYear }} 次元收藏夹</p>
       </div>
     </div>
 </template>
 
 <script setup lang="ts">
-function handleClick(): void {
-  console.log('clicked');
+import { ref, computed, onMounted } from 'vue'
+import footerApi from '@/api/footer'
+
+// 数据
+const introSection = ref<any>(null)
+const contactSection = ref<any>(null)
+const recordSection = ref<any>(null)
+const linkList = ref<any[]>([])
+
+const currentYear = new Date().getFullYear()
+
+// 联系方式按行分割显示
+const contactLines = computed(() => {
+    if (!contactSection.value?.content) return []
+    return contactSection.value.content.split('\n').filter((line: string) => line.trim())
+})
+
+// 加载底部配置
+const loadFooterConfig = async () => {
+    try {
+        const res = await footerApi.getConfig()
+        if (res.successful && res.resultValue) {
+            const data = res.resultValue
+            const sections = data.sections || []
+            const links = data.links || []
+
+            // 分类板块
+            introSection.value = sections.find((s: any) => s.type === 'intro' && s.enabled) || null
+            contactSection.value = sections.find((s: any) => s.type === 'contact' && s.enabled) || null
+            recordSection.value = sections.find((s: any) => s.type === 'record' && s.enabled) || null
+
+            // 快速链接
+            linkList.value = links.filter((l: any) => l.enabled)
+        }
+    } catch (e) {
+        console.error('加载底部配置失败:', e)
+    }
 }
+
+// 点击链接跳转
+const handleLinkClick = (link: any) => {
+    if (link.url && link.url !== '#') {
+        window.location.href = link.url
+    }
+}
+
+onMounted(() => {
+    loadFooterConfig()
+})
 </script>
 
 <style scoped>
@@ -116,6 +168,7 @@ function handleClick(): void {
   transition: all 0.2s ease;
   padding: 2px 4px;
   border-radius: var(--theme-radius-sm);
+  cursor: pointer;
 }
 
 .footer-link:hover {

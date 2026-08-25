@@ -62,7 +62,7 @@ function axiosget(url,params){
     
 }
 
-//post 请求
+//post 请求（表单格式）
 function axiospost(url,params){
     return new Promise((resolve,reject)=>{
         axios({
@@ -70,6 +70,27 @@ function axiospost(url,params){
             url: baseUrl+url,
             data:qs.stringify(params)
            
+        }
+        ).then(res =>{
+            if(res){
+                resolve(res.data)
+            }
+        }).catch(err=>{
+            if(err){
+                reject(err.data)
+            }
+        })
+    })
+    
+}
+//post 请求（JSON格式）
+function axiospostJson(url,params){
+    return new Promise((resolve,reject)=>{
+        axios({
+            method: 'post',
+            url: baseUrl+url,
+            headers: {"Content-Type": "application/json"},
+            data: JSON.stringify(params)
         }
         ).then(res =>{
             if(res){
@@ -164,6 +185,7 @@ function axiosupload(url,params){
 export {
     axiosget,
     axiospost,
+    axiospostJson,
     axiosdown,
     axiosupload
 }

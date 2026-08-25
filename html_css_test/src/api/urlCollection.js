@@ -1,4 +1,4 @@
-import{axiosget,axiospost,axiosupload}from '../utils/axiosUtils/axiosMethods'
+import{axiosget,axiospost,axiospostJson,axiosupload}from '../utils/axiosUtils/axiosMethods'
 
 const urlCollectionapi = Object.assign({}) 
 
@@ -25,6 +25,10 @@ urlCollectionapi.urlshow =function (data){
 //查询热度的url 接口
 urlCollectionapi.urlhot =function (data){
     return axiosget("/urlCollection/public/urlhot",data)
+}
+//批量验证网址可用性 接口
+urlCollectionapi.validateUrls =function (data){
+    return axiospostJson("/urlCollection/validateUrls",data)
 }
 
 

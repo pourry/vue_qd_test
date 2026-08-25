@@ -20,6 +20,14 @@
                   <el-icon></el-icon>
                   <span>代码测试场</span>
                 </el-menu-item>
+                <el-menu-item index="4"  route="/userSelf/carousel" >
+                  <el-icon></el-icon>
+                  <span>走马灯控制</span>
+                </el-menu-item>
+                <el-menu-item index="5"  route="/userSelf/footer" >
+                  <el-icon></el-icon>
+                  <span>底部内容控制</span>
+                </el-menu-item>
               </el-menu>
 
         </div>
