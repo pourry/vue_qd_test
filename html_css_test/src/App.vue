@@ -5,9 +5,21 @@
 </template>
 
 <script >
+import { onMounted } from 'vue'
+import store from '@/utils/store'
+
 export default {
   name: 'App',
   components: {
+  },
+  setup() {
+    onMounted(() => {
+      // 如果已登录，加载用户主题
+      const token = store.state.token
+      if(token && token.value){
+        store.dispatch('loadUserTheme')
+      }
+    })
   }
 }
 </script>

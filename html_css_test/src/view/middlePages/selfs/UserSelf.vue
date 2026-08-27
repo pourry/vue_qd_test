@@ -28,6 +28,18 @@
                   <el-icon></el-icon>
                   <span>底部内容控制</span>
                 </el-menu-item>
+                <el-menu-item index="6"  route="/userSelf/basicConfig" >
+                  <el-icon></el-icon>
+                  <span>基本配置</span>
+                </el-menu-item>
+                <el-menu-item index="7"  route="/userSelf/totalFeedback" >
+                  <el-icon></el-icon>
+                  <span>反馈管理</span>
+                </el-menu-item>
+                <el-menu-item index="8"  route="/userSelf/publishNotification" >
+                  <el-icon></el-icon>
+                  <span>发布管理</span>
+                </el-menu-item>
               </el-menu>
 
         </div>

@@ -4,7 +4,13 @@
              <el-carousel :interval="4000" type="card" height="200px" v-if="carouselList.length > 0">
                 <el-carousel-item v-for="item in carouselList" :key="item.id" @click="onCarouselClick(item)">
                   <div class="carousel-item-inner">
-                    <img v-if="item.pictureUrl" :src="item.pictureUrl" :alt="item.title" class="carousel-img" />
+                    <img 
+                      v-if="item.pictureUrl" 
+                      :src="item.pictureUrl" 
+                      :alt="item.title" 
+                      class="carousel-img"
+                      :style="{ objectFit: item.objectFit || 'cover' }"
+                    />
                     <div class="carousel-title" v-if="item.title">{{ item.title }}</div>
                   </div>
                 </el-carousel-item>
@@ -51,107 +57,120 @@
                     </div>
                     <div class="acgexport">
                      <div class="acgexporttitle">
-                       展示acg
+                       <el-icon><Collection /></el-icon>
+                       ACG 收藏
                      </div>
                      <div class="acgexportbody">
-                          <div class="exportmsg">
-                              <div class="exportmsgtitle">
-                                <el-icon><Aim /></el-icon>
-                                动画
+                          <!-- 动画板块 -->
+                          <div class="aceg-section">
+                              <div class="aceg-section-header">
+                                <div class="aceg-section-title">
+                                  <el-icon><VideoCamera /></el-icon>
+                                  动画
+                                </div>
+                                <div class="aceg-section-more" @click="toMore('/twoDimensions/animation')">
+                                  查看更多 <el-icon><ArrowRight /></el-icon>
+                                </div>
                               </div>
-                              <ul>
-                              <li  v-for="item of acgList.animationList" :key="item.id">
-                                    <ul class="exportmsgdetails">
-                                    <li>名称：{{item.name}}</li>
-                                    </ul>
-                                    <el-image class="exportmsgimg" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" >
-                                            <template #error>
-                                                <div class="exportmsgimg-slot">
-                                                  <el-icon><Picture /></el-icon>
-                                                </div>
-                                              </template>
+                              <div class="aceg-section-list">
+                                <template v-if="acgList.animationList.length > 0">
+                                  <div v-for="item in acgList.animationList.slice(0, 8)" :key="item.id" class="aceg-card" @click="tourl(item.address)">
+                                    <el-image class="aceg-card-img" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" fit="cover">
+                                      <template #error>
+                                        <div class="aceg-card-img-slot">
+                                          <el-icon :size="24"><Picture /></el-icon>
+                                        </div>
+                                      </template>
                                     </el-image>
-                              </li>
-                              </ul>
-                          </div>
-                          <div class="exportmsg">
-                              <div class="exportmsgtitle">
-                                <el-icon><Aim /></el-icon>
-                                漫画
+                                    <div class="aceg-card-name">{{ item.name }}</div>
+                                  </div>
+                                </template>
+                                <div v-else class="aceg-empty">暂无数据</div>
                               </div>
-                              <ul>
-                              <li  v-for="item of acgList.comicList" :key="item.id">
-                                    <ul class="exportmsgdetails">
-                                    <li>名称：{{item.name}}</li>
-                                    </ul>
-                                    <el-image class="exportmsgimg" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" >
-                                            <template #error>
-                                                <div class="exportmsgimg-slot">
-                                                  <el-icon><Picture /></el-icon>
-                                                </div>
-                                              </template>
+                          </div>
+                          <!-- 漫画板块 -->
+                          <div class="aceg-section">
+                              <div class="aceg-section-header">
+                                <div class="aceg-section-title">
+                                  <el-icon><Reading /></el-icon>
+                                  漫画
+                                </div>
+                                <div class="aceg-section-more" @click="toMore('/twoDimensions/comic')">
+                                  查看更多 <el-icon><ArrowRight /></el-icon>
+                                </div>
+                              </div>
+                              <div class="aceg-section-list">
+                                <template v-if="acgList.comicList.length > 0">
+                                  <div v-for="item in acgList.comicList.slice(0, 8)" :key="item.id" class="aceg-card" @click="tourl(item.address)">
+                                    <el-image class="aceg-card-img" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" fit="cover">
+                                      <template #error>
+                                        <div class="aceg-card-img-slot">
+                                          <el-icon :size="24"><Picture /></el-icon>
+                                        </div>
+                                      </template>
                                     </el-image>
-                              </li>
-                              </ul>
-                          </div>
-                          <div class="exportmsg">
-                                                    <div class="exportmsgtitle">
-                                <el-icon><Aim /></el-icon>
-                                小说
+                                    <div class="aceg-card-name">{{ item.name }}</div>
+                                  </div>
+                                </template>
+                                <div v-else class="aceg-empty">暂无数据</div>
                               </div>
-                              <ul>
-                              <li  v-for="item of acgList.novelList" :key="item.id">
-                                    <ul class="exportmsgdetails">
-                                    <li>名称：{{item.name}}</li>
-                                    </ul>
-                                    <el-image class="exportmsgimg" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" >
-                                            <template #error>
-                                                <div class="exportmsgimg-slot">
-                                                  <el-icon><Picture /></el-icon>
-                                                </div>
-                                              </template>
+                          </div>
+                          <!-- 小说板块 -->
+                          <div class="aceg-section">
+                              <div class="aceg-section-header">
+                                <div class="aceg-section-title">
+                                  <el-icon><Notebook /></el-icon>
+                                  小说
+                                </div>
+                                <div class="aceg-section-more" @click="toMore('/twoDimensions/novel')">
+                                  查看更多 <el-icon><ArrowRight /></el-icon>
+                                </div>
+                              </div>
+                              <div class="aceg-section-list">
+                                <template v-if="acgList.novelList.length > 0">
+                                  <div v-for="item in acgList.novelList.slice(0, 8)" :key="item.id" class="aceg-card" @click="tourl(item.address)">
+                                    <el-image class="aceg-card-img" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" fit="cover">
+                                      <template #error>
+                                        <div class="aceg-card-img-slot">
+                                          <el-icon :size="24"><Picture /></el-icon>
+                                        </div>
+                                      </template>
                                     </el-image>
-                              </li>
-                              </ul>
-                          </div>
-                          <div class="exportmsg">
-                              <div class="exportmsgtitle">
-                                <el-icon><Aim /></el-icon>
-                                游戏
+                                    <div class="aceg-card-name">{{ item.name }}</div>
+                                  </div>
+                                </template>
+                                <div v-else class="aceg-empty">暂无数据</div>
                               </div>
-                              <ul>
-                              <li  v-for="item of acgList.gameList" :key="item.id">
-                                    <ul class="exportmsgdetails">
-                                    <li>名称：{{item.name}}</li>
-                                    </ul>
-                                    <el-image class="exportmsgimg" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" >
-                                            <template #error>
-                                                <div class="exportmsgimg-slot">
-                                                  <el-icon><Picture /></el-icon>
-                                                </div>
-                                              </template>
+                          </div>
+                          <!-- 游戏板块 -->
+                          <div class="aceg-section">
+                              <div class="aceg-section-header">
+                                <div class="aceg-section-title">
+                                  <el-icon><Goods /></el-icon>
+                                  游戏
+                                </div>
+                                <div class="aceg-section-more" @click="toMore('/twoDimensions/game')">
+                                  查看更多 <el-icon><ArrowRight /></el-icon>
+                                </div>
+                              </div>
+                              <div class="aceg-section-list">
+                                <template v-if="acgList.gameList.length > 0">
+                                  <div v-for="item in acgList.gameList.slice(0, 8)" :key="item.id" class="aceg-card" @click="tourl(item.address)">
+                                    <el-image class="aceg-card-img" :src="item.pictures.length >0 ? item.pictures[0].pictureUrl : undefined" fit="cover">
+                                      <template #error>
+                                        <div class="aceg-card-img-slot">
+                                          <el-icon :size="24"><Picture /></el-icon>
+                                        </div>
+                                      </template>
                                     </el-image>
-                              </li>
-                              </ul>
-                          </div>
-                          <div class="exportmsg">
-                            <div class="exportmsgtitle exportmsgtitleflx">
-                              <div  @click="toselectdiv(1)">1</div>
-                              <div @click="toselectdiv(2)">2</div>
-                              <div  @click="toselectdiv(3)">3</div>
-                            </div>
-                            <div class="exportmsgtableflx">
-                              <div class="scollborder"></div>
-                              <div>
-                                <div>111111111111111111111111111111111111</div>
+                                    <div class="aceg-card-name">{{ item.name }}</div>
+                                  </div>
+                                </template>
+                                <div v-else class="aceg-empty">暂无数据</div>
                               </div>
-                              <div><div>22222</div></div>
-                              <div><div>33333</div></div>
-                            </div>
                           </div>
-                        </div>
-                        
                      </div>
+                    </div>
                       
            </div>
            <div class="exportmiddle">
@@ -249,6 +268,7 @@
 
 <script>
 import { ref,reactive,onMounted,onUnmounted} from 'vue';
+import { useRouter } from 'vue-router';
 import urlCollectionapi from '@/api/urlCollection'
 import acgapi from '@/api/acg'
 import carouselapi from '@/api/carousel'
@@ -258,6 +278,16 @@ export default {
   components: {
   },
   setup(){
+    //   路由 ---------------------------------开始-----------------------------------------------
+    const router = useRouter()
+
+    /** 跳转到ACG分类列表页 */
+    const toMore = function(path) {
+      const category = path.replace('/twoDimensions/', '')
+      router.push('/acgList/' + category)
+    }
+    //   路由 ---------------------------------结束-----------------------------------------------
+
     //   走马灯数据 ---------------------------------开始-----------------------------------------------
     let carouselList = ref([])
 
@@ -274,7 +304,16 @@ export default {
 
     /** 点击走马灯项跳转 */
     const onCarouselClick = function(item) {
-      if (item.linkUrl) {
+      if (!item.linkUrl) return
+      const target = item.linkTarget || 'blank'
+      if (target === 'router') {
+        // 站内路由跳转
+        router.push(item.linkUrl)
+      } else if (target === 'self') {
+        // 本页面跳转（替换当前页）
+        window.location.href = item.linkUrl
+      } else {
+        // 默认：打开新窗口
         window.open(item.linkUrl, '_blank')
       }
     }
@@ -451,7 +490,8 @@ export default {
             toselectdiv,
             carouselList,
             loadCarouselData,
-            onCarouselClick }
+            onCarouselClick,
+            toMore }
   }
   
 }
@@ -484,7 +524,7 @@ export default {
 .carousel-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* object-fit 由行内样式动态设置，不在这里固定 */
 }
 .carousel-title {
   position: absolute;
@@ -775,7 +815,7 @@ export default {
 
 .acgexport{
   width:100%;
-  height:62%;
+  height:60%;
   border: 1px solid var(--theme-border);
   border-radius: var(--theme-radius-md);
   background: var(--theme-bg-card);
@@ -783,6 +823,8 @@ export default {
   box-sizing: border-box;
   box-shadow: var(--theme-shadow-card);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .acgexporttitle{
   width:100%;
@@ -942,5 +984,136 @@ export default {
   text-overflow:ellipsis;
   font-size: 11px;
   border-radius: var(--theme-radius-sm);
+}
+
+/* ===== ACG 板块样式 ===== */
+.acgexportbody{
+  width:100%;
+  height: calc(100% - 32px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-spacing-md);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.aceg-section{
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-md);
+  padding: var(--theme-spacing-sm);
+  background: var(--theme-bg-card);
+  transition: all 0.2s ease;
+}
+
+.aceg-section:hover{
+  box-shadow: var(--theme-shadow-md);
+  border-color: var(--theme-primary);
+}
+
+.aceg-section-header{
+  width: 100%;
+  height: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--theme-spacing-xs);
+}
+
+.aceg-section-title{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+}
+
+.aceg-section-title .el-icon{
+  color: var(--theme-primary);
+  font-size: 18px;
+}
+
+.aceg-section-more{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--theme-text-placeholder);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--theme-radius-sm);
+  transition: all 0.2s ease;
+}
+
+.aceg-section-more:hover{
+  color: var(--theme-primary);
+  background: var(--theme-primary-bg);
+}
+
+.aceg-section-list{
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--theme-spacing-sm);
+  min-height: 0;
+}
+
+.aceg-card{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--theme-radius-sm);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--theme-bg-middle);
+  border: 1px solid var(--theme-border);
+}
+
+.aceg-card:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--theme-shadow-md);
+  border-color: var(--theme-primary);
+}
+
+.aceg-card-img{
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--theme-primary-light);
+}
+
+.aceg-card-img-slot{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--theme-primary-light);
+  color: var(--theme-text-placeholder);
+}
+
+.aceg-card-name{
+  padding: 4px 6px;
+  font-size: 12px;
+  color: var(--theme-text-regular);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--theme-bg-card);
+}
+
+.aceg-empty{
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: var(--theme-text-placeholder);
+  font-size: 13px;
 }
 </style>

@@ -27,6 +27,11 @@ import MyMsg from '@/view/middlePages/selfs/flowableControl/MyMsg.vue'
 import Test from '@/view/middlePages/selfs/flowableControl/Test.vue'
 import CarouselControl from '@/view/middlePages/selfs/CarouselControl.vue'
 import FooterControl from '@/view/middlePages/selfs/FooterControl.vue'
+import BasicConfig from '@/view/middlePages/selfs/BasicConfig.vue'
+import AcgList from '@/view/middlePages/AcgList.vue'
+import MessageCenter from '@/view/messageCenter/MessageCenter.vue'
+import TotalFeedback from '@/view/messageCenter/TotalFeedback.vue'
+import PublishNotification from '@/view/messageCenter/PublishNotification.vue'
 
 const routes : Array<RouteRecordRaw> = [
 
@@ -162,6 +167,24 @@ const routes : Array<RouteRecordRaw> = [
                name: 'FooterControl',
                component: FooterControl,
             },
+            {
+               //基本配置
+               path: '/userSelf/basicConfig',
+               name: 'BasicConfig',
+               component: BasicConfig,
+            },
+            {
+               //总反馈管理
+               path: '/userSelf/totalFeedback',
+               name: 'TotalFeedback',
+               component: TotalFeedback,
+            },
+            {
+               //发布通知
+               path: '/userSelf/publishNotification',
+               name: 'PublishNotification',
+               component: PublishNotification,
+            },
          ]
       },
       {
@@ -175,6 +198,18 @@ const routes : Array<RouteRecordRaw> = [
          path: '/signUp',
          name: 'SignUp',
          component: SignUp,
+      },
+      {
+         //ACG分类列表页（查看更多）
+         path: '/acgList/:category',
+         name: 'AcgList',
+         component: AcgList,
+      },
+      {
+         //消息中心
+         path: '/messageCenter',
+         name: 'MessageCenter',
+         component: MessageCenter,
       },
     ]
  },
@@ -191,3 +226,4 @@ const router = createRouter({
 })
 
 export default router;
+

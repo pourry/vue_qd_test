@@ -1,7 +1,6 @@
 <template>
     <div class="urlcollectcss">
          <div class="urlcollectoperatecss">
-
           <div>
               <div @click="toshowTree" class="urlcollectoperatecss-cz">
                 <div><el-icon ><Menu /></el-icon></div>
@@ -46,16 +45,6 @@
                 </el-tree>
               </div>
           </div>
-              <div class="search-box">
-               <el-input
-                  v-model="selectofname"
-                  style="width: 240px"
-                  @input="toselectNode"
-                  size="small"
-                  placeholder="输入查询内容"
-                  :suffix-icon="Search"
-                />
-              </div>
               <div @click="toggleSortMode" :class="['urlcollectoperatecss-cz', { 'sort-active': sortMode }]">
                 <div><el-icon><Rank /></el-icon></div>
                 <div>{{ sortMode ? '完成排序' : '排序模式' }}</div>
@@ -68,6 +57,17 @@
               <div @click="toggleValidateMode" :class="['urlcollectoperatecss-cz', { 'sort-active': validateMode || validating }]">
                 <div><el-icon :class="{ 'is-loading': validating }"><Connection /></el-icon></div>
                 <div>{{ validating ? '验证中...' : (validateMode ? '完成选择' : (validateResults ? '重新验证' : '验证可用性')) }}</div>
+              </div>
+              <!-- 搜索框放在所有按钮之后 -->
+              <div class="search-box">
+                <el-input
+                  v-model="selectofname"
+                  style="width: 240px"
+                  @input="toselectNode"
+                  size="small"
+                  placeholder="输入查询内容"
+                  :suffix-icon="Search"
+                />
               </div>
          </div>
          

@@ -9,4 +9,8 @@ acgapi.getshowAce =function (data){
 acgapi.gethotAce =function (data){
     return axiosget("/acg/public/gethotAce",data)
 }
+//按分类查询全部列表 接口
+acgapi.getListByCategory =function (category){
+    return axiosget("/acg/public/getListByCategory",{category: category})
+}
 export default acgapi

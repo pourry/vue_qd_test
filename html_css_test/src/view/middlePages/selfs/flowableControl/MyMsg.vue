@@ -24,7 +24,7 @@
               <!-- 用户头像区域 -->
               <div class="avatar-section">
                 <div class="avatar-container">
-                  <img :src="userInfo.avatar || defaultAvatar" alt="用户头像" class="avatar-img" />
+                  <img :src="userInfo.avatar ? userInfo.avatar + '?t=' + avatarTimestamp : defaultAvatar" alt="用户头像" class="avatar-img" />
                   <div class="avatar-overlay" @click="changeAvatar">
                     <span class="upload-text">更换头像</span>
                   </div>
@@ -363,6 +363,7 @@ const showDeleteConfirm = ref(false)
 const deleteConfirmPassword = ref('')
 const avatarInput = ref<HTMLInputElement>()
 const defaultAvatar = '/src/assets/logo.png'
+const avatarTimestamp = ref(Date.now())  // 用于强制刷新头像缓存
 
 // 原始数据备份
 let originalUserInfo: any = {}
@@ -569,6 +570,7 @@ const handleAvatarChange = async (event: Event) => {
       // 后端返回头像URL在 resultValue 中
       const avatarUrl = res.resultValue
       userInfo.avatar = avatarUrl
+      avatarTimestamp.value = Date.now()  // 更新时间戳强制刷新
       ElMessage.success('头像上传成功')
     } else {
       ElMessage.error(res.resultValue || '头像上传失败')

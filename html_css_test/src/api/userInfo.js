@@ -1,4 +1,4 @@
-import { axiosget, axiospost, axiosupload } from '../utils/axiosUtils/axiosMethods'
+import { axiosget, axiospost, axiospostJson, axiosupload } from '../utils/axiosUtils/axiosMethods'
 
 const userInfoApi = Object.assign({})
 
@@ -20,6 +20,11 @@ userInfoApi.changePassword = function (data) {
 // 上传头像
 userInfoApi.uploadAvatar = function (data) {
     return axiosupload("/userInfo/uploadAvatar", data)
+}
+
+// 保存用户主题
+userInfoApi.saveTheme = function (theme) {
+    return axiospost("/userInfo/saveTheme", { theme })
 }
 
 export default userInfoApi

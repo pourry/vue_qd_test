@@ -1,5 +1,6 @@
 //引入Vuex
 import { createStore } from 'vuex'
+import userInfoApi from '@/api/userInfo'
 
 // 主题配置列表（与 themes.css 中的 data-app-theme 对应）
 export const THEME_LIST = [
@@ -22,6 +23,10 @@ function applyTheme(themeKey) {
 }
 applyTheme(savedTheme)
 
+// 从 localStorage 读取用户信息
+const savedUserInfo = localStorage.getItem("userInfo");
+const parsedUserInfo = savedUserInfo ? JSON.parse(savedUserInfo) : null;
+
 export default createStore({
     //存储数据
     state:{
@@ -32,6 +37,8 @@ export default createStore({
         token: localStorage.getItem("Authorization")  == null || localStorage.getItem("Authorization") ==  undefined ? {value:undefined}: localStorage.getItem("Authorization"),
         //当前主题
         theme: savedTheme,
+        //用户信息
+        userInfo: parsedUserInfo,
     },
     //用于将state中的数据进行加工
     getters:{
@@ -46,6 +53,9 @@ export default createStore({
         },
         getThemeList :() =>{
             return THEME_LIST;
+        },
+        getUserInfo :(state) =>{
+            return state.userInfo;
         }
     },
     //操作数据
@@ -61,6 +71,15 @@ export default createStore({
             state.theme = themeKey;
             localStorage.setItem('app-theme', themeKey);
             applyTheme(themeKey);
+        },
+        //设置用户信息
+        SETUSERINFO(state, userInfo){
+            state.userInfo = userInfo;
+            if(userInfo){
+                localStorage.setItem("userInfo", JSON.stringify(userInfo));
+            }else{
+                localStorage.removeItem("userInfo");
+            }
         }
  
     },
@@ -73,8 +92,47 @@ export default createStore({
         setToken(context,value){
             context.commit("SETTOKEN",value);
         },
-        setTheme(context, themeKey){
+        // 设置主题（同时保存到后端）
+        async setTheme(context, themeKey){
+            // 先更新本地状态
             context.commit("SETTHEME", themeKey);
+            // 如果已登录，保存到后端
+            const token = context.state.token;
+            if(token && token.value){
+                try{
+                    await userInfoApi.saveTheme(themeKey);
+                }catch(e){
+                    // 保存失败不影响本地使用
+                    console.warn('保存主题到服务器失败:', e);
+                }
+            }
+        },
+        // 从后端加载用户信息（主题、用户资料等）
+        async loadUserTheme(context){
+            const token = context.state.token;
+            if(!token || !token.value){
+                return;
+            }
+            try{
+                const res = await userInfoApi.query();
+                if(res.successful && res.resultValue){
+                    // 保存用户信息到 store 和 localStorage（不存储敏感信息）
+                    const userInfo = {
+                        id: res.resultValue.id,
+                        username: res.resultValue.username,
+                        nickName: res.resultValue.nickName,
+                        avatar: res.resultValue.avatar,
+                        theme: res.resultValue.theme
+                    };
+                    context.commit("SETUSERINFO", userInfo);
+                    // 如果有主题，应用主题
+                    if(res.resultValue.theme){
+                        context.commit("SETTHEME", res.resultValue.theme);
+                    }
+                }
+            }catch(e){
+                console.warn('加载用户信息失败:', e);
+            }
         }
     },
     modules:{

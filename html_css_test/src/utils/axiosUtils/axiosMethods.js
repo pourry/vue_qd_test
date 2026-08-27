@@ -62,6 +62,26 @@ function axiosget(url,params){
     
 }
 
+//delete 请求
+function axiosdelete(url,params){
+    return new Promise((resolve,reject)=>{
+      return  axios({
+        method: 'delete',
+        url: baseUrl+url,
+        params: params
+      }).then(res =>{
+            if(res){
+                resolve(res.data)
+            }
+        }).catch(err=>{
+            if(err){
+                reject(err.data)
+            }
+        })
+    })
+    
+}
+
 //post 请求（表单格式）
 function axiospost(url,params){
     return new Promise((resolve,reject)=>{
@@ -184,6 +204,7 @@ function axiosupload(url,params){
 //export导出 变量   export default  导出 值
 export {
     axiosget,
+    axiosdelete,
     axiospost,
     axiospostJson,
     axiosdown,
