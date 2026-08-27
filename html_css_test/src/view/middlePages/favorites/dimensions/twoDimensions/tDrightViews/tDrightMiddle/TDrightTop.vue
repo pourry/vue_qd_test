@@ -7,20 +7,34 @@
       </div>
       <div class="toolbar-right">
         <div class="TDserchcss">
+          <el-select
+            v-model="searchHasend"
+            placeholder="完结状态"
+            :clearable="true"
+            style="width:130px"
+          >
+            <el-option
+              v-for="item in hasendoptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
           <el-input
             v-model="searchTd"
             placeholder="请输入名称"
             :clearable="true"
             @keyup.enter="tosearch"
           />
-          <el-button type="primary" icon="Search" @click="tosearch" />
+          <el-button type="primary" icon="Search" @click="tosearch">查询</el-button>
+          <el-button icon="Refresh" @click="toreset">重置</el-button>
         </div>
       </div>
 
       <!-- 添加 -->
-     <AddDialog :class="tdaddmenushow.css" @toclose="closeaddmenu" :hasendoptions="hasendoptions" :addform="addandeditform" @toadd="toadd" @tosearch="tosearch"></AddDialog>
+     <AddDialog v-model:visible="tdaddmenushow.isshow" @toclose="closeaddmenu" :hasendoptions="hasendoptions" :addform="addandeditform" @toadd="toadd" @tosearch="tosearch"></AddDialog>
       <!-- 修改 -->
-     <EditDialog :class="tdeditmenushow.css" @toclose="closeeditmenu"  :hasendoptions="hasendoptions" :editform="addandeditform" @toedit="toedit" @tosearch="tosearch"></EditDialog>
+     <EditDialog v-model:visible="tdeditmenushow.isshow" @toclose="closeeditmenu"  :hasendoptions="hasendoptions" :editform="addandeditform" @toedit="toedit" @tosearch="tosearch"></EditDialog>
     </div>
 </template>
 
@@ -63,6 +77,7 @@ export default {
     let msgList = reactive(props.msgList);
     let hasselecteds = reactive(props.hasselecteds);
      let searchTd = ref("");
+     let searchHasend = ref(null);
 
      //添加修改页面的数据展示
      let addandeditform = reactive({"form":{
@@ -99,41 +114,26 @@ export default {
      let setfrom = function(formvalue){
       addandeditform.form = formvalue;
      }
-     //添加页面显示隐藏 默认 隐藏样式 -------------------------
+     //添加页面显示隐藏
      let tdaddmenushow = reactive({
                                   isshow: false,
-                                  name:"添加",
-                                  css:"tdaddhiddencss"
+                                  name:"新增"
                                   });
      let totdaddmenushow = function(){
          resetfrom();
-
-         if(tdaddmenushow.css == "tdaddhiddencss"){
-          tdaddmenushow.isshow= true;
-          tdaddmenushow.name= "收起";
-          tdaddmenushow.css= "tdaddshowcss";
-
-          //当新增时  修改页面关闭
-          tdeditmenushow.isshow= false;
-          tdeditmenushow.name= "修改";
-          tdeditmenushow.css= "tdaddhiddencss";
-         }else{
-          tdaddmenushow.isshow= false;
-          tdaddmenushow.name= "添加";
-          tdaddmenushow.css= "tdaddhiddencss";
-         }
+         tdaddmenushow.isshow = true;
+         tdaddmenushow.name= "新增";
+         //当新增时  修改页面关闭
+         tdeditmenushow.isshow= false;
      }
      //提供给add组件 让其可关闭add组件自己
      let closeaddmenu = function(){
           tdaddmenushow.isshow= false;
-          tdaddmenushow.name= "添加";
-          tdaddmenushow.css= "tdaddhiddencss";
      }
-     //修改页面显示隐藏 默认 隐藏样式 -------------------------
+     //修改页面显示隐藏
      let tdeditmenushow = reactive({
                                   isshow: false,
-                                  name:"修改",
-                                  css:"tdaddhiddencss"
+                                  name:"修改"
                                   });
      let pictures = ref([]);
      let totdeditmenushow = function(){
@@ -150,34 +150,15 @@ export default {
             pict[i].url = pict[i].pictureUrl;
           }
           addandeditform.pictures = pict;
-         setfrom(hasselecteds.list[0]);
-        //  addandeditform.form.id = hasselecteds.list[0].id;
-        //  addandeditform.form.name = hasselecteds.list[0].name;
-        //  addandeditform.form.hasend = hasselecteds.list[0].hasend;
-        //  addandeditform.form.address = hasselecteds.list[0].address;
-        //  addandeditform.form.notes = hasselecteds.list[0].notes;
+          setfrom(hasselecteds.list[0]);
 
-         if(tdeditmenushow.css == "tdaddhiddencss"){
-          tdeditmenushow.isshow= true;
-          tdeditmenushow.name= "收起";
-          tdeditmenushow.css= "tdaddshowcss";
-
+          tdeditmenushow.isshow = true;
           //当修改时  新增页面关闭
           tdaddmenushow.isshow= false;
-          tdaddmenushow.name= "添加";
-          tdaddmenushow.css= "tdaddhiddencss";
-
-         }else{
-          tdeditmenushow.isshow= false;
-          tdeditmenushow.name= "修改";
-          tdeditmenushow.css= "tdaddhiddencss";
-         }
      }
-     //提供给add组件 让其可关闭add组件自己
+     //提供给edit组件 让其可关闭edit组件自己
      let closeeditmenu = function(){
           tdeditmenushow.isshow= false;
-          tdeditmenushow.name= "修改";
-          tdeditmenushow.css= "tdaddhiddencss";
      }
 
      //删除按钮
@@ -211,9 +192,16 @@ export default {
      let pagemsg = reactive(props.pagemsg)
      //查询按钮
      let tosearch = function(){
-      if(searchTd.value.trim() != undefined || searchTd.value.trim() != ''){
-        pagemsg.animation.name = searchTd.value.trim();
-      }
+        pagemsg.animation.name = searchTd.value.trim() || undefined;
+        pagemsg.animation.hasend = searchHasend.value || undefined;
+        emit("togetList",pagemsg.animation)
+     }
+     //重置
+     let toreset = function(){
+        searchTd.value = "";
+        searchHasend.value = null;
+        pagemsg.animation.name = undefined;
+        pagemsg.animation.hasend = undefined;
         emit("togetList",pagemsg.animation)
      }
      //新增
@@ -229,6 +217,8 @@ export default {
 
      return{
           searchTd,
+          searchHasend,
+          toreset,
           tdaddmenushow,
           totdaddmenushow,
           closeaddmenu,
@@ -285,7 +275,10 @@ export default {
   gap: var(--theme-spacing-sm);
   align-items: center;
   width: 100%;
-  max-width: 420px;
+  max-width: 560px;
+}
+.TDserchcss :deep(.el-select){
+  flex-shrink: 0;
 }
 .TDserchcss :deep(.el-input){
   flex: 1;
@@ -342,19 +335,6 @@ export default {
 .tdaddbut:hover{
   background: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-primary) 100%) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-}
-
-.tdaddhiddencss{
-  display: none;
-}
-
-.tdaddshowcss{
-  display: block;
-  animation: slideDown 0.25s ease-out;
-}
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 </style>

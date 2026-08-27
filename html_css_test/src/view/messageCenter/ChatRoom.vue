@@ -121,14 +121,24 @@
                     class="resend-btn"
                     title="重新发送"
                     @click="resendMessage(item.msg)"
-                  >↻ 重发</button>
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align: middle; margin-right: 2px;">
+                      <path d="M23 4V10H17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M20.49 15C19.98 16.93 18.85 18.6 17.21 19.77C15.58 20.94 13.64 21.5 11.67 21.44C9.7 21.38 7.82 20.72 6.37 19.53C4.92 18.34 3.97 16.7 3.7 14.89C3.43 13.08 3.86 11.23 4.94 9.76C6.02 8.29 7.66 7.28 9.5 6.95C11.34 6.62 13.25 7 14.81 8.05C16.37 9.1 17.52 10.76 18.13 12.63" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    重发
+                  </button>
                   <!-- 删除按钮（只能删除已发送成功的自己的消息） -->
                   <span
                     v-else-if="item.msg.isSelf && !item.msg.isDeleted && item.msg.status !== 'sending'"
                     class="delete-btn"
                     title="删除消息"
                     @click="handleDeleteMessage(item.msg)"
-                  >×</span>
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+                      <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                  </span>
                 </div>
                 <!-- 已删除提示 -->
                 <div v-if="item.msg.isDeleted" class="deleted-tip">
@@ -478,14 +488,28 @@ const pushSystemMessage = (content: string): void => {
 }
 
 /** 处理滚动事件，更新"是否在底部"和加载更多 */
+/** 处理滚动事件：自动加载更多历史消息 + 更新底部状态 */
+let scrollDebounceTimer: number | null = null
 const handleScroll = (): void => {
   const el = messageAreaRef.value
   if (!el) return
+
   const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight
   atBottom.value = distanceToBottom <= 30
   atTop.value = el.scrollTop <= 30
+
   if (atBottom.value) {
     newMessageCount.value = 0
+  }
+
+  // 滚动到顶部时自动加载更多历史消息（带防抖，避免频繁触发）
+  if (atTop.value && hasMoreHistory.value && !loadingMore.value) {
+    if (scrollDebounceTimer) clearTimeout(scrollDebounceTimer)
+    scrollDebounceTimer = window.setTimeout(() => {
+      if (atTop.value && hasMoreHistory.value && !loadingMore.value) {
+        loadMoreHistory()
+      }
+    }, 200)
   }
 }
 
@@ -1322,18 +1346,17 @@ onBeforeUnmount(() => {
   display: none;
   width: 18px;
   height: 18px;
-  line-height: 18px;
-  text-align: center;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   background: var(--theme-text-placeholder);
   color: white;
-  font-size: 12px;
   cursor: pointer;
   transition: background 0.2s;
   flex-shrink: 0;
 }
 .msg-bubble-wrap:hover .delete-btn {
-  display: inline-block;
+  display: inline-flex;
 }
 .delete-btn:hover {
   background: var(--theme-error, #ff4d4f);

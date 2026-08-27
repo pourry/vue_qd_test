@@ -65,7 +65,7 @@
                 <el-button type="primary" size="small" @click="openLinkDialog()">新增链接</el-button>
             </div>
             <div class="card-body">
-                <el-table :data="linkList" border stripe v-loading="linkLoading" style="width: 100%">
+                <el-table :data="linkList" border v-loading="linkLoading" style="width: 100%" class="theme-table">
                     <el-table-column prop="name" label="链接名称" width="150" />
                     <el-table-column prop="url" label="链接地址" show-overflow-tooltip />
                     <el-table-column prop="sort" label="排序" width="80" align="center" />
@@ -323,5 +323,51 @@ onMounted(() => {
 
 .inline-form-header .el-switch {
     margin-left: auto;
+}
+
+/* 表格主题适配 - 去除白色行 */
+.theme-table {
+    --el-table-bg-color: var(--theme-bg-card);
+    --el-table-tr-bg-color: var(--theme-bg-card);
+    --el-table-header-bg-color: var(--theme-bg-page);
+    --el-table-row-hover-bg-color: var(--theme-bg-hover, rgba(0, 0, 0, 0.04));
+    --el-table-border-color: var(--theme-border);
+    --el-table-header-text-color: var(--theme-text-primary);
+    --el-table-text-color: var(--theme-text-primary);
+}
+
+.theme-table :deep(.el-table__body-wrapper) {
+    background-color: var(--theme-bg-card);
+}
+
+.theme-table :deep(.el-table__body tr) {
+    background-color: var(--theme-bg-card);
+}
+
+.theme-table :deep(.el-table__body td) {
+    background-color: var(--theme-bg-card);
+    color: var(--theme-text-primary);
+}
+
+.theme-table :deep(.el-table__header-wrapper) {
+    background-color: var(--theme-bg-page);
+}
+
+.theme-table :deep(.el-table__header th) {
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-primary);
+}
+
+.theme-table :deep(.el-table__border-left-patch),
+.theme-table :deep(.el-table__border-right-patch) {
+    background-color: var(--theme-bg-card);
+}
+
+.theme-table :deep(.el-table__empty-block) {
+    background-color: var(--theme-bg-card);
+}
+
+.theme-table :deep(.el-table__inner-wrapper::before) {
+    display: none;
 }
 </style>

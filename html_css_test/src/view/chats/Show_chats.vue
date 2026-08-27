@@ -7,11 +7,13 @@
         class="widget-trigger"
         @click="toggleWidget"
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z" fill="white"/>
+        <!-- 消息中心 SVG 图标 - 简洁信封 -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="5" width="18" height="14" rx="2" stroke="white" stroke-width="1.8"/>
+          <path d="M3 7L12 13L21 7" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <div v-if="unreadCount > 0" class="notification-badge">
-          {{ unreadCount > 99 ? '99+' : unreadCount }}
+        <div v-if="totalCount > 0" class="notification-badge">
+          {{ totalCount > 99 ? '99+' : totalCount }}
         </div>
         <div v-if="isAnimating" class="pulse-ring"></div>
       </div>
@@ -23,14 +25,21 @@
         <div class="popup-header">
           <div class="header-left">
             <span class="popup-title">消息中心</span>
-            <span v-if="unreadCount > 0" class="unread-tag">{{ unreadCount }}条未读</span>
+            <span v-if="totalCount > 0" class="unread-tag">{{ totalCount }} 条未读</span>
           </div>
           <div class="popup-actions">
-            <button class="goto-btn" @click="goToMessageCenter">
-              打开完整页面
-              <span class="arrow">→</span>
+            <button class="goto-btn" @click="goToTab(activeTab)">
+              查看全部
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </button>
-            <button class="close-btn" @click="closeWidget">×</button>
+            <button class="close-btn" @click="closeWidget">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -44,7 +53,7 @@
               :class="{ active: activeTab === tab.id }"
               @click="activeTab = tab.id"
             >
-              <span class="tab-icon">{{ tab.icon }}</span>
+              <span class="tab-icon" v-html="tab.icon"></span>
               <span class="tab-name">{{ tab.name }}</span>
               <span v-if="tab.count > 0" class="tab-count">{{ tab.count > 99 ? '99+' : tab.count }}</span>
             </button>
@@ -52,11 +61,84 @@
 
           <!-- 快捷内容区 -->
           <div class="quick-content">
+            <!-- ============== 提醒 Tab ============== -->
+            <div v-if="activeTab === 'reminder'" class="reminder-section">
+              <div v-if="loadingReminder" class="loading-state">加载中...</div>
+              <div v-else-if="reminderList.length === 0" class="empty-state">
+                <div class="empty-icon-svg">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.25"/>
+                    <path d="M12 7V12L15 14" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.25" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="1" fill="currentColor" fill-opacity="0.25"/>
+                  </svg>
+                </div>
+                <div class="empty-text">暂无提醒</div>
+                <div class="empty-hint">您还没有设置任何提醒</div>
+              </div>
+              <div v-else>
+                <div class="reminder-list">
+                  <div
+                    v-for="item in reminderList.slice(0, 5)"
+                    :key="item.id"
+                    class="reminder-item"
+                    :class="{ cancelled: item.status === 'cancelled' }"
+                  >
+                    <div class="reminder-icon-wrap" :class="item.targetType">
+                      {{ getReminderTypeIcon(item.targetType) }}
+                    </div>
+                    <div class="reminder-main">
+                      <div class="reminder-row1">
+                        <span class="reminder-title">{{ item.targetName || '提醒' }}</span>
+                        <span class="reminder-status" :class="item.status">{{ getReminderStatusText(item.status) }}</span>
+                      </div>
+                      <div class="reminder-row2">
+                        <span class="reminder-time">
+                          {{ formatReminderTime(item.remindTime) }}
+                        </span>
+                      </div>
+                      <div v-if="item.remindMsg" class="reminder-msg" :title="item.remindMsg">
+                        {{ item.remindMsg }}
+                      </div>
+                    </div>
+                    <div v-if="item.status === 'pending'" class="reminder-actions">
+                      <span
+                        class="cancel-btn"
+                        @click="handleCancelReminder(item)"
+                      >取消</span>
+                      <span
+                        class="delete-btn"
+                        @click.stop="handleDeleteReminder(item)"
+                      >×</span>
+                    </div>
+                    <div v-else class="reminder-actions">
+                      <span
+                        class="delete-btn"
+                        @click="handleDeleteReminder(item)"
+                      >×</span>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="reminderList.length > 5" class="more-link has-more" @click="goToTab('reminder')">
+                  还有 {{ reminderList.length - 5 }} 条提醒，查看全部 →
+                </div>
+                <div v-else class="more-link" @click="goToTab('reminder')">前往提醒页 →</div>
+              </div>
+            </div>
+
             <!-- ============== 通知 Tab ============== -->
-            <div v-if="activeTab === 'notification'" class="preview-section">
-              <div v-if="loading" class="loading-state">加载中...</div>
+            <div v-else-if="activeTab === 'notification'" class="preview-section">
+              <div v-if="loading" class="loading-state">
+                <div class="loading-spinner"></div>
+                <span>加载中...</span>
+              </div>
               <div v-else-if="notificationList.length === 0" class="empty-state">
-                <div class="empty-icon">🔔</div>
+                <div class="empty-icon-svg">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3C9.24 3 7 5.24 7 8V12L4 15H20L17 12V8C17 5.24 14.76 3 12 3Z" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.25" stroke-linejoin="round"/>
+                    <path d="M10 18C10 19.1 10.9 20 12 20C13.1 20 14 19.1 14 18" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.25" stroke-linecap="round"/>
+                    <circle cx="12" cy="3" r="1" fill="currentColor" fill-opacity="0.25"/>
+                  </svg>
+                </div>
                 <div class="empty-text">暂无通知</div>
                 <div class="empty-hint">您目前没有新的通知</div>
               </div>
@@ -68,8 +150,7 @@
                   :class="{ unread: !item.read }"
                   @click="handleMarkAsRead(item)"
                 >
-                  <div class="preview-icon-wrap" :class="item.type">
-                    <span>{{ getTypeIcon(item.type) }}</span>
+                  <div class="preview-icon-wrap" :class="item.type" v-html="getTypeIcon(item.type)">
                   </div>
                   <div class="preview-content">
                     <div class="preview-title-row">
@@ -86,11 +167,16 @@
                     <span
                       class="delete-btn"
                       @click.stop="handleDelete(item)"
-                    >×</span>
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 6H21M8 6V4C8 3.45 8.45 3 9 3H15C15.55 3 16 3.45 16 4V6M19 6V20C19 21.1 18.1 22 17 22H7C5.9 22 5 21.1 5 20V6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 11V17M14 11V17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                      </svg>
+                    </span>
                   </div>
                 </div>
               </div>
-              <div v-if="notificationList.length > 5" class="more-link" @click="goToMessageCenter">
+              <div v-if="notificationList.length > 5" class="more-link" @click="goToTab('notification')">
                 查看更多 →
               </div>
             </div>
@@ -99,13 +185,23 @@
             <div v-else-if="activeTab === 'chat'" class="chat-section">
               <div class="chat-section-header">
                 <span class="chat-section-title">在线 {{ onlineCount }} 人</span>
-                <button class="chat-enter-full" @click="goToMessageCenter">进入完整版 →</button>
+                <button class="chat-enter-full" @click="goToTab('chat')">进入完整版</button>
               </div>
 
               <div class="chat-mini-body" ref="chatBodyRef">
-                <div v-if="loadingChat" class="loading-state">加载中...</div>
+                <div v-if="loadingChat" class="loading-state">
+                  <div class="loading-spinner"></div>
+                  <span>加载中...</span>
+                </div>
                 <div v-else-if="chatMessages.length === 0" class="empty-state">
-                  <div class="empty-icon">💬</div>
+                  <div class="empty-icon-svg">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.45 4.45 4 5 4H19C19.55 4 20 4.45 20 5V15C20 15.55 19.55 16 19 16H13L9 19V16H5C4.45 16 4 15.55 4 15V5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-opacity="0.25"/>
+                      <circle cx="8.5" cy="10" r="0.8" fill="currentColor" fill-opacity="0.25"/>
+                      <circle cx="12" cy="10" r="0.8" fill="currentColor" fill-opacity="0.25"/>
+                      <circle cx="15.5" cy="10" r="0.8" fill="currentColor" fill-opacity="0.25"/>
+                    </svg>
+                  </div>
                   <div class="empty-text">暂无消息</div>
                   <div class="empty-hint">说点什么吧</div>
                 </div>
@@ -132,7 +228,12 @@
                       >
                         {{ msg.content }}
                         <span v-if="msg.status === 'sending'" class="chat-mini-status">发送中</span>
-                        <button v-else-if="msg.status === 'failed'" class="chat-mini-resend" @click="resendChat(msg)">↻</button>
+                        <button v-else-if="msg.status === 'failed'" class="chat-mini-resend" @click="resendChat(msg)">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            <path d="M23 4V10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20.49 15C19.98 16.93 18.85 18.6 17.21 19.77C15.58 20.94 13.64 21.5 11.67 21.44C9.7 21.38 7.82 20.72 6.37 19.53C4.92 18.34 3.97 16.7 3.7 14.89C3.43 13.08 3.86 11.23 4.94 9.76C6.02 8.29 7.66 7.28 9.5 6.95C11.34 6.62 13.25 7 14.81 8.05C16.37 9.1 17.52 10.76 18.13 12.63" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
                       </div>
                     </div>
                     <div
@@ -169,37 +270,50 @@
 
             <!-- ============== 反馈 Tab ============== -->
             <div v-else-if="activeTab === 'feedback'" class="feedback-section">
-              <div v-if="loadingFeedback" class="loading-state">加载中...</div>
+              <div v-if="loadingFeedback" class="loading-state">
+                <div class="loading-spinner"></div>
+                <span>加载中...</span>
+              </div>
               <div v-else-if="feedbackList.length === 0" class="empty-state">
-                <div class="empty-icon">📝</div>
+                <div class="empty-icon-svg">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                    <path d="M7 3H14L20 9V20C20 20.55 19.55 21 19 21H7C6.45 21 6 20.55 6 20V4C6 3.45 6.45 3 7 3Z" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.25" stroke-linejoin="round"/>
+                    <path d="M14 3V9H20" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.25" stroke-linejoin="round"/>
+                    <path d="M9 13H15M9 16H13" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.25" stroke-linecap="round"/>
+                  </svg>
+                </div>
                 <div class="empty-text">暂无反馈记录</div>
                 <div class="empty-hint">提交反馈请到反馈页面</div>
-                <button class="enter-btn" @click="goToMessageCenter">前往反馈页 →</button>
+                <button class="enter-btn" @click="goToTab('feedback')">前往反馈页</button>
               </div>
-              <div v-else class="feedback-list">
-                <div
-                  v-for="item in feedbackList"
-                  :key="item.id"
-                  class="feedback-item"
-                  @click="goToMessageCenter"
-                >
-                  <div class="feedback-icon-wrap" :class="item.type">
-                    {{ getFeedbackTypeIcon(item.type) }}
-                  </div>
-                  <div class="feedback-main">
-                    <div class="feedback-row1">
-                      <span class="feedback-title">{{ item.title || '反馈' }}</span>
-                      <span class="feedback-status" :class="item.status">{{ getFeedbackStatusText(item.status) }}</span>
+              <div v-else>
+                <div class="feedback-list">
+                  <div
+                    v-for="item in feedbackList.slice(0, 5)"
+                    :key="item.id"
+                    class="feedback-item"
+                    @click="goToTab('feedback')"
+                  >
+                    <div class="feedback-icon-wrap" :class="item.type" v-html="getFeedbackTypeIcon(item.type)">
                     </div>
-                    <div class="feedback-row2">
-                      <span class="feedback-time">{{ formatTime(item.createTime) }}</span>
-                      <span v-if="item.reply" class="feedback-replied">已回复</span>
-                      <span v-else class="feedback-no-reply">未回复</span>
+                    <div class="feedback-main">
+                      <div class="feedback-row1">
+                        <span class="feedback-title">{{ item.title || '反馈' }}</span>
+                        <span class="feedback-status" :class="item.status">{{ getFeedbackStatusText(item.status) }}</span>
+                      </div>
+                      <div class="feedback-row2">
+                        <span class="feedback-time">{{ formatTime(item.createTime) }}</span>
+                        <span v-if="item.reply" class="feedback-replied">已回复</span>
+                        <span v-else class="feedback-no-reply">未回复</span>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div v-if="feedbackList.length > 5" class="more-link has-more" @click="goToTab('feedback')">
+                  还有 {{ feedbackList.length - 5 }} 条反馈，查看全部
+                </div>
+                <div v-else class="more-link" @click="goToTab('feedback')">前往反馈页</div>
               </div>
-              <div class="more-link" @click="goToMessageCenter">前往反馈页 →</div>
             </div>
           </div>
         </div>
@@ -214,16 +328,18 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import messageCenterApi from '@/api/messageCenter'
+import reminderApi from '@/api/reminder'
 
 const router = useRouter()
 const store = useStore()
 
 const isOpen = ref<boolean>(false)
 const isAnimating = ref<boolean>(false)
-const activeTab = ref<string>('notification')
+const activeTab = ref<string>('reminder')
 const notificationList = ref<any[]>([])
 const chatMessageCount = ref<number>(0)
 const feedbackCount = ref<number>(0)
+const reminderCount = ref<number>(0) // 提醒数量
 const loading = ref<boolean>(false)
 
 // 聊天室简易功能状态
@@ -240,6 +356,38 @@ const chatBodyRef = ref<HTMLElement | null>(null)
 // 反馈预览状态
 const feedbackList = ref<any[]>([])
 const loadingFeedback = ref<boolean>(false)
+
+// 提醒预览状态
+const reminderList = ref<any[]>([])
+const loadingReminder = ref<boolean>(false)
+
+/** Tab配置：提醒 → 聊天室 → 通知 → 反馈 */
+const tabs = computed(() => [
+  { 
+    id: 'reminder', 
+    name: '提醒', 
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7V12L15 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>',
+    count: reminderCount.value 
+  },
+  { 
+    id: 'chat', 
+    name: '聊天室', 
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 5C4 4.45 4.45 4 5 4H19C19.55 4 20 4.45 20 5V15C20 15.55 19.55 16 19 16H13L9 19V16H5C4.45 16 4 15.55 4 15V5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8.5" cy="10" r="0.8" fill="currentColor"/><circle cx="12" cy="10" r="0.8" fill="currentColor"/><circle cx="15.5" cy="10" r="0.8" fill="currentColor"/></svg>',
+    count: chatMessageCount.value 
+  },
+  { 
+    id: 'notification', 
+    name: '通知', 
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3C9.24 3 7 5.24 7 8V12L4 15H20L17 12V8C17 5.24 14.76 3 12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 18C10 19.1 10.9 20 12 20C13.1 20 14 19.1 14 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="3" r="1" fill="currentColor"/></svg>',
+    count: unreadCount.value 
+  },
+  { 
+    id: 'feedback', 
+    name: '反馈', 
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 4C8 3.45 8.45 3 9 3H15C15.55 3 16 3.45 16 4V5H19C19.55 5 20 5.45 20 6V18C20 18.55 19.55 19 19 19H16V20C16 20.55 15.55 21 15 21H9C8.45 21 8 20.55 8 20V19H5C4.45 19 4 18.55 4 18V6C4 5.45 4.45 5 5 5H8V4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 9H15M9 13H14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    count: feedbackCount.value 
+  }
+])
 
 /** 头像颜色池（与 ChatRoom 一致） */
 const avatarColors = [
@@ -258,14 +406,8 @@ const getColorByKey = (key: any): string => {
 const currentUser = computed(() => store.getters.getUserInfo || {})
 const isSelf = (msg: any): boolean => String(msg.senderId ?? '') === String(currentUser.value?.id ?? '')
 
-const tabs = computed(() => [
-  { id: 'chat', name: '聊天室', icon: '💬', count: chatMessageCount.value },
-  { id: 'notification', name: '通知', icon: '🔔', count: unreadCount.value },
-  { id: 'feedback', name: '反馈', icon: '📝', count: feedbackCount.value }
-])
-
 const unreadCount = computed(() => notificationList.value.filter(n => !n.read).length)
-const totalCount = computed(() => unreadCount.value + chatMessageCount.value)
+const totalCount = computed(() => unreadCount.value + chatMessageCount.value + reminderCount.value)
 const canSendChat = computed(() => {
   if (sendingChat.value || chatCooldown) return false
   const v = chatInput.value
@@ -273,22 +415,28 @@ const canSendChat = computed(() => {
 })
 
 const typeIconMap: Record<string, string> = {
-  info: 'ℹ️', warning: '⚠️', success: '✅', announcement: '📢'
+  info: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 7V11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  warning: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3L3 20H21L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9V13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1" fill="currentColor"/></svg>',
+  success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  announcement: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 10C3 8.9 3.9 8 5 8H8L14 4V20L8 16H5C3.9 16 3 15.1 3 14V10Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M16 9C17.2 10.2 17.5 11.5 17.5 12C17.5 12.5 17.2 13.8 16 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
 }
 const typeTextMap: Record<string, string> = {
   info: '信息', warning: '警告', success: '成功', announcement: '公告'
 }
 
-const getTypeIcon = (type: string): string => typeIconMap[type] || '📌'
+const getTypeIcon = (type: string): string => typeIconMap[type] || '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>'
 const getTypeText = (type: string): string => typeTextMap[type] || '未知'
 
 const feedbackTypeIconMap: Record<string, string> = {
-  bug: '🐛', feature: '💡', improvement: '✨', other: '📌'
+  bug: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="5" ry="8" stroke="currentColor" stroke-width="1.6"/><path d="M7 7L4 5M17 7L20 5M7 17L4 19M17 17L20 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M7 12H17M7 9.5H17M7 14.5H17" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>',
+  feature: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3L14.5 8H20L15.5 11L17 16L12 13L7 16L8.5 11L4 8H9.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  improvement: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 18L8 10L12 14L16 8L20 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 21H20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16 8H18V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  other: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 8V12L15 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
 }
 const feedbackStatusTextMap: Record<string, string> = {
   pending: '待处理', processing: '处理中', resolved: '已解决', closed: '已关闭'
 }
-const getFeedbackTypeIcon = (type: string): string => feedbackTypeIconMap[type] || '📌'
+const getFeedbackTypeIcon = (type: string): string => feedbackTypeIconMap[type] || feedbackTypeIconMap.other
 const getFeedbackStatusText = (status: string): string => feedbackStatusTextMap[status] || '未知'
 
 const formatTime = (timestamp: string): string => {
@@ -320,7 +468,8 @@ const toggleWidget = (): void => {
   if (isOpen.value) {
     isAnimating.value = false
     // 打开时按需加载
-    if (activeTab.value === 'notification') loadNotificationList()
+    if (activeTab.value === 'reminder') loadReminderList()
+    else if (activeTab.value === 'notification') loadNotificationList()
     else if (activeTab.value === 'chat') loadChatData()
     else if (activeTab.value === 'feedback') loadFeedbackList()
   } else {
@@ -333,16 +482,26 @@ const closeWidget = (): void => {
   stopChatPolling()
 }
 
-const goToMessageCenter = (): void => {
+const goToMessageCenter = (tabId?: string): void => {
   isOpen.value = false
   stopChatPolling()
+  // 如果指定了 tab，存储到 sessionStorage 供消息中心页面读取
+  if (tabId && ['reminder', 'chat', 'notification', 'feedback'].includes(tabId)) {
+    sessionStorage.setItem('mc_target_tab', tabId)
+  }
   router.push('/messageCenter')
+}
+
+/** 快捷跳转到指定 tab */
+const goToTab = (tabId: string): void => {
+  goToMessageCenter(tabId)
 }
 
 /** 切换 tab 时按需加载 */
 watch(activeTab, (val) => {
   if (!isOpen.value) return
-  if (val === 'notification') loadNotificationList()
+  if (val === 'reminder') loadReminderList()
+  else if (val === 'notification') loadNotificationList()
   else if (val === 'chat') {
     loadChatData()
     startChatPolling()
@@ -561,6 +720,123 @@ const resendChat = async (msg: any): Promise<void> => {
   }
 }
 
+/* ============== 提醒 ============== */
+
+/** 提醒类型图标映射 */
+const reminderTypeIconMap: Record<string, string> = {
+  animation: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M10 9L15 12L10 15V9Z" fill="currentColor"/></svg>',
+  comic: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 8H16M8 12H16M8 16H12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  novel: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4H16C17.1 4 18 4.9 18 6V20L14 18L10 20L6 18L2 20V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 8H12M7 11H12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  game: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="8" width="18" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="13" r="1.2" fill="currentColor"/><circle cx="16" cy="13" r="1.2" fill="currentColor"/><path d="M10 10H14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  exam: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 7H16M8 11H16M8 15H12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  appointment: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 3V7M16 3V7M3 10H21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  medicine: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="8" width="18" height="8" rx="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 8V16M7 12H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  report: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M7 3H14L20 9V20C20 20.55 19.55 21 19 21H7C6.45 21 6 20.55 6 20V4C6 3.45 6.45 3 7 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3V9H20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 13H15M9 16H13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  other: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 8V12L15 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+}
+
+/** 提醒状态文本映射 */
+const reminderStatusTextMap: Record<string, string> = {
+  pending: '待触发',
+  cancelled: '已取消',
+  triggered: '已触发',
+  expired: '已过期'
+}
+
+const getReminderTypeIcon = (type: string): string => reminderTypeIconMap[type] || reminderTypeIconMap.other
+const getReminderStatusText = (status: string): string => reminderStatusTextMap[status] || '未知'
+
+/** 格式化提醒时间（显示日期和时间） */
+const formatReminderTime = (timestamp: string): string => {
+  if (!timestamp) return ''
+  const date = new Date(timestamp.includes('T') ? timestamp : timestamp.replace(' ', 'T'))
+  if (Number.isNaN(date.getTime())) return ''
+  const now = new Date()
+  const diff = date.getTime() - now.getTime()
+  const days = Math.floor(diff / 86400000)
+  const hours = Math.floor(diff / 3600000)
+  const mins = Math.floor(diff / 60000)
+  
+  if (days < 0) {
+    return date.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+  }
+  if (days === 0 && hours === 0) {
+    if (mins > 0) return `${mins}分钟后`
+    return '即将触发'
+  }
+  if (days === 0) return `今天 ${date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`
+  if (days === 1) return `明天 ${date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`
+  if (days < 7) return `${days}天后 ${date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`
+  return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+}
+
+/** 加载提醒列表 */
+const loadReminderList = async (): Promise<void> => {
+  loadingReminder.value = true
+  try {
+    const userInfo = store.getters.getUserInfo || {}
+    const userId = userInfo?.id || localStorage.getItem('userId') || ''
+    const res: any = await reminderApi.getMyReminders({ userId, page: 1, size: 50 })
+    if (res?.code === 200) {
+      const data = res.resultValue
+      // 处理分页或数组格式
+      const list = Array.isArray(data) ? data : (data?.list || data?.records || [])
+      // 只显示未取消的提醒
+      reminderList.value = list.filter((item: any) => item.status !== 'cancelled').slice(0, 5)
+      // 更新数量
+      const total = Array.isArray(data) ? data.length : (data?.total || list.length)
+      reminderCount.value = total
+    } else {
+      reminderList.value = []
+      reminderCount.value = 0
+    }
+  } catch (e) {
+    console.warn('加载提醒列表失败:', e)
+    reminderList.value = []
+    reminderCount.value = 0
+  } finally {
+    loadingReminder.value = false
+  }
+}
+
+/** 取消提醒 */
+const handleCancelReminder = async (item: any): Promise<void> => {
+  try {
+    await ElMessageBox.confirm('确定要取消这个提醒吗？', '取消确认', {
+      confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning'
+    })
+    const res: any = await reminderApi.cancelReminder(item.id)
+    if (res?.code === 200) {
+      // 更新本地状态
+      item.status = 'cancelled'
+      reminderCount.value = Math.max(0, reminderCount.value - 1)
+      ElMessage.success('提醒已取消')
+    } else {
+      ElMessage.error(res?.resultValue || '取消失败')
+    }
+  } catch (e) { /* 用户取消 */ }
+}
+
+/** 删除提醒 */
+const handleDeleteReminder = async (item: any): Promise<void> => {
+  try {
+    await ElMessageBox.confirm('确定要删除这个提醒吗？', '删除确认', {
+      confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning'
+    })
+    const res: any = await reminderApi.deleteReminder(item.id)
+    if (res?.code === 200) {
+      const idx = reminderList.value.findIndex(r => r.id === item.id)
+      if (idx !== -1) {
+        reminderList.value.splice(idx, 1)
+        reminderCount.value = Math.max(0, reminderCount.value - 1)
+      }
+      ElMessage.success('删除成功')
+    } else {
+      ElMessage.error(res?.resultValue || '删除失败')
+    }
+  } catch (e) { /* 用户取消 */ }
+}
+
 /* ============== 反馈 ============== */
 const loadFeedbackList = async (): Promise<void> => {
   loadingFeedback.value = true
@@ -591,9 +867,16 @@ watch(unreadCount, (newVal, oldVal) => {
 })
 
 onMounted(() => {
-  loadNotificationList()
+  // 默认激活提醒Tab，加载提醒数据
+  loadReminderList()
   // 后台每 30s 拉一次通知（与原版一致）
-  notifTimer = window.setInterval(loadNotificationList, 30000)
+  notifTimer = window.setInterval(() => {
+    loadNotificationList()
+    // 如果当前在提醒Tab，也刷新提醒数据
+    if (activeTab.value === 'reminder' && isOpen.value) {
+      loadReminderList()
+    }
+  }, 30000)
 })
 
 onUnmounted(() => {
@@ -696,9 +979,27 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark, #0066cc) 100%);
-  color: var(--theme-text-light);
+  background: var(--theme-bg-card);
+  color: var(--theme-text-primary);
   flex-shrink: 0;
+  border-bottom: 1px solid var(--theme-border-light);
+  position: relative;
+}
+
+/* 顶部装饰条 - 使用主题色 */
+.popup-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--theme-primary) 0%,
+    var(--theme-primary-dark) 50%,
+    var(--theme-primary) 100%
+  );
 }
 
 .header-left {
@@ -710,13 +1011,16 @@ onUnmounted(() => {
 .popup-title {
   font-weight: 600;
   font-size: 15px;
+  color: var(--theme-text-primary);
 }
 
 .unread-tag {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--theme-primary);
+  color: white;
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 11px;
+  font-weight: 500;
 }
 
 .popup-actions {
@@ -726,34 +1030,47 @@ onUnmounted(() => {
 }
 
 .goto-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: none;
+  background: var(--theme-primary-bg);
+  color: var(--theme-primary);
+  border: 1px solid var(--theme-primary);
   padding: 5px 12px;
   border-radius: var(--theme-radius-sm);
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   gap: 4px;
 }
-.goto-btn:hover { background: rgba(255, 255, 255, 0.3); }
+.goto-btn:hover {
+  background: var(--theme-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--theme-primary-shadow);
+}
 
 .arrow { transition: transform 0.2s; }
 .goto-btn:hover .arrow { transform: translateX(3px); }
 
 .close-btn {
-  background: none;
-  border: none;
-  color: var(--theme-text-light);
-  font-size: 20px;
+  background: var(--theme-bg-hover);
+  border: 1px solid var(--theme-border-light);
+  color: var(--theme-text-secondary);
+  font-size: 16px;
   cursor: pointer;
-  padding: 0 6px;
+  padding: 2px 8px;
+  border-radius: var(--theme-radius-sm);
   opacity: 0.8;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
+  line-height: 1;
 }
-.close-btn:hover { opacity: 1; }
+.close-btn:hover {
+  opacity: 1;
+  background: var(--theme-error, #ff4d4f);
+  color: white;
+  border-color: var(--theme-error, #ff4d4f);
+}
 
 .popup-body {
   flex: 1;
@@ -761,16 +1078,19 @@ onUnmounted(() => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: var(--theme-bg-card);
 }
 
-/* 快速Tab */
+/* 快速Tab - 分段控件风格 */
 .quick-tabs {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--theme-border-light);
+  padding: 4px;
+  background: var(--theme-bg-hover);
+  border-radius: var(--theme-radius-md);
   flex-shrink: 0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .quick-tab {
@@ -779,32 +1099,36 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding: 7px 8px;
-  background: var(--theme-bg-hover);
+  padding: 8px 10px;
+  background: transparent;
   border: none;
-  border-radius: var(--theme-radius-md);
+  border-radius: var(--theme-radius-sm);
   font-size: 12px;
-  color: var(--theme-text-regular);
+  color: var(--theme-text-secondary);
   cursor: pointer;
   transition: all 0.25s ease;
   position: relative;
+  font-weight: 500;
 }
-.quick-tab:hover { background: var(--theme-bg-secondary); color: var(--theme-text-primary); }
+.quick-tab:hover {
+  background: var(--theme-bg-card);
+  color: var(--theme-text-primary);
+}
 .quick-tab.active {
-  background: var(--theme-primary-bg);
+  background: var(--theme-bg-card);
   color: var(--theme-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   font-weight: 600;
-  box-shadow: 0 2px 8px var(--theme-primary-bg);
 }
 
 .tab-icon { font-size: 14px; }
 
 .tab-count {
   position: absolute;
-  top: -3px;
-  right: 2px;
-  background: var(--theme-danger);
-  color: var(--theme-text-light);
+  top: -2px;
+  right: 0;
+  background: var(--theme-error, #ff4d4f);
+  color: white;
   border-radius: 8px;
   min-width: 14px;
   height: 14px;
@@ -814,6 +1138,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
 }
 
 /* 内容区 */
@@ -841,8 +1166,19 @@ onUnmounted(() => {
 .empty-state {
   text-align: center;
   padding: 30px 20px;
+  color: var(--theme-text-placeholder);
 }
 .empty-icon { font-size: 36px; margin-bottom: 12px; }
+.empty-icon-svg { 
+  margin-bottom: 12px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--theme-text-placeholder);
+}
+.empty-icon-svg svg {
+  display: block;
+}
 .empty-text { font-size: 14px; font-weight: 500; color: var(--theme-text-primary); margin-bottom: 4px; }
 .empty-hint { font-size: 12px; color: var(--theme-text-placeholder); margin-bottom: 12px; }
 
@@ -869,8 +1205,26 @@ onUnmounted(() => {
   margin-top: 8px;
   border-top: 1px solid var(--theme-border-light);
   flex-shrink: 0;
+  transition: background 0.2s;
 }
-.more-link:hover { color: var(--theme-primary-dark, #0066cc); }
+.more-link:hover {
+  color: var(--theme-primary-dark, #0066cc);
+  background: var(--theme-primary-bg, rgba(0, 130, 244, 0.05));
+}
+
+/* 有更多数据时的强调样式 */
+.more-link.has-more {
+  background: var(--theme-primary-bg, rgba(0, 130, 244, 0.08));
+  border-radius: var(--theme-radius-md);
+  margin: 8px 12px 4px;
+  padding: 10px 8px;
+  font-weight: 500;
+  border-top: none;
+}
+.more-link.has-more:hover {
+  background: var(--theme-primary, #0082F4);
+  color: white;
+}
 
 /* ============== 通知列表 ============== */
 .preview-list {
@@ -1062,13 +1416,16 @@ onUnmounted(() => {
   margin-left: 4px;
 }
 .chat-mini-resend {
-  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: none;
   color: inherit;
   cursor: pointer;
   margin-left: 4px;
   padding: 0 2px;
+  vertical-align: middle;
 }
 .chat-mini-resend:hover { opacity: 0.8; }
 
@@ -1218,6 +1575,119 @@ onUnmounted(() => {
 }
 .feedback-no-reply {
   color: var(--theme-text-placeholder);
+}
+
+/* ============== 提醒 Tab ============== */
+.reminder-section {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.reminder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--theme-radius-md);
+  transition: background 0.2s;
+  border: 1px solid var(--theme-border-light);
+}
+.reminder-item:hover { background: var(--theme-bg-hover); }
+.reminder-item.cancelled { opacity: 0.6; }
+
+.reminder-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.reminder-icon-wrap.exam { background: var(--theme-info-light, #d6e8ff); }
+.reminder-icon-wrap.appointment { background: var(--theme-success-light, #d9f7be); }
+.reminder-icon-wrap.medicine { background: var(--theme-warning-light, #ffe7ba); }
+.reminder-icon-wrap.report { background: var(--theme-purple-light, #f3e5f5); }
+.reminder-icon-wrap.other { background: var(--theme-bg-hover); }
+
+.reminder-main { flex: 1; min-width: 0; }
+.reminder-row1 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.reminder-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--theme-text-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reminder-status {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.reminder-status.pending { background: var(--theme-warning-light, #ffe7ba); color: var(--theme-warning, #faad14); }
+.reminder-status.cancelled { background: var(--theme-bg-hover); color: var(--theme-text-placeholder); }
+.reminder-status.triggered { background: var(--theme-success-light, #d9f7be); color: var(--theme-success, #00b42a); }
+.reminder-status.expired { background: var(--theme-danger-light, #ffccc7); color: var(--theme-danger, #ff4d4f); }
+
+.reminder-row2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--theme-text-placeholder);
+}
+.reminder-time {
+  color: var(--theme-primary);
+  font-weight: 500;
+}
+
+.reminder-msg {
+  font-size: 11px;
+  color: var(--theme-text-secondary);
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reminder-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.cancel-btn {
+  font-size: 11px;
+  color: var(--theme-warning, #faad14);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.cancel-btn:hover {
+  background: var(--theme-warning-light, #ffe7ba);
+  color: var(--theme-warning-dark, #d48806);
 }
 
 /* ============== 动画 ============== */

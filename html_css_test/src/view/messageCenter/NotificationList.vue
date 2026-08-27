@@ -19,6 +19,40 @@
       </div>
     </div>
 
+    <!-- 查询条件 -->
+    <div class="filter-bar">
+      <div class="filter-item">
+        <label>通知类型</label>
+        <el-select v-model="filters.type" placeholder="全部类型" clearable size="small">
+          <el-option label="信息" value="info" />
+          <el-option label="警告" value="warning" />
+          <el-option label="成功" value="success" />
+          <el-option label="公告" value="announcement" />
+        </el-select>
+      </div>
+      <div class="filter-item">
+        <label>已读状态</label>
+        <el-select v-model="filters.readStatus" placeholder="全部状态" clearable size="small">
+          <el-option label="未读" value="unread" />
+          <el-option label="已读" value="read" />
+        </el-select>
+      </div>
+      <div class="filter-item keyword-filter">
+        <label>关键词</label>
+        <el-input
+          v-model="filters.keyword"
+          placeholder="搜索标题或内容"
+          clearable
+          size="small"
+          @keyup.enter="handleSearch"
+        />
+      </div>
+      <div class="filter-actions">
+        <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
+        <el-button size="small" @click="handleResetFilters">重置</el-button>
+      </div>
+    </div>
+
     <!-- 通知列表 -->
     <div class="list-body">
 
@@ -129,6 +163,18 @@ const pagination = reactive({
   total: 0
 })
 
+/** 查询条件 */
+const filters = reactive({
+  type: '',
+  readStatus: '',
+  keyword: ''
+})
+const appliedFilters = reactive({
+  type: '',
+  readStatus: '',
+  keyword: ''
+})
+
 /** 通知列表 */
 const notificationList = ref<Notification[]>([])
 
@@ -197,6 +243,24 @@ const toBool = (val: any): boolean => {
 /** 全部数据（用于前端分页） */
 const allNotifications = ref<Notification[]>([])
 
+/** 筛选后的全部数据 */
+const filteredNotifications = computed<Notification[]>(() => {
+  return allNotifications.value.filter(item => {
+    // 类型筛选
+    if (appliedFilters.type && item.type !== appliedFilters.type) return false
+    // 已读状态筛选
+    if (appliedFilters.readStatus === 'unread' && item.read) return false
+    if (appliedFilters.readStatus === 'read' && !item.read) return false
+    // 关键词筛选
+    if (appliedFilters.keyword) {
+      const kw = appliedFilters.keyword.toLowerCase()
+      return item.title.toLowerCase().includes(kw) || 
+             item.description.toLowerCase().includes(kw)
+    }
+    return true
+  })
+})
+
 const loadNotifications = async (): Promise<void> => {
   loading.value = true
   try {
@@ -244,9 +308,8 @@ const loadNotifications = async (): Promise<void> => {
     
     // 存储全部数据
     allNotifications.value = newList
-    pagination.total = newList.length
     
-    // 前端分页
+    // 使用筛选后的数据更新分页
     updatePagedList()
   } catch (e) {
     console.warn('获取通知列表失败:', e)
@@ -261,13 +324,36 @@ const loadNotifications = async (): Promise<void> => {
 
 /** 前端分页计算 */
 const updatePagedList = () => {
+  const filtered = filteredNotifications.value
+  pagination.total = filtered.length
   const start = (pagination.page - 1) * pagination.size
   const end = start + pagination.size
-  notificationList.value = allNotifications.value.slice(start, end)
+  notificationList.value = filtered.slice(start, end)
 }
 
 /** 分页变化处理 */
 const handlePageChange = () => {
+  updatePagedList()
+}
+
+/** 查询 */
+const handleSearch = () => {
+  appliedFilters.type = filters.type
+  appliedFilters.readStatus = filters.readStatus
+  appliedFilters.keyword = filters.keyword.trim()
+  pagination.page = 1
+  updatePagedList()
+}
+
+/** 重置查询条件 */
+const handleResetFilters = () => {
+  filters.type = ''
+  filters.readStatus = ''
+  filters.keyword = ''
+  appliedFilters.type = ''
+  appliedFilters.readStatus = ''
+  appliedFilters.keyword = ''
+  pagination.page = 1
   updatePagedList()
 }
 
@@ -417,6 +503,38 @@ onUnmounted(() => {
   background: var(--theme-bg-card);
   border-bottom: 1px solid var(--theme-border);
   flex-shrink: 0;
+}
+
+/* 查询条件样式 */
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  background: var(--theme-bg-card);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--theme-border-light);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 130px;
+}
+.filter-item label {
+  font-size: 11px;
+  color: var(--theme-text-secondary);
+  font-weight: 500;
+}
+.keyword-filter {
+  flex: 1;
+  min-width: 160px;
+}
+.filter-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .header-left {

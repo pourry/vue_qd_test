@@ -1,118 +1,139 @@
 <template>
-  <div class="tdaddstartcss">
-     <!-- <div>111</div> -->
-     <div class="tdformcss">
-           <el-form :model="editform.form" label-position="right">
-                <el-row :gutter="20">
-                  <el-col :span="19" >
-                    <el-form-item label="名称" >
-                      <el-input v-model="editform.form.name" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="5">
-                    <el-form-item label="完结状态" >
-                      <el-select v-model="editform.form.hasend" placeholder="请选择">
-                      <el-option
-                        v-for="item in hasendoptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </el-form-item>
-                  </el-col>
-                </el-row> 
-                <el-row :gutter="20">
-                 <el-col :span="19">
-                    <el-form-item label="别名" >
-                      <el-input v-model="editform.form.alias" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>  
-                <el-row :gutter="20">
-                 <el-col :span="19">
-                    <el-form-item label="地址（路径）" >
-                      <el-input v-model="editform.form.address" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>      
-                <el-row :gutter="20">
-                  <el-col :span="24">
-                    <el-form-item label="备注" >
-                      <el-input v-model="editform.form.notes" type="textarea"/>
-                    </el-form-item>
-                  </el-col>
-                </el-row>  
-                <el-row :gutter="20">
-                  <el-col :span="24">
-                    <el-form-item label="是否公开">
-                      <el-switch  v-model="editform.form.share"/>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                  <el-col :span="19">
-                    <el-upload action="#" list-type="picture-card" 
-                    :auto-upload="false" 
-                    :file-list="editform.form.pictures"
-                    :on-change="filechange"
-                    :on-remove="handleRemove"
-                    >
-                        <el-icon><Plus /></el-icon>
-
-                        <template #file="{file}" class="uploadremcss" >
-                          <div >
-                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                            <span class="el-upload-list__item-actions">
-                              <span
-                                class="el-upload-list__item-preview"
-                                @click="handlePictureCardPreview(file)"
-                              >
-                                <el-icon><zoom-in /></el-icon>
-                              </span>
-                              <!-- <span
-                                class="el-upload-list__item-delete"
-                                @click="handleDownload(file)"
-                              >
-                                <el-icon><Download /></el-icon>
-                              </span> -->
-                              <span
-                                class="el-upload-list__item-delete"
-                                @click="handleRemove(file)"
-                              >
-                                <el-icon><Delete /></el-icon>
-                              </span>
-                            </span>
-                          </div>
-                        </template>
-                      </el-upload>
-                  </el-col>
-                </el-row> 
-                <el-row :gutter="20" justify="end">
-                  <el-col :span="5.4">
-                    <el-form-item class="buttomcss">
-                      <el-button type="primary" @click="toedit">修改</el-button>
-                      <el-button @click="toclose">关闭</el-button>
-                    </el-form-item>
-                  </el-col>
-                </el-row>  
-              </el-form>
-  
-     </div>
-      <el-dialog v-model="dialogVisibleShowpicture">
-        <div > <img w-full :src="dialogImageUrl" alt="Preview Image" class="showimgcss"/></div>
-      </el-dialog>
+  <div>
+    <el-dialog
+      v-model="dialogVisible"
+      title="修改收藏"
+      width="720px"
+      :close-on-click-modal="false"
+      class="tddialogcss"
+      align-center
+      @close="toclose"
+    >
+      <div class="tdformcss">
+        <el-form :model="editform.form" label-position="right" label-width="100px">
+          <el-row :gutter="20">
+            <el-col :span="15">
+              <el-form-item label="名称">
+                <el-input v-model="editform.form.name" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="9">
+              <el-form-item label="完结状态">
+                <el-select v-model="editform.form.hasend" placeholder="请选择" style="width:100%">
+                  <el-option
+                    v-for="item in hasendoptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="别名">
+                <el-input v-model="editform.form.alias" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="地址（路径）">
+                <el-input v-model="editform.form.address" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="备注">
+                <el-input v-model="editform.form.notes" type="textarea" :rows="3" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="是否公开">
+                <el-switch v-model="editform.form.share" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="消息提醒">
+                <el-switch v-model="editform.form.remindopen" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" v-if="editform.form.remindopen">
+            <el-col :span="24">
+              <el-alert type="info" show-icon :closable="false" style="margin-bottom:12px">
+                <p>开启消息提醒后会根据通知时间对通知消息进行提醒</p>
+              </el-alert>
+              <el-form-item label="通知时间">
+                <el-date-picker
+                  v-model="editform.form.remindtime"
+                  type="datetime"
+                  placeholder="请选择时间"
+                  format="YYYY-MM-DD hh:mm:ss"
+                  style="width:100%"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" v-if="editform.form.remindopen">
+            <el-col :span="24">
+              <el-form-item label="通知消息">
+                <el-input v-model="editform.form.remindmsg" type="textarea" :rows="2" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="图片">
+                <el-upload action="#" list-type="picture-card"
+                  :auto-upload="false"
+                  :file-list="editform.form.pictures"
+                  :on-change="filechange"
+                  :on-remove="handleRemove"
+                >
+                  <el-icon><Plus /></el-icon>
+                  <template #file="{file}">
+                    <div>
+                      <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                      <span class="el-upload-list__item-actions">
+                        <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+                          <el-icon><zoom-in /></el-icon>
+                        </span>
+                        <span class="el-upload-list__item-delete" @click="handleRemove(file)">
+                          <el-icon><Delete /></el-icon>
+                        </span>
+                      </span>
+                    </div>
+                  </template>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
+      <template #footer>
+        <el-button @click="toclose">关闭</el-button>
+        <el-button type="primary" @click="toedit">修改</el-button>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="dialogVisibleShowpicture" width="720px">
+      <div>
+        <img style="width:100%" :src="dialogImageUrl" alt="Preview Image" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {ref,reactive,onMounted,watch,nextTick} from 'vue'
+import {ref,reactive,watch} from 'vue'
 import {ElMessage} from 'element-plus'
 
 export default {
   name: 'EditDialog',
-  components: {
-  },
   props:{
      editform:{
         type:Object,
@@ -121,18 +142,32 @@ export default {
      hasendoptions:{
         type:Object,
         required: true
+     },
+     visible:{
+        type:Boolean,
+        default: false
      }
   },
-  emits: ["toclose","toedit","tosearch"],
+  emits: ["update:visible","toclose","toedit","tosearch"],
   setup(props,{emit}){
      let hasendoptions = reactive(props.hasendoptions);
-     let editform = reactive(props.editform); 
-      let toclose = function(){
-         emit("toclose")
-      }
+     let editform = reactive(props.editform);
+     let dialogVisible = ref(props.visible);
 
-      //修改
-      let toedit = function(){
+     watch(()=>props.visible,(val)=>{
+       dialogVisible.value = val;
+     });
+
+     watch(dialogVisible,(val)=>{
+       emit("update:visible",val);
+     });
+
+     let toclose = function(){
+        emit("toclose");
+        dialogVisible.value = false;
+     }
+
+     let toedit = function(){
         for(let i = 0;i < hasendoptions.length;i++){
             if(hasendoptions[i].value == editform.form.hasend ){
               editform.form.hasendLabel = hasendoptions[i].label;
@@ -142,30 +177,30 @@ export default {
         let formdata = new FormData();
 
         let files = editform.form.pictures;
-        for(let key in files){
-          console.log(key)
-          if(files.hasOwnProperty(key)){
-            if(!files[key].id){
-             formdata.append("file",files[key].raw)
-             editform.form.pictures.splice(key)
-            }
+        let newFiles = [];
+        for(let i = files.length - 1; i >= 0; i--){
+          if(!files[i].id){
+             newFiles.push(files[i]);
+             files.splice(i,1);
           }
         }
-        
+
         let animation = editform.form;
         for(let key in animation){
           if(animation.hasOwnProperty(key)){
             if(animation[key] != undefined){
-              console.log(typeof animation[key])
               if(typeof animation[key]  === 'object'){
-                 formdata.append("object",JSON.stringify(animation[key]));
+                 formdata.append("pictures",JSON.stringify(animation[key]));
               }else{
                  formdata.append(key,animation[key]);
               }
-              
             }
           }
         }
+        for(let i = 0; i < newFiles.length; i++){
+          formdata.append("file", newFiles[i].raw);
+        }
+
         emit("toedit",formdata,function(res){
           if(res.successful){
                 ElMessage({
@@ -183,87 +218,59 @@ export default {
         })
       }
 
-           //图片处理
      let dialogImageUrl = ref('')
      let dialogVisibleShowpicture = ref(false)
 
-     // 添加图片触发
      let filechange = function(file){
       editform.form.pictures.push(file);
      }
-     //图片展示
-     let handlePictureCardPreview = function(file,uploadFiles){
+     let handlePictureCardPreview = function(file){
       dialogImageUrl.value = file.url
       dialogVisibleShowpicture.value = true
      }
-     //下载图片
-     let handleDownload = function(file){
-
-     }
-     //移除图片
      let handleRemove = function(file){
       let fileList = editform.form.pictures;
-      for(let i = 0;i<fileList.length;i++){
+      for(let i = fileList.length - 1; i >= 0; i--){
         if(fileList[i].uid == file.uid){
-          fileList.splice(i);
+          fileList.splice(i,1);
         }
       }
-      //获取所有的li标签添加删除元素事件  会造成同vue 其他li标签点击都绑定删除元素
-      let list =document.querySelectorAll("li");
-				for (let i = 0; i < list.length; i++) {
-					(function (i) {
-						list[i].onclick = function () {
-							list[i].remove();
-						}
-					})(i);
-				}
      }
-  onMounted(()=>{
 
-    
-  })
   return{editform,
          toclose,
          toedit,
-         handlePictureCardPreview,handleDownload,handleRemove,filechange,dialogVisibleShowpicture,dialogImageUrl,
+         handlePictureCardPreview,handleRemove,filechange,
+         dialogVisibleShowpicture,dialogImageUrl,dialogVisible,
          hasendoptions}
   }
 }
 </script>
 
 <style scoped>
-.tdaddstartcss{
-  position:absolute;
-  top:100%;
-  width: 100%;  
-  height: auto;
-  z-index: 100;
-  border-radius: 0 0 var(--theme-radius-lg) var(--theme-radius-lg);
-  background-color: var(--theme-bg-card);
-  box-shadow: var(--theme-shadow-lg);
-  border-top: 1px solid var(--theme-border);
-  animation: slideDown 0.25s ease-out;
-}
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 .tdformcss{
-  margin-top: 10px;
-  height:auto;
-  width:100%;
-  overflow:auto;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding: var(--theme-spacing-sm);
+  padding: 10px 0;
 }
-.el-form{
-  height:100%;
-  width:85%;
+.tddialogcss :deep(.el-dialog__body){
+  padding: 10px 20px 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.tddialogcss :deep(.el-dialog__header){
+  padding: 16px 20px 10px;
+  border-bottom: 1px solid var(--theme-border);
+  margin-right: 0;
+}
+.tddialogcss :deep(.el-dialog__title){
+  color: var(--theme-text-primary);
+  font-weight: 600;
+}
+.tddialogcss :deep(.el-dialog__footer){
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--theme-border);
 }
 .el-form-item{
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 .el-form-item :deep(.el-form-item__label){
   color: var(--theme-text-regular);
@@ -281,43 +288,15 @@ export default {
 }
 .el-form-item :deep(.el-textarea__inner){
   border-color: var(--theme-border);
-  transition: border-color 0.2s ease;
 }
 .el-form-item :deep(.el-textarea__inner:hover){
   border-color: var(--theme-primary);
 }
-.el-form-item :deep(.el-textarea__inner:focus){
-  border-color: var(--theme-primary);
-}
 .el-form-item :deep(.el-select .el-select__wrapper){
   box-shadow: 0 0 0 1px var(--theme-border) inset;
-  transition: box-shadow 0.2s ease;
-}
-.el-form-item :deep(.el-select .el-select__wrapper:hover){
-  box-shadow: 0 0 0 1px var(--theme-primary) inset;
-}
-.el-form-item :deep(.el-select .el-select__wrapper.is-focused){
-  box-shadow: 0 0 0 1px var(--theme-primary) inset;
 }
 .el-form-item :deep(.el-switch.is-checked .el-switch__core){
   background-color: var(--theme-primary);
   border-color: var(--theme-primary);
-}
-.buttomcss{
-  display: flex;
-  gap: var(--theme-spacing-sm);
-  justify-content: flex-end;
-}
-.buttomcss :deep(.el-button--primary){
-  background-color: var(--theme-primary);
-  border-color: var(--theme-primary);
-}
-.buttomcss :deep(.el-button--primary:hover){
-  background-color: var(--theme-primary-dark);
-  border-color: var(--theme-primary-dark);
-}
-.showimgcss{
-  height:100%;
-  width:100%;
 }
 </style>

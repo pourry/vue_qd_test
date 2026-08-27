@@ -75,12 +75,12 @@
     <div class="feedback-list-section">
       <div class="list-header">
         <span class="list-title">反馈列表</span>
-        <span class="list-count">共 {{ filteredList.length }} 条</span>
+        <span class="list-count">共 {{ total }} 条</span>
       </div>
       <div class="feedback-list">
         <div v-if="loading" class="loading-state">加载中...</div>
         <template v-else>
-          <div v-for="item in filteredList" :key="item.id" class="feedback-card">
+          <div v-for="item in pagedList" :key="item.id" class="feedback-card">
             <div class="card-header">
               <div class="card-title-area">
                 <span class="card-type-tag" :class="item.type">{{ getTypeText(item.type) }}</span>
@@ -113,11 +113,36 @@
               <button class="reply-btn" @click="openReplyDialog(item)">回复</button>
             </div>
           </div>
-          <div v-if="filteredList.length === 0" class="empty-state">
+          <div v-if="pagedList.length === 0" class="empty-state">
             <div class="empty-icon">📭</div>
             <div class="empty-text">暂无符合条件的反馈</div>
           </div>
         </template>
+      </div>
+      <!-- 分页组件 -->
+      <div class="pagination-bar" v-if="total > 0">
+        <span class="pagination-info">第 {{ currentPage }} / {{ totalPages }} 页</span>
+        <div class="pagination-controls">
+          <button 
+            class="page-btn" 
+            :disabled="currentPage <= 1 || loading" 
+            @click="goToPage(currentPage - 1)"
+          >
+            上一页
+          </button>
+          <button 
+            class="page-btn" 
+            :disabled="currentPage >= totalPages || loading" 
+            @click="goToPage(currentPage + 1)"
+          >
+            下一页
+          </button>
+          <select v-model="pageSize" class="page-size-select" @change="handlePageSizeChange">
+            <option :value="10">10条/页</option>
+            <option :value="20">20条/页</option>
+            <option :value="50">50条/页</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -216,6 +241,20 @@ const feedbackList = ref<FeedbackRecord[]>([])
 const replyingItem = ref<FeedbackRecord | null>(null)
 const replyContent = ref<string>('')
 
+// 分页相关状态
+const currentPage = ref<number>(1)
+const pageSize = ref<number>(10)
+const total = ref<number>(0)
+
+// 计算总页数
+const totalPages = computed(() => Math.ceil(total.value / pageSize.value))
+
+// 当前页显示的数据（用于前端分页显示）
+const pagedList = computed(() => {
+  // 如果使用后端分页，feedbackList就是当前页的数据
+  return feedbackList.value
+})
+
 // 图片预览（支持缩放和拖拽）
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
@@ -301,24 +340,9 @@ const formatTime = (timestamp: string): string => {
   return d.toLocaleDateString('zh-CN') + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 
-const filteredList = computed<FeedbackRecord[]>(() => {
-  return feedbackList.value.filter(item => {
-    if (appliedFilters.status && item.status !== appliedFilters.status) return false
-    if (appliedFilters.type && item.type !== appliedFilters.type) return false
-    if (appliedFilters.keyword) {
-      const kw = appliedFilters.keyword.toLowerCase()
-      return item.title.toLowerCase().includes(kw) || item.description.toLowerCase().includes(kw)
-    }
-    return true
-  })
-})
-
 const calculateStats = (): void => {
-  stats.total = feedbackList.value.length
-  stats.pending = feedbackList.value.filter(f => f.status === 'pending').length
-  stats.processing = feedbackList.value.filter(f => f.status === 'processing').length
-  stats.resolved = feedbackList.value.filter(f => f.status === 'resolved').length
-  stats.closed = feedbackList.value.filter(f => f.status === 'closed').length
+  stats.total = total.value
+  // 从当前页数据无法计算全局统计，需要调用后端统计接口
 }
 
 const loadStats = async (): Promise => {
@@ -335,10 +359,25 @@ const loadStats = async (): Promise => {
 const loadFeedbackList = async (): Promise => {
   loading.value = true
   try {
-    const res: any = await messageCenterApi.getAllFeedbacks({})
-    if (res?.code === 200 && Array.isArray(res.resultValue)) {
-      console.log('反馈列表原始数据 (TotalFeedback):', res.resultValue)
-      feedbackList.value = res.resultValue.map((item: any) => {
+    // 使用后端分页接口
+    const params: any = {
+      page: currentPage.value,
+      size: pageSize.value
+    }
+    // 添加筛选条件
+    if (appliedFilters.status) params.status = appliedFilters.status
+    if (appliedFilters.type) params.type = appliedFilters.type
+    if (appliedFilters.keyword) params.keyword = appliedFilters.keyword
+
+    const res: any = await messageCenterApi.getAllFeedbacksPaged(params)
+    if (res?.code === 200 && res.resultValue) {
+      const data = res.resultValue
+      // 兼容不同的返回格式
+      const list = data.list || data.records || data.data || []
+      total.value = data.total || data.totalCount || 0
+
+      console.log('反馈列表原始数据 (TotalFeedback):', list)
+      feedbackList.value = list.map((item: any) => {
         console.log('反馈项 images 字段:', item.images, '类型:', typeof item.images)
         // 解析图片列表
         let images: string[] = []
@@ -388,19 +427,38 @@ const loadFeedbackList = async (): Promise => {
       { id: 3, type: 'improvement', title: '移动端适配问题', description: '在小屏幕手机上，部分按钮显示不全。', status: 'resolved', timestamp: new Date(Date.now() - 1 * 86400000).toISOString(), userName: '王五', contact: '13800138000', reply: '已优化移动端布局，问题已解决。' },
       { id: 4, type: 'other', title: '建议优化搜索功能', description: '搜索结果排序不够智能。', status: 'closed', timestamp: new Date(Date.now() - 14 * 86400000).toISOString(), userName: '赵六', contact: '', reply: '此需求暂不优先。' }
     ]
+    total.value = feedbackList.value.length
     calculateStats()
   } finally { loading.value = false }
+}
+
+// 分页相关方法
+const goToPage = (page: number): void => {
+  if (page < 1 || page > totalPages.value || page === currentPage.value) return
+  currentPage.value = page
+  loadFeedbackList()
+}
+
+const handlePageSizeChange = (): void => {
+  currentPage.value = 1  // 切换每页条数时回到第一页
+  loadFeedbackList()
 }
 
 const handleSearch = (): void => {
   appliedFilters.status = filters.status
   appliedFilters.type = filters.type
   appliedFilters.keyword = filters.keyword.trim()
+  // 搜索时重置到第一页
+  currentPage.value = 1
+  loadFeedbackList()
 }
 
 const handleResetFilters = (): void => {
   filters.status = ''; filters.type = ''; filters.keyword = ''
   appliedFilters.status = ''; appliedFilters.type = ''; appliedFilters.keyword = ''
+  // 重置时回到第一页
+  currentPage.value = 1
+  loadFeedbackList()
 }
 
 const handleUpdateStatus = async (item: FeedbackRecord): Promise => {
@@ -481,6 +539,59 @@ onMounted(async () => { await loadStats(); await loadFeedbackList() })
 .list-title { font-size: 15px; font-weight: 600; color: var(--theme-text-primary); }
 .list-count { font-size: 12px; color: var(--theme-text-secondary); }
 .feedback-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
+
+/* 分页组件样式 */
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--theme-bg-card);
+  border-top: 1px solid var(--theme-border-light);
+  border-radius: 0 0 var(--theme-radius-lg) var(--theme-radius-lg);
+  flex-shrink: 0;
+}
+.pagination-info {
+  font-size: 13px;
+  color: var(--theme-text-secondary);
+}
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.page-btn {
+  padding: 6px 14px;
+  background: var(--theme-bg-middle);
+  color: var(--theme-text-regular);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-md);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.page-btn:hover:not(:disabled) {
+  background: var(--theme-primary);
+  color: var(--theme-text-light);
+  border-color: var(--theme-primary);
+}
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.page-size-select {
+  padding: 6px 10px;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-md);
+  background: var(--theme-bg-middle);
+  color: var(--theme-text-primary);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+.page-size-select:focus {
+  border-color: var(--theme-primary);
+}
 .feedback-card { background: var(--theme-bg-card); border: 1px solid var(--theme-border-light); border-radius: var(--theme-radius-lg); padding: 14px 16px; transition: box-shadow 0.2s; }
 .feedback-card:hover { box-shadow: var(--theme-shadow-sm); }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }

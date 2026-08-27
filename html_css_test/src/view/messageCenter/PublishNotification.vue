@@ -127,6 +127,44 @@
         <el-tab-pane label="发布内容" name="manage">
           <!-- 已发布通知列表（按批次显示） -->
           <div class="manage-container">
+            <!-- 查询条件 -->
+            <div class="filter-bar">
+              <div class="filter-item">
+                <label>通知类型</label>
+                <el-select v-model="searchFilters.type" placeholder="全部类型" clearable>
+                  <el-option
+                    v-for="type in notificationTypes"
+                    :key="type.value"
+                    :label="type.label"
+                    :value="type.value"
+                  />
+                </el-select>
+              </div>
+              <div class="filter-item keyword-filter">
+                <label>关键词</label>
+                <el-input
+                  v-model="searchFilters.keyword"
+                  placeholder="搜索标题或内容"
+                  clearable
+                  @keyup.enter="handleSearch"
+                />
+              </div>
+              <div class="filter-item date-filter">
+                <label>发布日期</label>
+                <el-date-picker
+                  v-model="searchFilters.dateRange"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                />
+              </div>
+              <div class="filter-actions">
+                <el-button type="primary" @click="handleSearch">查询</el-button>
+                <el-button @click="handleResetFilters">重置</el-button>
+              </div>
+            </div>
+
             <div class="manage-header">
               <span class="manage-count">共 {{ pagination.total }} 条发布</span>
               <el-button type="primary" link @click="loadPublishedList">刷新列表</el-button>
@@ -471,6 +509,18 @@ const publishedList = ref([])
 const deletingId = ref(null)
 const listLoading = ref(false)
 
+// 查询条件
+const searchFilters = reactive({
+  type: '',
+  keyword: '',
+  dateRange: null
+})
+const appliedFilters = reactive({
+  type: '',
+  keyword: '',
+  dateRange: null
+})
+
 // 接收者详情弹窗
 const detailVisible = ref(false)
 const detailLoading = ref(false)
@@ -564,10 +614,19 @@ const refreshUserList = async () => {
 const loadPublishedList = async () => {
   listLoading.value = true
   try {
-    const res = await messageCenterApi.getPublishedBatchesPaged({
+    const params = {
       page: pagination.page,
       size: pagination.size
-    })
+    }
+    // 添加查询条件
+    if (appliedFilters.type) params.type = appliedFilters.type
+    if (appliedFilters.keyword) params.keyword = appliedFilters.keyword
+    if (appliedFilters.dateRange && appliedFilters.dateRange.length === 2) {
+      params.startDate = appliedFilters.dateRange[0]
+      params.endDate = appliedFilters.dateRange[1]
+    }
+
+    const res = await messageCenterApi.getPublishedBatchesPaged(params)
     if (res?.code === 200 && res.resultValue) {
       publishedList.value = res.resultValue.list || []
       pagination.total = res.resultValue.total || 0
@@ -583,6 +642,27 @@ const loadPublishedList = async () => {
   } finally {
     listLoading.value = false
   }
+}
+
+// 查询
+const handleSearch = () => {
+  appliedFilters.type = searchFilters.type
+  appliedFilters.keyword = searchFilters.keyword.trim()
+  appliedFilters.dateRange = searchFilters.dateRange ? [...searchFilters.dateRange] : null
+  pagination.page = 1
+  loadPublishedList()
+}
+
+// 重置查询条件
+const handleResetFilters = () => {
+  searchFilters.type = ''
+  searchFilters.keyword = ''
+  searchFilters.dateRange = null
+  appliedFilters.type = ''
+  appliedFilters.keyword = ''
+  appliedFilters.dateRange = null
+  pagination.page = 1
+  loadPublishedList()
 }
 
 // 处理分页大小变化
@@ -1102,6 +1182,48 @@ watch(activeTab, (newVal) => {
 /* 发布管理样式 */
 .manage-container {
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 查询条件样式 */
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  background: var(--theme-bg-card);
+  padding: 14px 16px;
+  border-radius: var(--theme-radius-lg);
+  border: 1px solid var(--theme-border-light);
+  flex-wrap: wrap;
+}
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+}
+.filter-item label {
+  font-size: 12px;
+  color: var(--theme-text-secondary);
+  font-weight: 500;
+}
+.filter-item .el-select,
+.filter-item .el-input {
+  width: 100%;
+}
+.keyword-filter {
+  flex: 1;
+  min-width: 200px;
+}
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.filter-actions .el-button {
+  height: 34px;
 }
 
 .manage-header {

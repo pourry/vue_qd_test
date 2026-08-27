@@ -1,0 +1,226 @@
+﻿npx : Browserslist: caniuse-lite is outdated. Please run:
+At line:15 char:3528
++ ... test\html_css_test; npx vue-cli-service build --no-clean 2>&1 | Out-F ...
++                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Browserslist: c...ed. Please run::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+All browser targets in the browserslist configuration have supported ES module.
+Therefore we don't build two separate bundles for differential loading.
+
+
+-  Building for production...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+[1m[33m[@vue/compiler-sfc][0m[33m ::v-deep usage as a combinator has been deprecated. Use :deep(<inner-selector>) i
+nstead.[0m
+
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ERROR  Failed to compile with 1 error15:24:59
+
+ error  in ./src/view/messageCenter/PublishNotification.vue?vue&type=script&setup=true&lang=js
+
+Syntax Error: Thread Loader (Worker 12)
+Cannot read properties of null (reading 'content')
+
+
+ ERROR  Error: Build failed with errors.
+Error: Build failed with errors.
+    at D:\development\my_project\vue_qd_test\html_css_test\node_modules\@vue\cli-service\lib\commands\build\index.js:20
+7:23
+    at D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\webpack.js:159:8
+    at D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\HookWebpackError.js:68:3
+    at Hook.eval [as callAsync] (eval at create (D:\development\my_project\vue_qd_test\html_css_test\node_modules\tapab
+le\lib\HookCodeFactory.js:33:10), <anonymous>:6:1)
+    at Hook.CALL_ASYNC_DELEGATE [as _callAsync] (D:\development\my_project\vue_qd_test\html_css_test\node_modules\tapab
+le\lib\Hook.js:18:14)
+    at Cache.shutdown (D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\Cache.js:156:23)
+    at D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\Compiler.js:1358:15
+    at Hook.eval [as callAsync] (eval at create (D:\development\my_project\vue_qd_test\html_css_test\node_modules\tapab
+le\lib\HookCodeFactory.js:33:10), <anonymous>:6:1)
+    at Hook.CALL_ASYNC_DELEGATE [as _callAsync] (D:\development\my_project\vue_qd_test\html_css_test\node_modules\tapab
+le\lib\Hook.js:18:14)
+    at Compiler.close (D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\Compiler.js:1351:23
+)
+    at D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\webpack.js:158:16
+    at finalCallback (D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\Compiler.js:476:32)
+    at D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\Compiler.js:500:13
+    at Hook.eval [as callAsync] (eval at create (D:\development\my_project\vue_qd_test\html_css_test\node_modules\tapab
+le\lib\HookCodeFactory.js:33:10), <anonymous>:33:1)
+    at Hook.CALL_ASYNC_DELEGATE [as _callAsync] (D:\development\my_project\vue_qd_test\html_css_test\node_modules\tapab
+le\lib\Hook.js:18:14)
+    at onCompiled (D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\Compiler.js:498:21)
+    at D:\development\my_project\vue_qd_test\html_css_test\node_modules\webpack\lib\Compiler.js:1329:17
+    at eval (eval at create (D:\development\my_project\vue_qd_test\html_css_test\node_modules\tapable\lib\HookCodeFacto
+ry.js:33:10), <anonymous>:14:1)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

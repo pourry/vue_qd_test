@@ -66,23 +66,16 @@ export default {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  /* 关键：flex 列布局，让子元素能正确分配高度 */
-  display: flex;
-  flex-direction: column;
 }
 .middlecss {
   background-color: var(--theme-bg-middle);
   position: relative;
-  /* 关键：占满剩余高度，允许内部 flex 子元素正确传递高度 */
-  flex: 1;
-  min-height: 0;
+  min-height: 60vh;
 }
 .bottomcss{
   background-color: var(--theme-bg-bottom);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
   position: relative;
-  /* 关键：底部栏保持自身内容高度，不被压缩 */
-  flex-shrink: 0;
 }
 
 /* 中间区域与顶/底的连接样式 */

@@ -27,24 +27,31 @@
          </div>
 
          <div v-if="haslogin" :class="['nav-btn', { active: isActive('/favorites') }]" @click="toFavorites">
-           <el-icon><Collection /></el-icon>
-           <span>收藏夹</span>
-         </div>
-         <div v-if="haslogin" :class="['nav-btn', { active: isActive('/userSelf') }]" @click="toUserSelf">
-           <el-icon><User /></el-icon>
-           <span>我的</span>
-         </div>
-         <div v-if="haslogin" class="tchead">
-           <div :class="['tccss', 'nav-btn', { active: toggleControl }]" @click="toggleControl = !toggleControl">
-             <el-icon><Setting /></el-icon>
-             <span>控制</span>
-           </div>
-           <ul v-show="toggleControl" class="tc_li" @click.stop>
-             <li @click="tologin"><el-icon><User /></el-icon>重新登录</li>
-             <li @click="toquite"><el-icon><SwitchButton /></el-icon>退出</li>
-           </ul>
-         </div>
-         <div v-if="!haslogin" class="nav-btn login-btn" @click="tologin">
+          <el-icon><Collection /></el-icon>
+          <span>收藏夹</span>
+        </div>
+        <div v-if="haslogin" :class="['nav-btn', { active: isActive('/userSelf') }]" @click="toUserSelf">
+          <el-icon><User /></el-icon>
+          <span>我的</span>
+        </div>
+        <!-- 设置菜单 -->
+        <div v-if="haslogin" class="settings-wrapper">
+          <div :class="['nav-btn', 'settings-btn', { active: toggleControl }]" @click="toggleControl = !toggleControl">
+            <el-icon><Setting /></el-icon>
+            <span>设置</span>
+          </div>
+          <ul v-show="toggleControl" class="settings-menu" @click.stop>
+            <li @click="tologin">
+              <el-icon><User /></el-icon>
+              <span>重新登录</span>
+            </li>
+            <li class="danger" @click="toquite">
+              <el-icon><SwitchButton /></el-icon>
+              <span>退出登录</span>
+            </li>
+          </ul>
+        </div>
+        <div v-if="!haslogin" class="nav-btn login-btn" @click="tologin">
           <el-icon><User /></el-icon>
           <span>登录</span>
         </div>
@@ -232,7 +239,6 @@ export default {
 /* ===== 统一样式：基础按钮 ===== */
 .rightdiv > div,
 .nav-btn,
-.tccss,
 .theme-switcher {
   cursor: pointer;
   height: 36px;
@@ -253,7 +259,6 @@ export default {
 /* 悬停状态 - 所有按钮统一 */
 .rightdiv > div:hover,
 .nav-btn:hover,
-.tccss:hover,
 .theme-switcher:hover {
   background: var(--theme-bg-hover);
   color: var(--theme-text-primary);
@@ -265,7 +270,6 @@ export default {
 /* 点击状态 */
 .rightdiv > div:active,
 .nav-btn:active,
-.tccss:active,
 .theme-switcher:active {
   transform: translateY(0);
   background: var(--theme-bg-active);
@@ -294,92 +298,6 @@ export default {
 .nav-btn.active:hover {
   background: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-primary) 100%);
   box-shadow: 0 6px 20px var(--theme-primary-shadow);
-}
-
-/* ===== 控制按钮容器 ===== */
-.tchead{
-  height: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-/* ===== 控制按钮下拉箭头 ===== */
-.tccss::after {
-  content: '';
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 2px;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid currentColor;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.tccss.active::after {
-  transform: rotate(180deg);
-}
-
-/* ===== 退出下拉菜单 ===== */
-.tc_li{
-   position: absolute;
-   top: 100%;
-   right: 0;
-   margin-top: 10px;
-   list-style-type: none;
-   padding: 8px;
-   margin: 0;
-   min-width: 150px;
-   text-align:center;
-   background: var(--theme-bg-card);
-   border: 1px solid var(--theme-border);
-   border-radius: var(--theme-radius-lg);
-   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-   overflow: hidden;
-   z-index: 999;
-   animation: dropDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-   transform-origin: top right;
-}
-@keyframes dropDown{
-  from{
-    opacity: 0;
-    transform: translateY(-8px) scale(0.95);
-  }
-  to{
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-.tc_li li{
-  width:100%;
-  height: 40px;
-  list-style: none;
-  background-color: transparent;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--theme-text-regular);
-  font-size: 13px;
-  border-radius: var(--theme-radius-md);
-  transition: all 0.2s ease;
-  cursor: pointer;
-  gap: 8px;
-}
-.tc_li li:hover{
-  background: var(--theme-primary-bg);
-  color: var(--theme-primary);
-  font-weight: 500;
-}
-.tc_li li + li {
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px solid var(--theme-border-lighter);
-}
-.tc_li li + li:first-of-type {
-  border-top: none;
-  padding-top: 0;
 }
 
 /* ===== 主题切换器（特殊样式） ===== */
@@ -450,19 +368,66 @@ export default {
   flex: 1;
 }
 
-/* ===== 登录按钮特殊样式 ===== */
-.login-btn {
-  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
-  color: #fff;
-  font-weight: 500;
-  box-shadow: 0 2px 10px var(--theme-primary-shadow);
-  border-color: transparent;
+/* ===== 设置菜单 - 统一风格 ===== */
+.settings-wrapper {
+  position: relative;
+  height: 100%;
 }
-.login-btn:hover {
-  background: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-primary) 100%);
-  color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px var(--theme-primary-shadow);
+
+.settings-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  padding: 10px;
+  min-width: 190px;
+  list-style: none;
+  background: var(--theme-bg-card);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top right;
+}
+
+.settings-menu li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--theme-radius-md);
+  cursor: pointer;
+  color: var(--theme-text-regular);
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+
+.settings-menu li:hover {
+  background-color: var(--theme-primary-bg);
+  color: var(--theme-primary);
+  transform: translateX(2px);
+}
+
+.settings-menu li.danger {
+  color: var(--theme-error, #ff4d4f);
+}
+
+.settings-menu li.danger:hover {
+  background-color: var(--theme-error-bg, rgba(255, 77, 79, 0.1));
+  color: var(--theme-error, #ff4d4f);
+}
+
+.settings-menu li + li {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--theme-border-lighter);
+}
+
+.settings-menu li + li:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
 }
 
 /* ===== 响应式优化 ===== */
@@ -482,8 +447,7 @@ export default {
     gap: 4px;
   }
   .rightdiv > div,
-  .nav-btn,
-  .tccss {
+  .nav-btn {
     padding: 0 12px;
     font-size: 13px;
     height: 34px;
@@ -503,7 +467,6 @@ export default {
   }
   .rightdiv > div,
   .nav-btn,
-  .tccss,
   .theme-switcher {
     padding: 0 8px;
     font-size: 12px;

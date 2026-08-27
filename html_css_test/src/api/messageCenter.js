@@ -184,6 +184,11 @@ messageCenterApi.getAllFeedbacks = function (params) {
     return axiosget('/feedback/allList', params)
 }
 
+// 分页获取所有反馈列表
+messageCenterApi.getAllFeedbacksPaged = function (params) {
+    return axiosget('/feedback/allList/page', params)
+}
+
 // 处理反馈（更新状态）（JSON格式）
 messageCenterApi.processFeedback = function (data) {
     return axiospostJson('/feedback/process', data)

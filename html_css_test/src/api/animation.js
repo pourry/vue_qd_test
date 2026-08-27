@@ -20,4 +20,9 @@ animationapi.todelete =function (data){
 animationapi.togetList =function (data){
     return axiosget("/animation/getList",data)
 }
+
+//获取详情 接口
+animationapi.togetone =function (data){
+    return axiosget("/animation/getone/"+data)
+}
 export default animationapi
