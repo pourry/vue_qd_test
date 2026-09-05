@@ -1,4 +1,5 @@
 import { createRouter,createWebHistory,RouteRecordRaw } from 'vue-router'
+import store from '@/utils/store'
 
 import Login from '@/view/middlePages/Login.vue'
 import UserSelf from '@/view/middlePages/selfs/UserSelf.vue'
@@ -10,8 +11,7 @@ import SignUp from '@/view/middlePages/SignUp.vue'
 
 import OneDimensions from '@/view/middlePages/favorites/dimensions/OneDimensions.vue'
 import TwoDimensions from '@/view/middlePages/favorites/dimensions/TwoDimensions.vue'
-import ThreeDimensions from '@/view/middlePages/favorites/dimensions/ThreeDimensions.vue'
-import FourDimensions from '@/view/middlePages/favorites/dimensions/FourDimensions.vue'
+import OtherDimensions from '@/view/middlePages/favorites/dimensions/OtherDimensions.vue'
 
 import URLcollect from '@/view/middlePages/favorites/dimensions/oneDimensions/URLcollect.vue'
 
@@ -20,18 +20,16 @@ import Comic from '@/view/middlePages/favorites/dimensions/twoDimensions/Comic.v
 import Novel from '@/view/middlePages/favorites/dimensions/twoDimensions/Novel.vue'
 import Game from '@/view/middlePages/favorites/dimensions/twoDimensions/Game.vue'
 
-import TVplay from '@/view/middlePages/favorites/dimensions/threeDimensions/TVplay.vue'
-
-import ApplyFor from '@/view/middlePages/selfs/flowableControl/ApplyFor.vue'
 import MyMsg from '@/view/middlePages/selfs/flowableControl/MyMsg.vue'
-import Test from '@/view/middlePages/selfs/flowableControl/Test.vue'
 import CarouselControl from '@/view/middlePages/selfs/CarouselControl.vue'
 import FooterControl from '@/view/middlePages/selfs/FooterControl.vue'
 import BasicConfig from '@/view/middlePages/selfs/BasicConfig.vue'
 import AcgList from '@/view/middlePages/AcgList.vue'
+import OtherList from '@/view/middlePages/OtherList.vue'
 import MessageCenter from '@/view/messageCenter/MessageCenter.vue'
 import TotalFeedback from '@/view/messageCenter/TotalFeedback.vue'
 import PublishNotification from '@/view/messageCenter/PublishNotification.vue'
+import RolePermissionManagement from '@/view/rolePermission/RolePermissionManagement.vue'
 
 const routes : Array<RouteRecordRaw> = [
 
@@ -108,25 +106,10 @@ const routes : Array<RouteRecordRaw> = [
                ]
             },
             {
-               //三次元
-               path: '/threeDimensions',
-               name: 'ThreeDimensions',
-               component: ThreeDimensions,
-               redirect: '/tVplay',
-               children: [
-                  {
-                     //电视剧
-                     path: '/tVplay',
-                     name: 'TVplay',
-                     component: TVplay,
-                  },
-               ]
-            },
-            {
-               //四次元
-               path: '/fourDimensions',
-               name: 'FourDimensions',
-               component: FourDimensions,
+               //综合收藏（书籍/电影/音乐/名言/灵感等）
+               path: '/otherDimensions',
+               name: 'OtherDimensions',
+               component: OtherDimensions,
             },
          ]
       },
@@ -142,18 +125,6 @@ const routes : Array<RouteRecordRaw> = [
                path: '/userSelf/myMsg',
                name: 'MyMsg',
                component: MyMsg,
-            },
-            {
-               //我的申请
-               path: '/userSelf/applyFor',
-               name: 'ApplyFor',
-               component: ApplyFor,
-            },
-            {
-               //代码测试场
-               path: '/userSelf/test',
-               name: 'Test',
-               component: Test,
             },
             {
                //走马灯控制
@@ -185,6 +156,12 @@ const routes : Array<RouteRecordRaw> = [
                name: 'PublishNotification',
                component: PublishNotification,
             },
+            {
+               //角色权限管理
+               path: '/userSelf/rolePermission',
+               name: 'RolePermissionManagement',
+               component: RolePermissionManagement,
+            },
          ]
       },
       {
@@ -206,6 +183,12 @@ const routes : Array<RouteRecordRaw> = [
          component: AcgList,
       },
       {
+         //综合收藏公开列表页（查看更多）
+         path: '/otherList',
+         name: 'OtherList',
+         component: OtherList,
+      },
+      {
          //消息中心
          path: '/messageCenter',
          name: 'MessageCenter',
@@ -223,6 +206,73 @@ const routes : Array<RouteRecordRaw> = [
 const router = createRouter({
    history:createWebHistory(),
    routes
+})
+
+// ===== 路由守卫：动态权限控制 =====
+// 定义公共页面（所有人可访问，包括未登录用户）
+const PUBLIC_PATHS = ['/login', '/signUp', '/home'];
+
+router.beforeEach((to, from, next) => {
+   const haslogin = store.getters.getToken && store.getters.getToken.value;
+   const roleInfo = store.getters.getRoleInfo;
+   const allowedPaths: string[] = store.getters.getAllowedPaths || [];
+   const isAdmin = store.getters.isAdmin;
+
+   // 1. 公共页面直接放行
+   if (PUBLIC_PATHS.some(p => to.path === p || to.path.startsWith(p))) {
+      return next();
+   }
+
+   // 2. ACG 分类页面、综合收藏页面，允许访问（不做权限限制）
+   if (to.path.startsWith('/acgList') || to.path.startsWith('/otherList') || to.path === '/otherDimensions') {
+      return next();
+   }
+
+   // 3. 管理员放行所有
+   if (isAdmin) {
+      return next();
+   }
+
+   // 4. 未登录用户：跳转到登录页
+   if (!haslogin) {
+      if (to.path.startsWith('/userSelf') || to.path.startsWith('/messageCenter')) {
+         return next('/login');
+      }
+      // 其他页面（如收藏夹）未登录也允许访问基础内容
+      return next();
+   }
+
+   // 5. 已登录但无权限数据（可能还没加载完），先放行让用户看到内容
+   if (allowedPaths.length === 0) {
+      // 如果有 token 但没权限数据，尝试加载一下
+      store.dispatch('loadRolePermissions').catch(() => {});
+      return next();
+   }
+
+   // 6. 普通用户：检查权限
+   // 精确匹配或子路径匹配
+   const hasPathPermission = (targetPath: string): boolean => {
+      if (allowedPaths.includes(targetPath)) return true;
+      for (const p of allowedPaths) {
+         if (targetPath.startsWith(p + '/')) return true;
+      }
+      // 父级路径也检查（如 /userSelf/carousel 需要先检查 /userSelf）
+      if (targetPath.startsWith('/userSelf/')) {
+         if (allowedPaths.includes('/userSelf')) return true;
+      }
+      if (targetPath.startsWith('/favorites/')) {
+         if (allowedPaths.includes('/favorites')) return true;
+      }
+      return false;
+   };
+
+   if (hasPathPermission(to.path)) {
+      return next();
+   }
+
+   // 7. 无权限：跳转到首页
+   console.warn(`[路由守卫] 用户无权访问: ${to.path}，已跳转到 /home`);
+   next('/home');
 })
 
 export default router;

@@ -90,10 +90,23 @@
   --el-color-primary-light-7: #cbe3fc;
   --el-color-primary-light-9: #ebf5ff;
   --el-color-primary-dark-2: #0066c2;
+
+  /* ===== Element Plus 适配 ===== */
+  --el-bg-color: var(--theme-bg-card);
+  --el-bg-color-overlay: var(--theme-bg-card);
+  --el-text-color-primary: var(--theme-text-primary);
+  --el-text-color-regular: var(--theme-text-regular);
+  --el-text-color-secondary: var(--theme-text-secondary);
+  --el-text-color-placeholder: var(--theme-text-placeholder);
+  --el-border-color: var(--theme-border);
+  --el-border-color-light: var(--theme-border-light);
+  --el-fill-color-blank: var(--theme-bg-card);
+  --el-mask-color: rgba(0, 0, 0, 0.45);
 }
 
 /* ===== 主题：翠绿 ===== */
 [data-app-theme="green"] {
+  /* ===== 主色调 ===== */
   --theme-primary: #00b42a;
   --theme-primary-light: #e7fff1;
   --theme-primary-dark: #009a29;
@@ -101,26 +114,71 @@
   --theme-primary-bg-hover: rgba(0, 180, 42, 0.12);
   --theme-primary-shadow: rgba(0, 180, 42, 0.35);
 
+  /* ===== 背景层级 ===== */
+  --theme-bg-page: #f0f5f2;
   --theme-bg-top: #ffffff;
   --theme-bg-middle: #f7faf8;
   --theme-bg-bottom: #1a3a28;
+  --theme-bg-card: #ffffff;
+  --theme-bg-card-hover: #f6fbf7;
+  --theme-bg-sidebar: #ffffff;
   --theme-bg-hover: rgba(0, 180, 42, 0.06);
   --theme-bg-active: rgba(0, 180, 42, 0.12);
+  --theme-bg-mask: rgba(0, 0, 0, 0.45);
+
+  /* ===== 文字 ===== */
+  --theme-text-primary: #1f2d26;
+  --theme-text-regular: #4b6358;
+  --theme-text-secondary: #8b9f93;
+  --theme-text-placeholder: #c0c9c4;
   --theme-text-link: #00b42a;
+  --theme-text-disabled: #c0c9c4;
 
+  /* ===== 边框与分割 ===== */
+  --theme-border: #e4ede7;
+  --theme-border-light: #ebeff3;
+  --theme-border-lighter: #f2f4f5;
+  --theme-divider: #f0f5f2;
+
+  /* ===== 阴影 ===== */
+  --theme-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --theme-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --theme-shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.14);
+  --theme-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --theme-shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+
+  /* ===== 状态色 ===== */
   --theme-success: #00b42a;
+  --theme-success-light: #e7fff1;
   --theme-info: #00b42a;
+  --theme-info-light: #e7fff1;
 
+  /* ===== 覆盖 Element Plus 主色 ===== */
   --el-color-primary: #00b42a;
   --el-color-primary-light-3: #33c353;
   --el-color-primary-light-5: #80df97;
   --el-color-primary-light-7: #c3efd3;
   --el-color-primary-light-9: #e6fff1;
   --el-color-primary-dark-2: #009a29;
+
+  /* ===== Element Plus 适配 ===== */
+  --el-bg-color: var(--theme-bg-card);
+  --el-bg-color-overlay: var(--theme-bg-card);
+  --el-text-color-primary: var(--theme-text-primary);
+  --el-text-color-regular: var(--theme-text-regular);
+  --el-text-color-secondary: var(--theme-text-secondary);
+  --el-text-color-placeholder: var(--theme-text-placeholder);
+  --el-border-color: var(--theme-border);
+  --el-border-color-light: var(--theme-border-light);
+  --el-fill-color-blank: var(--theme-bg-card);
+  --el-mask-color: rgba(0, 0, 0, 0.45);
 }
 
 /* ===== 主题：紫罗兰 ===== */
 [data-app-theme="purple"] {
+  /* ===== 主色调 ===== */
   --theme-primary: #722ed1;
   --theme-primary-light: #f5edff;
   --theme-primary-dark: #531dab;
@@ -128,25 +186,69 @@
   --theme-primary-bg-hover: rgba(114, 46, 209, 0.12);
   --theme-primary-shadow: rgba(114, 46, 209, 0.35);
 
+  /* ===== 背景层级 ===== */
+  --theme-bg-page: #f4f2f8;
   --theme-bg-top: #ffffff;
   --theme-bg-middle: #faf7fc;
   --theme-bg-bottom: #22113f;
+  --theme-bg-card: #ffffff;
+  --theme-bg-card-hover: #fbf8fd;
+  --theme-bg-sidebar: #ffffff;
   --theme-bg-hover: rgba(114, 46, 209, 0.06);
   --theme-bg-active: rgba(114, 46, 209, 0.12);
+  --theme-bg-mask: rgba(0, 0, 0, 0.45);
+
+  /* ===== 文字 ===== */
+  --theme-text-primary: #2a1f3d;
+  --theme-text-regular: #5a4c72;
+  --theme-text-secondary: #8d7fa5;
+  --theme-text-placeholder: #c0b8cc;
   --theme-text-link: #722ed1;
+  --theme-text-disabled: #c0b8cc;
 
+  /* ===== 边框与分割 ===== */
+  --theme-border: #e8e4ee;
+  --theme-border-light: #eeeaf3;
+  --theme-border-lighter: #f4f2f7;
+  --theme-divider: #f4f2f8;
+
+  /* ===== 阴影 ===== */
+  --theme-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --theme-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --theme-shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.14);
+  --theme-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --theme-shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+
+  /* ===== 状态色 ===== */
   --theme-info: #722ed1;
+  --theme-info-light: #f5edff;
 
+  /* ===== 覆盖 Element Plus 主色 ===== */
   --el-color-primary: #722ed1;
   --el-color-primary-light-3: #8e5cd9;
   --el-color-primary-light-5: #b18fe5;
   --el-color-primary-light-7: #d5c2f0;
   --el-color-primary-light-9: #f5edff;
   --el-color-primary-dark-2: #531dab;
+
+  /* ===== Element Plus 适配 ===== */
+  --el-bg-color: var(--theme-bg-card);
+  --el-bg-color-overlay: var(--theme-bg-card);
+  --el-text-color-primary: var(--theme-text-primary);
+  --el-text-color-regular: var(--theme-text-regular);
+  --el-text-color-secondary: var(--theme-text-secondary);
+  --el-text-color-placeholder: var(--theme-text-placeholder);
+  --el-border-color: var(--theme-border);
+  --el-border-color-light: var(--theme-border-light);
+  --el-fill-color-blank: var(--theme-bg-card);
+  --el-mask-color: rgba(0, 0, 0, 0.45);
 }
 
 /* ===== 主题：日落橙 ===== */
 [data-app-theme="orange"] {
+  /* ===== 主色调 ===== */
   --theme-primary: #fa541c;
   --theme-primary-light: #fff2e8;
   --theme-primary-dark: #d4380d;
@@ -154,25 +256,69 @@
   --theme-primary-bg-hover: rgba(250, 84, 28, 0.12);
   --theme-primary-shadow: rgba(250, 84, 28, 0.35);
 
+  /* ===== 背景层级 ===== */
+  --theme-bg-page: #f6f2ef;
   --theme-bg-top: #ffffff;
   --theme-bg-middle: #fcf8f5;
   --theme-bg-bottom: #3d1f0e;
+  --theme-bg-card: #ffffff;
+  --theme-bg-card-hover: #fffaf5;
+  --theme-bg-sidebar: #ffffff;
   --theme-bg-hover: rgba(250, 84, 28, 0.06);
   --theme-bg-active: rgba(250, 84, 28, 0.12);
+  --theme-bg-mask: rgba(0, 0, 0, 0.45);
+
+  /* ===== 文字 ===== */
+  --theme-text-primary: #2d241e;
+  --theme-text-regular: #635248;
+  --theme-text-secondary: #9f8e82;
+  --theme-text-placeholder: #c4bab3;
   --theme-text-link: #fa541c;
+  --theme-text-disabled: #c4bab3;
 
+  /* ===== 边框与分割 ===== */
+  --theme-border: #ece6e0;
+  --theme-border-light: #f2ece6;
+  --theme-border-lighter: #f7f2ee;
+  --theme-divider: #f6f2ef;
+
+  /* ===== 阴影 ===== */
+  --theme-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --theme-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --theme-shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.14);
+  --theme-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --theme-shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+
+  /* ===== 状态色 ===== */
   --theme-info: #fa541c;
+  --theme-info-light: #fff2e8;
 
+  /* ===== 覆盖 Element Plus 主色 ===== */
   --el-color-primary: #fa541c;
   --el-color-primary-light-3: #fb7648;
   --el-color-primary-light-5: #fcab7f;
   --el-color-primary-light-7: #fdd9c7;
   --el-color-primary-light-9: #fff2e8;
   --el-color-primary-dark-2: #d4380d;
+
+  /* ===== Element Plus 适配 ===== */
+  --el-bg-color: var(--theme-bg-card);
+  --el-bg-color-overlay: var(--theme-bg-card);
+  --el-text-color-primary: var(--theme-text-primary);
+  --el-text-color-regular: var(--theme-text-regular);
+  --el-text-color-secondary: var(--theme-text-secondary);
+  --el-text-color-placeholder: var(--theme-text-placeholder);
+  --el-border-color: var(--theme-border);
+  --el-border-color-light: var(--theme-border-light);
+  --el-fill-color-blank: var(--theme-bg-card);
+  --el-mask-color: rgba(0, 0, 0, 0.45);
 }
 
 /* ===== 主题：玫红 ===== */
 [data-app-theme="rose"] {
+  /* ===== 主色调 ===== */
   --theme-primary: #eb2f96;
   --theme-primary-light: #fff0f6;
   --theme-primary-dark: #c41d7f;
@@ -180,25 +326,69 @@
   --theme-primary-bg-hover: rgba(235, 47, 150, 0.12);
   --theme-primary-shadow: rgba(235, 47, 150, 0.35);
 
+  /* ===== 背景层级 ===== */
+  --theme-bg-page: #f7f0f4;
   --theme-bg-top: #ffffff;
   --theme-bg-middle: #fcf5f8;
   --theme-bg-bottom: #3a1029;
+  --theme-bg-card: #ffffff;
+  --theme-bg-card-hover: #fff7fa;
+  --theme-bg-sidebar: #ffffff;
   --theme-bg-hover: rgba(235, 47, 150, 0.06);
   --theme-bg-active: rgba(235, 47, 150, 0.12);
+  --theme-bg-mask: rgba(0, 0, 0, 0.45);
+
+  /* ===== 文字 ===== */
+  --theme-text-primary: #2d1a26;
+  --theme-text-regular: #634957;
+  --theme-text-secondary: #9f7f90;
+  --theme-text-placeholder: #c4b0bc;
   --theme-text-link: #eb2f96;
+  --theme-text-disabled: #c4b0bc;
 
+  /* ===== 边框与分割 ===== */
+  --theme-border: #ece0e6;
+  --theme-border-light: #f2e8ee;
+  --theme-border-lighter: #f7f0f4;
+  --theme-divider: #f7f0f4;
+
+  /* ===== 阴影 ===== */
+  --theme-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --theme-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --theme-shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.14);
+  --theme-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --theme-shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+
+  /* ===== 状态色 ===== */
   --theme-info: #eb2f96;
+  --theme-info-light: #fff0f6;
 
+  /* ===== 覆盖 Element Plus 主色 ===== */
   --el-color-primary: #eb2f96;
   --el-color-primary-light-3: #ef5aa7;
   --el-color-primary-light-5: #f48cc0;
   --el-color-primary-light-7: #f9c4da;
   --el-color-primary-light-9: #fff0f6;
   --el-color-primary-dark-2: #c41d7f;
+
+  /* ===== Element Plus 适配 ===== */
+  --el-bg-color: var(--theme-bg-card);
+  --el-bg-color-overlay: var(--theme-bg-card);
+  --el-text-color-primary: var(--theme-text-primary);
+  --el-text-color-regular: var(--theme-text-regular);
+  --el-text-color-secondary: var(--theme-text-secondary);
+  --el-text-color-placeholder: var(--theme-text-placeholder);
+  --el-border-color: var(--theme-border);
+  --el-border-color-light: var(--theme-border-light);
+  --el-fill-color-blank: var(--theme-bg-card);
+  --el-mask-color: rgba(0, 0, 0, 0.45);
 }
 
 /* ===== 主题：青蓝 ===== */
 [data-app-theme="cyan"] {
+  /* ===== 主色调 ===== */
   --theme-primary: #13c2c2;
   --theme-primary-light: #e6fffb;
   --theme-primary-dark: #08979c;
@@ -206,21 +396,64 @@
   --theme-primary-bg-hover: rgba(19, 194, 194, 0.12);
   --theme-primary-shadow: rgba(19, 194, 194, 0.35);
 
+  /* ===== 背景层级 ===== */
+  --theme-bg-page: #f0f5f5;
   --theme-bg-top: #ffffff;
   --theme-bg-middle: #f5fcfc;
   --theme-bg-bottom: #0e3a3a;
+  --theme-bg-card: #ffffff;
+  --theme-bg-card-hover: #f5fcfc;
+  --theme-bg-sidebar: #ffffff;
   --theme-bg-hover: rgba(19, 194, 194, 0.06);
   --theme-bg-active: rgba(19, 194, 194, 0.12);
+  --theme-bg-mask: rgba(0, 0, 0, 0.45);
+
+  /* ===== 文字 ===== */
+  --theme-text-primary: #1a2d2d;
+  --theme-text-regular: #4a6363;
+  --theme-text-secondary: #8b9f9f;
+  --theme-text-placeholder: #c0cccc;
   --theme-text-link: #13c2c2;
+  --theme-text-disabled: #c0cccc;
 
+  /* ===== 边框与分割 ===== */
+  --theme-border: #e4eded;
+  --theme-border-light: #ebeff0;
+  --theme-border-lighter: #f2f4f4;
+  --theme-divider: #f0f5f5;
+
+  /* ===== 阴影 ===== */
+  --theme-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --theme-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --theme-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --theme-shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.14);
+  --theme-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --theme-shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+
+  /* ===== 状态色 ===== */
   --theme-info: #13c2c2;
+  --theme-info-light: #e6fffb;
 
+  /* ===== 覆盖 Element Plus 主色 ===== */
   --el-color-primary: #13c2c2;
   --el-color-primary-light-3: #43cccc;
   --el-color-primary-light-5: #8bdcdc;
   --el-color-primary-light-7: #c6eced;
   --el-color-primary-light-9: #e6fffb;
   --el-color-primary-dark-2: #08979c;
+
+  /* ===== Element Plus 适配 ===== */
+  --el-bg-color: var(--theme-bg-card);
+  --el-bg-color-overlay: var(--theme-bg-card);
+  --el-text-color-primary: var(--theme-text-primary);
+  --el-text-color-regular: var(--theme-text-regular);
+  --el-text-color-secondary: var(--theme-text-secondary);
+  --el-text-color-placeholder: var(--theme-text-placeholder);
+  --el-border-color: var(--theme-border);
+  --el-border-color-light: var(--theme-border-light);
+  --el-fill-color-blank: var(--theme-bg-card);
+  --el-mask-color: rgba(0, 0, 0, 0.45);
 }
 
 /* ===== 主题：灰黑 ===== */

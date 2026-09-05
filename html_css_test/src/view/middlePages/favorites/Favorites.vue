@@ -22,16 +22,9 @@
                   <el-menu-item index="2-3" route="/twoDimensions/novel">小说</el-menu-item>
                   <el-menu-item index="2-4" route="/twoDimensions/game">游戏</el-menu-item>
                 </el-sub-menu>
-                <el-sub-menu index="3" >
-                  <template #title>
-                    <el-icon><Menu /></el-icon>
-                    <span>三次元</span>
-                  </template>
-                  <el-menu-item index="3-1" route="/tVplay">电视剧</el-menu-item>
-                </el-sub-menu>
-                <el-menu-item index="4" disabled>
+                <el-menu-item index="5" route="/otherDimensions">
                   <el-icon></el-icon>
-                  <span>四次元</span>
+                  <span>综合收藏</span>
                 </el-menu-item>
               </el-menu>
 

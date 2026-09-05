@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="message-center-entry">
     <!-- 悬浮按钮 -->
     <transition name="fade">
@@ -76,52 +76,143 @@
                 <div class="empty-hint">您还没有设置任何提醒</div>
               </div>
               <div v-else>
-                <div class="reminder-list">
-                  <div
-                    v-for="item in reminderList.slice(0, 5)"
-                    :key="item.id"
-                    class="reminder-item"
-                    :class="{ cancelled: item.status === 'cancelled' }"
-                  >
-                    <div class="reminder-icon-wrap" :class="item.targetType">
-                      {{ getReminderTypeIcon(item.targetType) }}
-                    </div>
-                    <div class="reminder-main">
-                      <div class="reminder-row1">
-                        <span class="reminder-title">{{ item.targetName || '提醒' }}</span>
-                        <span class="reminder-status" :class="item.status">{{ getReminderStatusText(item.status) }}</span>
+                <!-- ========== 分区1：已触发未读（最重要） ========== -->
+                <template v-if="reminderUnreadList.length > 0">
+                  <div class="reminder-section-title unread">
+                    <span class="reminder-section-dot"></span>
+                    已触发 · 待查看（{{ reminderUnreadList.length }}）
+                  </div>
+                  <div class="reminder-list">
+                    <div
+                      v-for="item in reminderUnreadList.slice(0, 3)"
+                      :key="'u-' + item.id"
+                      class="reminder-item triggered unread"
+                      @click="handleReminderClick(item)"
+                    >
+                      <div class="reminder-icon-wrap" :class="item.targetType" v-html="getReminderTypeIcon(item.targetType)"></div>
+                      <div class="reminder-main">
+                        <div class="reminder-row1">
+                          <span class="reminder-title">{{ item.targetName || '提醒' }}</span>
+                          <span class="reminder-status triggered">已触发</span>
+                          <span class="reminder-unread-dot"></span>
+                        </div>
+                        <div v-if="item.alias" class="reminder-sub">
+                          <span class="reminder-label">别名</span>
+                          <span class="reminder-value">{{ item.alias }}</span>
+                        </div>
+                        <a v-if="item.address" class="reminder-sub link-row" :href="item.address" target="_blank" rel="noopener noreferrer" :title="item.address">
+                          <span class="reminder-label">地址</span>
+                          <span class="reminder-value link-text">{{ item.address }}</span>
+                        </a>
+                        <div class="reminder-row2">
+                          <span class="reminder-time triggered-time">
+                            触发于 {{ formatReminderTime(item.triggerTime) }}
+                          </span>
+                          <span v-if="item.repeatType && item.repeatType !== 'none'" class="reminder-repeat-tag">
+                            {{ getRepeatText(item.repeatType, item.repeatInterval) }}
+                          </span>
+                        </div>
+                        <div v-if="item.remindMsg" class="reminder-msg" :title="item.remindMsg">{{ item.remindMsg }}</div>
                       </div>
-                      <div class="reminder-row2">
-                        <span class="reminder-time">
-                          {{ formatReminderTime(item.remindTime) }}
-                        </span>
+                      <div class="reminder-actions">
+                        <span class="mark-read-btn" @click.stop="handleMarkRead(item)">已读</span>
+                        <span class="delete-btn" @click.stop="handleDeleteReminder(item)">×</span>
                       </div>
-                      <div v-if="item.remindMsg" class="reminder-msg" :title="item.remindMsg">
-                        {{ item.remindMsg }}
-                      </div>
-                    </div>
-                    <div v-if="item.status === 'pending'" class="reminder-actions">
-                      <span
-                        class="cancel-btn"
-                        @click="handleCancelReminder(item)"
-                      >取消</span>
-                      <span
-                        class="delete-btn"
-                        @click.stop="handleDeleteReminder(item)"
-                      >×</span>
-                    </div>
-                    <div v-else class="reminder-actions">
-                      <span
-                        class="delete-btn"
-                        @click="handleDeleteReminder(item)"
-                      >×</span>
                     </div>
                   </div>
+                </template>
+
+                <!-- ========== 分区2：今天待触发 ========== -->
+                <template v-if="reminderTodayList.length > 0">
+                  <div class="reminder-section-title">
+                    今日待触发（{{ reminderTodayList.length }}）
+                  </div>
+                  <div class="reminder-list">
+                    <div
+                      v-for="item in reminderTodayList.slice(0, 3)"
+                      :key="'t-' + item.id"
+                      class="reminder-item pending"
+                      @click="handleReminderClick(item)"
+                    >
+                      <div class="reminder-icon-wrap" :class="item.targetType" v-html="getReminderTypeIcon(item.targetType)"></div>
+                      <div class="reminder-main">
+                        <div class="reminder-row1">
+                          <span class="reminder-title">{{ item.targetName || '提醒' }}</span>
+                          <span class="reminder-status pending">待触发</span>
+                        </div>
+                        <div v-if="item.alias" class="reminder-sub">
+                          <span class="reminder-label">别名</span>
+                          <span class="reminder-value">{{ item.alias }}</span>
+                        </div>
+                        <div class="reminder-row2">
+                          <span class="reminder-time">
+                            {{ formatReminderTime(item.remindTime) }}
+                          </span>
+                          <span v-if="item.repeatType && item.repeatType !== 'none'" class="reminder-repeat-tag">
+                            {{ getRepeatText(item.repeatType, item.repeatInterval) }}
+                          </span>
+                        </div>
+                        <div v-if="item.remindMsg" class="reminder-msg" :title="item.remindMsg">{{ item.remindMsg }}</div>
+                      </div>
+                      <div class="reminder-actions">
+                        <span class="cancel-btn" @click.stop="handleCancelReminder(item)">取消</span>
+                        <span class="delete-btn" @click.stop="handleDeleteReminder(item)">×</span>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- ========== 分区3：更早/更晚的提醒 ========== -->
+                <template v-if="reminderFutureList.length > 0">
+                  <div class="reminder-section-title light">
+                    其他提醒
+                  </div>
+                  <div class="reminder-list">
+                    <div
+                      v-for="item in reminderFutureList.slice(0, reminderUnreadList.length + reminderTodayList.length > 0 ? 2 : 5)"
+                      :key="'f-' + item.id"
+                      class="reminder-item"
+                      :class="{ cancelled: item.status === 'cancelled', triggered: item.status === 'triggered' }"
+                      @click="handleReminderClick(item)"
+                    >
+                      <div class="reminder-icon-wrap" :class="item.targetType" v-html="getReminderTypeIcon(item.targetType)"></div>
+                      <div class="reminder-main">
+                        <div class="reminder-row1">
+                          <span class="reminder-title">{{ item.targetName || '提醒' }}</span>
+                          <span class="reminder-status" :class="item.status">{{ getReminderStatusText(item.status) }}</span>
+                        </div>
+                        <div v-if="item.alias" class="reminder-sub">
+                          <span class="reminder-label">别名</span>
+                          <span class="reminder-value">{{ item.alias }}</span>
+                        </div>
+                        <a v-if="item.address" class="reminder-sub link-row" :href="item.address" target="_blank" rel="noopener noreferrer" :title="item.address">
+                          <span class="reminder-label">地址</span>
+                          <span class="reminder-value link-text">{{ item.address }}</span>
+                        </a>
+                        <div class="reminder-row2">
+                          <span class="reminder-time">
+                            {{ formatReminderTime(item.status === 'pending' ? item.remindTime : item.triggerTime) }}
+                          </span>
+                          <span v-if="item.repeatType && item.repeatType !== 'none'" class="reminder-repeat-tag">
+                            {{ getRepeatText(item.repeatType, item.repeatInterval) }}
+                          </span>
+                        </div>
+                        <div v-if="item.remindMsg" class="reminder-msg" :title="item.remindMsg">{{ item.remindMsg }}</div>
+                      </div>
+                      <div class="reminder-actions">
+                        <span v-if="item.status === 'pending'" class="cancel-btn" @click.stop="handleCancelReminder(item)">取消</span>
+                        <span class="delete-btn" @click.stop="handleDeleteReminder(item)">×</span>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- 空状态兜底 -->
+                <div v-if="reminderUnreadList.length === 0 && reminderTodayList.length === 0 && reminderFutureList.length === 0" style="padding:16px;color:var(--theme-text-placeholder);text-align:center;font-size:12px;">
+                  暂无提醒
                 </div>
-                <div v-if="reminderList.length > 5" class="more-link has-more" @click="goToTab('reminder')">
-                  还有 {{ reminderList.length - 5 }} 条提醒，查看全部 →
-                </div>
-                <div v-else class="more-link" @click="goToTab('reminder')">前往提醒页 →</div>
+
+                <div class="more-link" @click="goToTab('reminder')">前往提醒页 →</div>
               </div>
             </div>
 
@@ -319,6 +410,77 @@
         </div>
       </div>
     </transition>
+
+    <!-- 提醒详情弹窗 -->
+    <el-dialog
+      v-model="reminderDetailVisible"
+      :close-on-click-modal="true"
+      :show-close="true"
+      width="420px"
+      align-center
+      destroy-on-close
+      custom-class="reminder-detail-dialog"
+    >
+      <template #header>
+        <div class="detail-header">
+          <span v-html="reminderDetailItem ? getReminderTypeIcon(reminderDetailItem.targetType) : ''" class="detail-icon"></span>
+          <span class="detail-title">{{ reminderDetailItem?.targetName || '提醒详情' }}</span>
+          <span class="detail-status-tag" :class="reminderDetailItem?.status">{{ getReminderStatusText(reminderDetailItem?.status) }}</span>
+        </div>
+      </template>
+      <template #default>
+        <div v-if="reminderDetailItem" class="detail-body">
+          <div class="detail-row" v-if="reminderDetailItem.alias">
+            <span class="detail-label">别名</span>
+            <span class="detail-value">{{ reminderDetailItem.alias }}</span>
+          </div>
+          <div class="detail-row" v-if="reminderDetailItem.address">
+            <span class="detail-label">地址</span>
+            <a
+              class="detail-value link"
+              :href="reminderDetailItem.address"
+              target="_blank"
+              rel="noopener noreferrer"
+            >{{ reminderDetailItem.address }}</a>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">提醒时间</span>
+            <span class="detail-value highlight">{{ formatReminderTime(reminderDetailItem.status === 'pending' ? reminderDetailItem.remindTime : reminderDetailItem.triggerTime) }}</span>
+          </div>
+          <div class="detail-row" v-if="reminderDetailItem.repeatType && reminderDetailItem.repeatType !== 'none'">
+            <span class="detail-label">重复规则</span>
+            <span class="detail-value">{{ getRepeatText(reminderDetailItem.repeatType, reminderDetailItem.repeatInterval) }}</span>
+          </div>
+          <div class="detail-row" v-if="reminderDetailItem.repeatType && reminderDetailItem.repeatType !== 'none' && reminderDetailItem.repeatEndTime">
+            <span class="detail-label">结束时间</span>
+            <span class="detail-value">{{ formatReminderTime(reminderDetailItem.repeatEndTime) }}</span>
+          </div>
+          <div class="detail-row" v-if="reminderDetailItem.triggerTime">
+            <span class="detail-label">触发于</span>
+            <span class="detail-value">{{ formatReminderTime(reminderDetailItem.triggerTime) }}</span>
+          </div>
+          <div class="detail-row" v-if="reminderDetailItem.remindMsg">
+            <span class="detail-label">消息</span>
+            <span class="detail-value multi-line">{{ reminderDetailItem.remindMsg }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">状态</span>
+            <span class="detail-value">
+              <span class="detail-status-tag" :class="reminderDetailItem.isRead === 1 ? 'read' : 'unread'">
+                {{ reminderDetailItem.isRead === 1 ? '已读' : '未读' }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <span class="detail-footer-actions">
+          <el-button link size="small" @click="handleCancelReminder(reminderDetailItem)" v-if="reminderDetailItem?.status === 'pending'">取消提醒</el-button>
+          <el-button link size="small" type="danger" @click="handleDeleteReminder(reminderDetailItem)">删除</el-button>
+          <el-button type="primary" size="small" @click="closeReminderDetail">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -360,6 +522,41 @@ const loadingFeedback = ref<boolean>(false)
 // 提醒预览状态
 const reminderList = ref<any[]>([])
 const loadingReminder = ref<boolean>(false)
+const reminderDetailVisible = ref<boolean>(false)    // 提醒详情弹窗
+const reminderDetailItem = ref<any>(null)            // 当前查看的提醒详情
+
+/** 纯字符串判断两个时间是否同一天（零 Date 构造） */
+const isSameDayStr = (ts: string | undefined, dateStr: string): boolean => {
+  if (!ts) return false
+  return datePart(ts) === dateStr
+}
+
+/** 分区1：已触发未读（最重要） */
+const reminderUnreadList = computed(() =>
+  reminderList.value.filter(
+    (item: any) => item.status === 'triggered' && item.isRead !== 1
+  )
+)
+
+/** 分区2：今天待触发（pending 且提醒时间在今天） */
+const reminderTodayList = computed(() => {
+  const todayStr = datePart(nowStr())
+  return reminderList.value.filter((item: any) => {
+    if (item.status !== 'pending') return false
+    const remindAt = item.remindTime
+    if (!remindAt) return false
+    return isSameDayStr(remindAt, todayStr)
+  })
+})
+
+/** 分区3：其他提醒（更早的待触发、已读、已取消） */
+const reminderFutureList = computed(() => {
+  const unreadIds = new Set(reminderUnreadList.value.map((i: any) => i.id))
+  const todayIds = new Set(reminderTodayList.value.map((i: any) => i.id))
+  return reminderList.value.filter((item: any) =>
+    !unreadIds.has(item.id) && !todayIds.has(item.id)
+  )
+})
 
 /** Tab配置：提醒 → 聊天室 → 通知 → 反馈 */
 const tabs = computed(() => [
@@ -439,28 +636,101 @@ const feedbackStatusTextMap: Record<string, string> = {
 const getFeedbackTypeIcon = (type: string): string => feedbackTypeIconMap[type] || feedbackTypeIconMap.other
 const getFeedbackStatusText = (status: string): string => feedbackStatusTextMap[status] || '未知'
 
+/**
+ * 从时间字符串中安全提取 [年, 月, 日, 时, 分, 秒]（纯字符串，零时区风险）
+ * 支持格式："2026-09-02 12:30:00" / "2026-09-02T12:30:00" / "2026/09/02 12:30:00"
+ */
+const splitTime = (ts: string): number[] | null => {
+  if (!ts) return null
+  const m = ts.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})[ Tt](\d{1,2}):(\d{1,2}):(\d{1,2})/)
+  return m ? [+m[1], +m[2], +m[3], +m[4], +m[5], +m[6]] : null
+}
+
+/** 把当前时间转成字符串格式（和后端返回统一口径） */
+const nowStr = (): string => {
+  const d = new Date()
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
+}
+
+/** 两个时间字符串相差多少秒（abs） */
+const diffSeconds = (a: string, b: string): number => {
+  const A = splitTime(a), B = splitTime(b)
+  if (!A || !B) return 0
+  const toSec = (x: number[]) =>
+    x[0]*31536000 + x[1]*2592000 + x[2]*86400 + x[3]*3600 + x[4]*60 + x[5]
+  return Math.abs(toSec(A) - toSec(B))
+}
+
+/** 纯字符串提取 "MM/DD HH:mm" */
+const shortMD = (ts: string): string => {
+  const s = splitTime(ts); if (!s) return ts || ''
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${p(s[1])}/${p(s[2])} ${p(s[3])}:${p(s[4])}`
+}
+
+/** 纯字符串提取 "HH:mm" */
+const shortHM = (ts: string): string => {
+  const s = splitTime(ts); if (!s) return ts || ''
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${p(s[3])}:${p(s[4])}`
+}
+
+/** 纯字符串提取日期部分 "yyyy-MM-dd" */
+const datePart = (ts: string): string => {
+  const s = splitTime(ts); if (!s) return ''
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${s[0]}-${p(s[1])}-${p(s[2])}`
+}
+
 const formatTime = (timestamp: string): string => {
   if (!timestamp) return ''
-  const date = new Date(timestamp.includes('T') ? timestamp : timestamp.replace(' ', 'T'))
-  if (Number.isNaN(date.getTime())) return ''
-  const now = new Date()
-  const diff = now.getTime() - date.getTime()
-  const minutes = Math.floor(diff / 60000)
-  const hours = Math.floor(diff / 3600000)
-  const days = Math.floor(diff / 86400000)
+  const ds = diffSeconds(timestamp, nowStr())
+  const minutes = Math.floor(ds / 60)
+  const hours = Math.floor(ds / 3600)
+  const days = Math.floor(ds / 86400)
   if (minutes < 1) return '刚刚'
   if (minutes < 60) return `${minutes}分钟前`
   if (hours < 24) return `${hours}小时前`
   if (days < 7) return `${days}天前`
-  return date.toLocaleDateString('zh-CN')
+  return shortMD(timestamp)
 }
 
 /** 聊天消息用的更紧凑时间（HH:mm） */
-const formatChatTime = (ts: string): string => {
-  if (!ts) return ''
-  const d = new Date(ts.includes('T') ? ts : ts.replace(' ', 'T'))
-  if (Number.isNaN(d.getTime())) return ''
-  return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+const formatChatTime = (ts: string): string => shortHM(ts)
+
+/** 格式化提醒时间（纯字符串，零时区） */
+const formatReminderTime = (timestamp: string): string => {
+  if (!timestamp) return ''
+  const tDate = datePart(timestamp)
+  const nDate = datePart(nowStr())
+  const d = splitTime(timestamp), n = splitTime(nowStr())
+  if (!d || !n) return timestamp
+  // 计算相差天数（字符串比较年月日）
+  let dayDiff = 0
+  if (tDate === nDate) dayDiff = 0
+  else if (tDate < nDate) {
+    // 过去的时间
+    dayDiff = -diffDays(tDate, nDate)
+  } else {
+    dayDiff = diffDays(nDate, tDate)
+  }
+  const p = (x: number) => String(x).padStart(2, '0')
+  if (dayDiff < 0) return `${p(d[1])}/${p(d[2])} ${p(d[3])}:${p(d[4])}`
+  if (dayDiff === 0) return `今天 ${p(d[3])}:${p(d[4])}`
+  if (dayDiff === 1) return `明天 ${p(d[3])}:${p(d[4])}`
+  if (dayDiff < 7) return `${dayDiff}天后 ${p(d[3])}:${p(d[4])}`
+  return `${d[0]}-${p(d[1])}-${p(d[2])} ${p(d[3])}:${p(d[4])}`
+}
+
+/** 两个日期字符串(yyyy-MM-dd)相差的天数 */
+function diffDays(a: string, b: string): number {
+  const toDays = (s: string) => {
+    const p = splitTime(s + ' 00:00:00')!
+    // 简化版：只用于"a在b之前/之后"的近似比较（提醒只关心今天/明天/几天后）
+    return p[0]*10000 + p[1]*100 + p[2]
+  }
+  return Math.abs(toDays(b) - toDays(a))
 }
 
 const toggleWidget = (): void => {
@@ -746,48 +1016,43 @@ const reminderStatusTextMap: Record<string, string> = {
 const getReminderTypeIcon = (type: string): string => reminderTypeIconMap[type] || reminderTypeIconMap.other
 const getReminderStatusText = (status: string): string => reminderStatusTextMap[status] || '未知'
 
-/** 格式化提醒时间（显示日期和时间） */
-const formatReminderTime = (timestamp: string): string => {
-  if (!timestamp) return ''
-  const date = new Date(timestamp.includes('T') ? timestamp : timestamp.replace(' ', 'T'))
-  if (Number.isNaN(date.getTime())) return ''
-  const now = new Date()
-  const diff = date.getTime() - now.getTime()
-  const days = Math.floor(diff / 86400000)
-  const hours = Math.floor(diff / 3600000)
-  const mins = Math.floor(diff / 60000)
-  
-  if (days < 0) {
-    return date.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
-  }
-  if (days === 0 && hours === 0) {
-    if (mins > 0) return `${mins}分钟后`
-    return '即将触发'
-  }
-  if (days === 0) return `今天 ${date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`
-  if (days === 1) return `明天 ${date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`
-  if (days < 7) return `${days}天后 ${date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`
-  return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
-}
-
-/** 加载提醒列表 */
+/** 加载提醒列表和未读数 */
 const loadReminderList = async (): Promise<void> => {
   loadingReminder.value = true
   try {
     const userInfo = store.getters.getUserInfo || {}
     const userId = userInfo?.id || localStorage.getItem('userId') || ''
-    const res: any = await reminderApi.getMyReminders({ userId, page: 1, size: 50 })
-    if (res?.code === 200) {
-      const data = res.resultValue
-      // 处理分页或数组格式
+    if (!userId) {
+      reminderList.value = []
+      reminderCount.value = 0
+      return
+    }
+
+    // 并行请求列表和未读数
+    const [listRes, unreadRes]: any = await Promise.all([
+      reminderApi.getMyReminders({ userId, page: 1, size: 50 }),
+      reminderApi.getUnreadCount(userId)
+    ])
+
+    // 处理列表
+    if (listRes?.code === 200) {
+      const data = listRes.resultValue
       const list = Array.isArray(data) ? data : (data?.list || data?.records || [])
-      // 只显示未取消的提醒
+      // ====== DEBUG: 打印后端返回的原始时间值 ======
+      if (list.length > 0) {
+        console.log('🟡 [DEBUG] 后端返回的原始提醒数据:', JSON.stringify(list, null, 2))
+        console.log('🟡 [DEBUG] 第一条的 remindTime 原始值:', list[0].remindTime, typeof list[0].remindTime)
+        console.log('🟡 [DEBUG] 第一条的 triggerTime 原始值:', list[0].triggerTime)
+      }
       reminderList.value = list.filter((item: any) => item.status !== 'cancelled').slice(0, 5)
-      // 更新数量
-      const total = Array.isArray(data) ? data.length : (data?.total || list.length)
-      reminderCount.value = total
     } else {
       reminderList.value = []
+    }
+
+    // 未读数只统计已触发+未读
+    if (unreadRes?.code === 200) {
+      reminderCount.value = Number(unreadRes.resultValue) || 0
+    } else {
       reminderCount.value = 0
     }
   } catch (e) {
@@ -799,6 +1064,56 @@ const loadReminderList = async (): Promise<void> => {
   }
 }
 
+/** 单独点击"已读"按钮 */
+const handleMarkRead = async (item: any): Promise<void> => {
+  try {
+    await reminderApi.markAsRead(item.id)
+    item.isRead = 1
+    reminderCount.value = Math.max(0, reminderCount.value - 1)
+  } catch (e) {
+    console.warn('标记已读失败:', e)
+  }
+}
+
+/** 点击提醒：打开详情；已触发未读的顺便标记已读 */
+const handleReminderClick = async (item: any): Promise<void> => {
+  // 先打开详情弹窗
+  reminderDetailItem.value = item
+  reminderDetailVisible.value = true
+  // 已触发且未读 → 顺便标记已读
+  if (item.status === 'triggered' && !item.isRead) {
+    try {
+      await reminderApi.markAsRead(item.id)
+      item.isRead = 1
+      reminderCount.value = Math.max(0, reminderCount.value - 1)
+    } catch (e) {
+      console.warn('标记已读失败:', e)
+    }
+  }
+}
+
+/** 关闭提醒详情弹窗 */
+const closeReminderDetail = (): void => {
+  reminderDetailVisible.value = false
+  reminderDetailItem.value = null
+}
+
+/** 获取周期类型文字描述 */
+const getRepeatText = (repeatType: string, interval: number | undefined): string => {
+  const map: Record<string, string> = {
+    hourly: '每小时',
+    daily: '每天',
+    weekly: '每周',
+    monthly: '每月',
+    yearly: '每年'
+  }
+  if (repeatType === 'custom' && interval) {
+    if (interval >= 60) return `每${Math.floor(interval / 60)}小时`
+    return `每${interval}分钟`
+  }
+  return map[repeatType] || ''
+}
+
 /** 取消提醒 */
 const handleCancelReminder = async (item: any): Promise<void> => {
   try {
@@ -807,9 +1122,12 @@ const handleCancelReminder = async (item: any): Promise<void> => {
     })
     const res: any = await reminderApi.cancelReminder(item.id)
     if (res?.code === 200) {
-      // 更新本地状态
       item.status = 'cancelled'
-      reminderCount.value = Math.max(0, reminderCount.value - 1)
+      // 已触发且未读的取消后未读数要减
+      if (item.isRead !== 1) {
+        reminderCount.value = Math.max(0, reminderCount.value - 1)
+      }
+      item.isRead = 1
       ElMessage.success('提醒已取消')
     } else {
       ElMessage.error(res?.resultValue || '取消失败')
@@ -825,10 +1143,13 @@ const handleDeleteReminder = async (item: any): Promise<void> => {
     })
     const res: any = await reminderApi.deleteReminder(item.id)
     if (res?.code === 200) {
+      // 已触发且未读的删除后未读数要减
+      if (item.isRead !== 1) {
+        reminderCount.value = Math.max(0, reminderCount.value - 1)
+      }
       const idx = reminderList.value.findIndex(r => r.id === item.id)
       if (idx !== -1) {
         reminderList.value.splice(idx, 1)
-        reminderCount.value = Math.max(0, reminderCount.value - 1)
       }
       ElMessage.success('删除成功')
     } else {
@@ -1586,6 +1907,35 @@ onUnmounted(() => {
   flex-direction: column;
 }
 
+/* 分区标题 */
+.reminder-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  padding: 8px 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.reminder-section-title.unread {
+  color: var(--theme-danger, #f5222d);
+}
+.reminder-section-title.light {
+  color: var(--theme-text-secondary);
+  font-weight: 500;
+  margin-top: 4px;
+}
+.reminder-section-dot {
+  width: 8px; height: 8px;
+  background: var(--theme-danger, #f5222d);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+
 .reminder-list {
   display: flex;
   flex-direction: column;
@@ -1650,6 +2000,28 @@ onUnmounted(() => {
 .reminder-status.triggered { background: var(--theme-success-light, #d9f7be); color: var(--theme-success, #00b42a); }
 .reminder-status.expired { background: var(--theme-danger-light, #ffccc7); color: var(--theme-danger, #ff4d4f); }
 
+/* 别名和地址 */
+.reminder-sub {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--theme-text-secondary);
+  margin-bottom: 2px;
+  overflow: hidden;
+}
+.reminder-label {
+  flex-shrink: 0;
+  color: var(--theme-text-placeholder);
+  font-size: 10px;
+}
+.reminder-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 24px);
+}
+
 .reminder-row2 {
   display: flex;
   align-items: center;
@@ -1669,6 +2041,58 @@ onUnmounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 未读红点 */
+.reminder-unread-dot {
+  width: 6px; height: 6px;
+  background: var(--theme-danger, #f5222d);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+/* 周期标签 */
+.reminder-repeat-tag {
+  font-size: 10px;
+  padding: 1px 5px;
+  background: var(--theme-primary-bg, #e6f4ff);
+  color: var(--theme-primary, #1677ff);
+  border-radius: 8px;
+  line-height: 1.4;
+}
+
+/* 触发状态：可点击 */
+.reminder-item.triggered {
+  cursor: pointer;
+}
+.reminder-item.triggered:hover {
+  border-color: var(--theme-primary);
+}
+/* 已触发未读：高亮背景 */
+.reminder-item.triggered.unread {
+  background: linear-gradient(135deg, rgba(var(--theme-danger-rgb, 245, 34, 45), 0.06) 0%, transparent 100%);
+  border-left: 3px solid var(--theme-danger, #f5222d);
+}
+.reminder-item.triggered.unread:hover {
+  border-color: var(--theme-danger, #f5222d);
+}
+.triggered-time {
+  color: var(--theme-danger, #f5222d) !important;
+}
+.mark-read-btn {
+  font-size: 11px;
+  color: var(--theme-primary);
+  cursor: pointer;
+  padding: 1px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  border: 1px solid var(--theme-primary-light, #91caff);
+  white-space: nowrap;
+}
+.mark-read-btn:hover {
+  background: var(--theme-primary);
+  color: #fff;
 }
 
 .reminder-actions {
@@ -1711,4 +2135,59 @@ onUnmounted(() => {
 .popup-body *::-webkit-scrollbar-track { background: transparent; }
 .popup-body *::-webkit-scrollbar-thumb { background: var(--theme-border); border-radius: 3px; }
 .popup-body *::-webkit-scrollbar-thumb:hover { background: var(--theme-text-placeholder); }
+
+/* ============== 提醒详情弹窗 ============== */
+.reminder-detail-dialog .detail-header {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 15px; color: var(--theme-text-primary);
+}
+.reminder-detail-dialog .detail-icon {
+  width: 20px; height: 20px; display: inline-flex;
+  color: var(--theme-primary);
+}
+.reminder-detail-dialog .detail-title { flex: 1; }
+.reminder-detail-dialog .detail-status-tag {
+  font-size: 12px; padding: 2px 8px; border-radius: 10px; font-weight: 500;
+}
+.reminder-detail-dialog .detail-status-tag.triggered { background: #fef0f0; color: #f56c6c; }
+.reminder-detail-dialog .detail-status-tag.pending { background: #ecf5ff; color: var(--theme-primary); }
+.reminder-detail-dialog .detail-status-tag.cancelled { background: #f4f4f5; color: #909399; }
+.reminder-detail-dialog .detail-status-tag.read { background: #f0f9eb; color: #67c23a; }
+.reminder-detail-dialog .detail-status-tag.unread { background: #fef0f0; color: #f56c6c; }
+
+.reminder-detail-dialog .detail-body { padding: 0 4px; }
+.reminder-detail-dialog .detail-row {
+  display: flex; padding: 10px 0; border-bottom: 1px dashed var(--theme-border);
+}
+.reminder-detail-dialog .detail-row:last-child { border-bottom: none; }
+.reminder-detail-dialog .detail-label {
+  width: 72px; flex-shrink: 0; font-size: 13px; color: var(--theme-text-placeholder);
+}
+.reminder-detail-dialog .detail-value {
+  flex: 1; font-size: 13px; color: var(--theme-text-primary); word-break: break-all;
+}
+.reminder-detail-dialog .detail-value.highlight { color: var(--theme-primary); font-weight: 600; }
+.reminder-detail-dialog .detail-value.multi-line { white-space: pre-wrap; line-height: 1.6; }
+.reminder-detail-dialog .detail-value.link {
+  flex: 1; font-size: 13px; color: var(--theme-primary); word-break: break-all;
+  text-decoration: none; cursor: pointer;
+}
+.reminder-detail-dialog .detail-value.link:hover { text-decoration: underline; }
+
+/* 列表中的可点击地址行 */
+.reminder-sub.link-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 2px 0; cursor: pointer; text-decoration: none;
+  border-radius: 4px; transition: background 0.15s;
+}
+.reminder-sub.link-row:hover { background: var(--theme-primary-bg-hover); }
+.reminder-sub.link-row .reminder-value.link-text {
+  color: var(--theme-primary); text-decoration: underline;
+  font-size: 12px; max-width: 100%;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.reminder-detail-dialog .detail-footer-actions {
+  display: flex; gap: 8px; justify-content: flex-end; align-items: center;
+}
 </style>

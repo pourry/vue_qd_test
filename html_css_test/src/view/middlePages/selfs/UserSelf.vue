@@ -12,33 +12,29 @@
                   <el-icon></el-icon>
                   <span>我的信息</span>
                 </el-menu-item>
-                <el-menu-item index="2"  route="/userSelf/applyFor" >
-                  <el-icon></el-icon>
-                  <span>我的申请</span>
-                </el-menu-item>
-                <el-menu-item index="3"  route="/userSelf/test" >
-                  <el-icon></el-icon>
-                  <span>代码测试场</span>
-                </el-menu-item>
-                <el-menu-item index="4"  route="/userSelf/carousel" >
+                <el-menu-item index="2"  route="/userSelf/carousel" >
                   <el-icon></el-icon>
                   <span>走马灯控制</span>
                 </el-menu-item>
-                <el-menu-item index="5"  route="/userSelf/footer" >
+                <el-menu-item index="3"  route="/userSelf/footer" >
                   <el-icon></el-icon>
                   <span>底部内容控制</span>
                 </el-menu-item>
-                <el-menu-item index="6"  route="/userSelf/basicConfig" >
+                <el-menu-item index="4"  route="/userSelf/basicConfig" >
                   <el-icon></el-icon>
                   <span>基本配置</span>
                 </el-menu-item>
-                <el-menu-item index="7"  route="/userSelf/totalFeedback" >
+                <el-menu-item index="5"  route="/userSelf/totalFeedback" >
                   <el-icon></el-icon>
                   <span>反馈管理</span>
                 </el-menu-item>
-                <el-menu-item index="8"  route="/userSelf/publishNotification" >
+                <el-menu-item index="6"  route="/userSelf/publishNotification" >
                   <el-icon></el-icon>
                   <span>发布管理</span>
+                </el-menu-item>
+                <el-menu-item index="7"  route="/userSelf/rolePermission" >
+                  <el-icon></el-icon>
+                  <span>角色权限管理</span>
                 </el-menu-item>
               </el-menu>
 

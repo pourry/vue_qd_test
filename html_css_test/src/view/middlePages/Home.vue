@@ -172,6 +172,41 @@
                      </div>
                     </div>
                       
+                    <!-- 综合收藏板块 -->
+                    <div class="acgexport">
+                      <div class="acgexporttitle">
+                        <el-icon><Files /></el-icon>
+                        综合收藏
+                      </div>
+                      <div class="acgexportbody">
+                        <div class="other-section-list">
+                          <template v-if="otherList.length > 0">
+                            <div v-for="item in otherList.slice(0, 10)" :key="item.id" class="other-card" @click="item.linkUrl && tourl(item.linkUrl)">
+                              <el-image v-if="item.pictureUrl" class="other-card-img" :src="item.pictureUrl" fit="cover">
+                                <template #error>
+                                  <div class="aceg-card-img-slot"><el-icon :size="20"><Picture /></el-icon></div>
+                                </template>
+                              </el-image>
+                              <div v-else class="other-card-icon">
+                                <el-icon :size="22"><Files /></el-icon>
+                              </div>
+                              <div class="other-card-info">
+                                <div class="other-card-title">{{ item.title }}</div>
+                                <div class="other-card-meta">
+                                  <span class="other-type-tag">{{ item.typeValue }}</span>
+                                  <span class="other-share-time">{{ item.shareTime }}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </template>
+                          <div v-else class="aceg-empty">暂无分享</div>
+                        </div>
+                        <div class="aceg-section-more" @click="toMore('/otherList')">
+                          查看更多 <el-icon><ArrowRight /></el-icon>
+                        </div>
+                      </div>
+                    </div>
+                      
            </div>
            <div class="exportmiddle">
            </div>
@@ -271,6 +306,7 @@ import { ref,reactive,onMounted,onUnmounted} from 'vue';
 import { useRouter } from 'vue-router';
 import urlCollectionapi from '@/api/urlCollection'
 import acgapi from '@/api/acg'
+import ocapi from '@/api/otherCollection'
 import carouselapi from '@/api/carousel'
 import $ from 'jquery' 
 export default {
@@ -283,8 +319,12 @@ export default {
 
     /** 跳转到ACG分类列表页 */
     const toMore = function(path) {
-      const category = path.replace('/twoDimensions/', '')
-      router.push('/acgList/' + category)
+      if (path === '/otherList') {
+        router.push('/otherList')
+      } else {
+        const category = path.replace('/twoDimensions/', '')
+        router.push('/acgList/' + category)
+      }
     }
     //   路由 ---------------------------------结束-----------------------------------------------
 
@@ -326,6 +366,7 @@ export default {
       togeturlshow();
       togeturlhot();
       getacgList();
+      getOtherList();
       automaticscroll();
       loadCarouselData();
     })
@@ -442,6 +483,14 @@ export default {
                             "comicList":[],
                             "novelList":[],
                             "gameList":[]})
+    let otherList = reactive([])
+    let getOtherList = function() {
+      ocapi.publicShow(10).then(res => {
+        if(res.successful && res.resultValue) {
+          otherList.splice(0, otherList.length, ...res.resultValue)
+        }
+      }).catch(() => {})
+    }
     let getacgList =function(){
        acgapi.getshowAce().then(res=>{
         if(res.successful){
@@ -486,6 +535,8 @@ export default {
             tourl,
             acgList,
             getacgList,
+            otherList,
+            getOtherList,
             automaticscroll,
             toselectdiv,
             carouselList,
@@ -1115,5 +1166,82 @@ export default {
   padding: 20px;
   color: var(--theme-text-placeholder);
   font-size: 13px;
+}
+
+/* ===== 综合收藏卡片 ===== */
+.other-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.other-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--theme-bg-middle);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.other-card:hover {
+  border-color: var(--theme-primary);
+  box-shadow: var(--theme-shadow-md);
+  transform: translateY(-1px);
+}
+.other-card-img {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--theme-primary-light);
+}
+.other-card-icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--theme-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--theme-text-placeholder);
+}
+.other-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.other-card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--theme-text-regular);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.other-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--theme-text-secondary);
+}
+.other-type-tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: var(--theme-primary-light);
+  color: var(--theme-primary);
+  font-size: 11px;
+  font-weight: 500;
+}
+.other-share-time {
+  font-size: 11px;
+  color: var(--theme-text-placeholder);
 }
 </style>

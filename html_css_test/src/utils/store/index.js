@@ -1,6 +1,7 @@
 //引入Vuex
 import { createStore } from 'vuex'
 import userInfoApi from '@/api/userInfo'
+import rolePermissionApi from '@/api/rolePermission'
 
 // 主题配置列表（与 themes.css 中的 data-app-theme 对应）
 export const THEME_LIST = [
@@ -27,6 +28,14 @@ applyTheme(savedTheme)
 const savedUserInfo = localStorage.getItem("userInfo");
 const parsedUserInfo = savedUserInfo ? JSON.parse(savedUserInfo) : null;
 
+// 从 localStorage 读取角色权限
+const savedRoleInfo = localStorage.getItem("roleInfo");
+const parsedRoleInfo = savedRoleInfo ? JSON.parse(savedRoleInfo) : null;
+const savedPermissions = localStorage.getItem("userPermissions");
+const parsedPermissions = savedPermissions ? JSON.parse(savedPermissions) : [];
+const savedAllowedPaths = localStorage.getItem("allowedPaths");
+const parsedAllowedPaths = savedAllowedPaths ? JSON.parse(savedAllowedPaths) : [];
+
 export default createStore({
     //存储数据
     state:{
@@ -39,6 +48,12 @@ export default createStore({
         theme: savedTheme,
         //用户信息
         userInfo: parsedUserInfo,
+        //角色信息（包含 roleId, roleCode, roleName）
+        roleInfo: parsedRoleInfo,
+        //权限列表（完整权限对象列表）
+        permissions: parsedPermissions,
+        //允许访问的路由路径集合（用于快速路由守卫检查）
+        allowedPaths: parsedAllowedPaths,
     },
     //用于将state中的数据进行加工
     getters:{
@@ -56,6 +71,32 @@ export default createStore({
         },
         getUserInfo :(state) =>{
             return state.userInfo;
+        },
+        getRoleInfo :(state) =>{
+            return state.roleInfo;
+        },
+        getPermissions :(state) =>{
+            return state.permissions;
+        },
+        getAllowedPaths :(state) =>{
+            return state.allowedPaths;
+        },
+        // 判断当前用户是否为管理员
+        isAdmin :(state) =>{
+            return state.roleInfo && state.roleInfo.roleCode === 'admin';
+        },
+        // 检查用户是否有访问某路径的权限
+        hasPermission :(state) => (path) =>{
+            if (!state.allowedPaths || state.allowedPaths.length === 0) return false;
+            // 管理员放行所有
+            if (state.roleInfo && state.roleInfo.roleCode === 'admin') return true;
+            // 精确匹配
+            if (state.allowedPaths.includes(path)) return true;
+            // 检查是否有父路径权限（如 /twoDimensions 下的子路径）
+            for (const p of state.allowedPaths) {
+                if (path.startsWith(p + '/')) return true;
+            }
+            return false;
         }
     },
     //操作数据
@@ -79,6 +120,30 @@ export default createStore({
                 localStorage.setItem("userInfo", JSON.stringify(userInfo));
             }else{
                 localStorage.removeItem("userInfo");
+            }
+        },
+        //设置角色信息
+        SETROLEINFO(state, roleInfo){
+            state.roleInfo = roleInfo;
+            if(roleInfo){
+                localStorage.setItem("roleInfo", JSON.stringify(roleInfo));
+            }else{
+                localStorage.removeItem("roleInfo");
+            }
+        },
+        //设置权限列表
+        SETPERMISSIONS(state, { permissions, allowedPaths }){
+            state.permissions = permissions || [];
+            state.allowedPaths = allowedPaths || [];
+            if(permissions){
+                localStorage.setItem("userPermissions", JSON.stringify(permissions));
+            }else{
+                localStorage.removeItem("userPermissions");
+            }
+            if(allowedPaths){
+                localStorage.setItem("allowedPaths", JSON.stringify(allowedPaths));
+            }else{
+                localStorage.removeItem("allowedPaths");
             }
         }
  
@@ -133,6 +198,44 @@ export default createStore({
             }catch(e){
                 console.warn('加载用户信息失败:', e);
             }
+        },
+        // 加载当前用户的角色信息和权限列表
+        async loadRolePermissions(context){
+            const token = context.state.token;
+            if(!token || !token.value){
+                // 未登录，清除角色权限
+                context.commit("SETROLEINFO", null);
+                context.commit("SETPERMISSIONS", { permissions: [], allowedPaths: [] });
+                return;
+            }
+            try{
+                const res = await rolePermissionApi.getMyPermissions();
+                if(res.successful && res.resultValue){
+                    const data = res.resultValue;
+                    // 保存角色信息
+                    const roleInfo = {
+                        roleId: data.roleId,
+                        roleCode: data.roleCode,
+                        roleName: data.roleName,
+                    };
+                    context.commit("SETROLEINFO", roleInfo);
+                    // 保存权限列表和允许的路径
+                    context.commit("SETPERMISSIONS", {
+                        permissions: data.permissions || [],
+                        allowedPaths: data.allowedPaths || [],
+                    });
+                }
+            }catch(e){
+                console.warn('加载角色权限失败:', e);
+                // 失败时设置为访客角色
+                context.commit("SETROLEINFO", { roleCode: 'guest', roleName: '访客' });
+                context.commit("SETPERMISSIONS", { permissions: [], allowedPaths: ['/home'] });
+            }
+        },
+        // 清除角色权限（登出时调用）
+        clearRolePermissions(context){
+            context.commit("SETROLEINFO", null);
+            context.commit("SETPERMISSIONS", { permissions: [], allowedPaths: [] });
         }
     },
     modules:{

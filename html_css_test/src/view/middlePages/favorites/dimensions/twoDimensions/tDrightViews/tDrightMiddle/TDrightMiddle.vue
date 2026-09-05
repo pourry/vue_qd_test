@@ -54,6 +54,23 @@
             </div>
             <div class="card-info">
               <h4 class="card-title" :title="item.name">{{ item.name }}</h4>
+              <!-- 评分 + 标签 -->
+              <div class="card-detail-row" v-if="item.rating || item.tags">
+                <span class="detail-text" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                  <template v-if="item.rating">
+                    <span class="rating-stars">★</span>
+                    <span class="rating-num">{{ item.rating }}</span>
+                  </template>
+                  <template v-if="item.tags">
+                    <el-tag v-for="tag in item.tags.split(',').slice(0,3)" :key="tag" size="small" effect="plain" style="margin-right:2px">{{ tag }}</el-tag>
+                  </template>
+                </span>
+              </div>
+              <!-- 类型专属一行摘要 -->
+              <div class="card-detail-row type-summary" v-if="getTypeSummary(item)">
+                <el-icon :size="12" class="detail-icon"><Collection /></el-icon>
+                <span class="detail-text">{{ getTypeSummary(item) }}</span>
+              </div>
               <div class="card-detail-row" v-if="item.alias">
                 <el-icon :size="12" class="detail-icon"><Document /></el-icon>
                 <span class="detail-text" :title="item.alias">{{ item.alias }}</span>
@@ -197,6 +214,21 @@
               <h4 class="list-title" :title="item.name">{{ item.name }}</h4>
             </div>
             <div class="list-detail-rows">
+              <div class="card-detail-row" v-if="item.rating || item.tags">
+                <span class="detail-text" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                  <template v-if="item.rating">
+                    <span class="rating-stars">★</span>
+                    <span class="rating-num">{{ item.rating }}</span>
+                  </template>
+                  <template v-if="item.tags">
+                    <el-tag v-for="tag in item.tags.split(',').slice(0,3)" :key="tag" size="small" effect="plain" style="margin-right:2px">{{ tag }}</el-tag>
+                  </template>
+                </span>
+              </div>
+              <div class="card-detail-row type-summary" v-if="getTypeSummary(item)">
+                <el-icon :size="12" class="detail-icon"><Collection /></el-icon>
+                <span class="detail-text">{{ getTypeSummary(item) }}</span>
+              </div>
               <div class="card-detail-row" v-if="item.alias">
                 <el-icon :size="12" class="detail-icon"><Document /></el-icon>
                 <span class="detail-text" :title="item.alias">{{ item.alias }}</span>
@@ -266,7 +298,7 @@
 
 <script>
 import {ref,reactive,onMounted,watch} from 'vue'
-import { Grid, List, Picture, View, Link, Document, EditPen, Share } from '@element-plus/icons-vue'
+import { Grid, List, Picture, View, Link, Document, EditPen, Share, Collection } from '@element-plus/icons-vue'
 
 export default {
   name: 'TDrightMiddle',
@@ -312,6 +344,30 @@ export default {
         'beforeStart': 'warning'
       }
       return map[value] || 'info'
+    }
+
+    /** 根据类型生成一行摘要 */
+    const getTypeSummary = (item) => {
+      const t = item.type
+      const parts = []
+      if (t === 'animation') {
+        if (item.episodes) parts.push(`${item.episodes}集`)
+        if (item.studio) parts.push(item.studio)
+        if (item.source) parts.push(item.source)
+      } else if (t === 'comic') {
+        if (item.chapters) parts.push(`${item.chapters}话`)
+        if (item.comicAuthor) parts.push(item.comicAuthor)
+        if (item.publisher) parts.push(item.publisher)
+      } else if (t === 'novel') {
+        if (item.wordCount) parts.push(`${item.wordCount}千字`)
+        if (item.novelAuthor) parts.push(item.novelAuthor)
+        if (item.platform) parts.push(item.platform)
+      } else if (t === 'game') {
+        if (item.gamePlatform) parts.push(item.gamePlatform)
+        if (item.developer) parts.push(item.developer)
+        if (item.hoursPlayed) parts.push(`${item.hoursPlayed}h`)
+      }
+      return parts.join(' · ')
     }
 
     const truncateText = (text, maxLen) => {
@@ -372,7 +428,8 @@ export default {
       pagemsg,
       viewMode,
       getHasEndLabel,
-      getHasEndTagType,
+getHasEndTagType,
+getTypeSummary,
       truncateText
     }
   }
@@ -609,6 +666,16 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 评分星 */
+.rating-stars { color: #f5a623; font-weight: bold; }
+.rating-num { color: #f5a623; font-size: 12px; font-weight: 600; }
+
+/* 类型摘要 */
+.type-summary .detail-text {
+  color: var(--theme-text-secondary, #909399);
+  font-size: 12px;
 }
 
 .detail-link {

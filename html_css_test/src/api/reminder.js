@@ -60,4 +60,25 @@ reminderApi.checkReminders = function () {
   return axiospost(BASE_URL + '/check', null)
 }
 
+/**
+ * 获取已触发但未读的提醒数量
+ */
+reminderApi.getUnreadCount = function (userId) {
+  return axiosget(BASE_URL + '/unreadCount', { userId })
+}
+
+/**
+ * 标记单条提醒为已读
+ */
+reminderApi.markAsRead = function (id) {
+  return axiospost(BASE_URL + '/markRead/' + id, null)
+}
+
+/**
+ * 标记所有已触发提醒为已读
+ */
+reminderApi.markAllAsRead = function (userId) {
+  return axiospost(BASE_URL + '/markAllRead', { userId })
+}
+
 export default reminderApi

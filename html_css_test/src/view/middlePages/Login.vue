@@ -152,6 +152,8 @@ export default {
             localStorage.setItem("Authorization",res.resultValue.token);
             store.commit("SETTOKEN",{value: res.resultValue.token});
             store.dispatch('loadUserTheme');
+            // 登录成功后加载角色权限
+            store.dispatch('loadRolePermissions').catch(() => {});
             // 登录成功后刷新验证码
             router.push("/home"); 
          }else{

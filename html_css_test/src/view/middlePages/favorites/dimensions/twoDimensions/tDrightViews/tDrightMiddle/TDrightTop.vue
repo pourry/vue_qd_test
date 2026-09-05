@@ -40,9 +40,11 @@
 
 <script>
 import {ref,reactive,nextTick,onMounted,onBeforeUnmount} from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import AddDialog from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/tDrightMiddleDialog/AddDialog.vue'
 import EditDialog from '@/view/middlePages/favorites/dimensions/twoDimensions/tDrightViews/tDrightMiddle/tDrightMiddleDialog/EditDialog.vue'
+import animationapi from '@/api/animation.js'
 export default {
   name: 'TDrightTop',
   components: {
@@ -69,6 +71,11 @@ export default {
   },
   emits:["toadd", "togetList","toedit","todelete"],
   setup(props,{emit}){
+    // 从路由路径解析 type: /twoDimensions/animation -> animation
+    const route = useRoute();
+    const typeMap = { Animation: 'animation', Comic: 'comic', Novel: 'novel', Game: 'game' };
+    const currentType = typeMap[route.name] || 'animation';
+
     onMounted(()=>{
     })
 
@@ -83,15 +90,30 @@ export default {
      let addandeditform = reactive({"form":{
                                             id:undefined,
                                             name:undefined,
+                                            type:currentType,
                                             hasend:undefined,
                                             hasendLabel:undefined,
                                             address:undefined,
                                             notes:undefined,
                                             alias:undefined,
+                                            rating:undefined,
+                                            tags:undefined,
+                                            // 动画
+                                            episodes:undefined, studio:undefined, voiceActors:undefined, source:undefined,
+                                            // 漫画
+                                            chapters:undefined, comicAuthor:undefined, publisher:undefined, serialization:undefined,
+                                            // 小说
+                                            wordCount:undefined, novelAuthor:undefined, platform:undefined, category:undefined,
+                                            // 游戏
+                                            gamePlatform:undefined, developer:undefined, genre:undefined, hoursPlayed:undefined,
+                                            // 系统
                                             remindopen:undefined,
                                             remindtime:undefined,
                                             remindmsg:undefined,
-                                            share:undefined
+                                            share:undefined,
+                                            repeatType:'none',
+                                            repeatInterval:undefined,
+                                            repeatEndTime:undefined
                                             }
                                     }); 
      //重置
@@ -99,15 +121,25 @@ export default {
       addandeditform.form = {
                               id:undefined,
                               name:undefined,
+                              type:currentType,
                               hasend:undefined,
                               hasendLabel:undefined,
                               address:undefined,
                               notes:undefined,
                               alias:undefined,
+                              rating:undefined,
+                              tags:undefined,
+                              episodes:undefined, studio:undefined, voiceActors:undefined, source:undefined,
+                              chapters:undefined, comicAuthor:undefined, publisher:undefined, serialization:undefined,
+                              wordCount:undefined, novelAuthor:undefined, platform:undefined, category:undefined,
+                              gamePlatform:undefined, developer:undefined, genre:undefined, hoursPlayed:undefined,
                               remindopen:undefined,
                               remindtime:undefined,
                               remindmsg:undefined,
-                              share:undefined
+                              share:undefined,
+                              repeatType:'none',
+                              repeatInterval:undefined,
+                              repeatEndTime:undefined
                             }
      }
      //赋值
@@ -136,7 +168,7 @@ export default {
                                   name:"修改"
                                   });
      let pictures = ref([]);
-     let totdeditmenushow = function(){
+     let totdeditmenushow = async function(){
          if(hasselecteds == undefined ||hasselecteds.list.length<=0 || hasselecteds.list.length>1){
             ElMessage({
               message: '请选择一个进行修改',
@@ -144,17 +176,54 @@ export default {
             })
             return;
          }
-          let pict = hasselecteds.list[0].pictures;
-          for(let i=0;i<pict.length;i++){
-            pict[i].name=pict[i].pictureLogic;
-            pict[i].url = pict[i].pictureUrl;
-          }
-          addandeditform.pictures = pict;
-          setfrom(hasselecteds.list[0]);
+         // 先准备图片数据（从列表选中项中取）
+         let pict = hasselecteds.list[0].pictures || [];
+         for(let i=0;i<pict.length;i++){
+           pict[i].name=pict[i].pictureLogic;
+           pict[i].url = pict[i].pictureUrl;
+         }
+         addandeditform.pictures = pict;
 
-          tdeditmenushow.isshow = true;
-          //当修改时  新增页面关闭
-          tdaddmenushow.isshow= false;
+         // 调 getone 获取完整数据（包含 repeatType/repeatInterval/repeatEndTime）
+         let selectedId = hasselecteds.list[0].id;
+         try {
+           let res = await animationapi.togetone(selectedId);
+           if (res.successful && res.resultValue) {
+             let detail = res.resultValue;
+             // value-format 已设，form 里直接存字符串即可
+             addandeditform.form = {
+               id: detail.id,
+               name: detail.name,
+               hasend: detail.hasend,
+               hasendLabel: detail.hasendLabel,
+               address: detail.address,
+               notes: detail.notes,
+               alias: detail.alias,
+               share: detail.share,
+               remindopen: detail.remindopen === true,
+               remindtime: detail.remindtime || undefined,
+               remindmsg: detail.remindmsg,
+               repeatType: detail.repeatType || 'none',
+               repeatInterval: detail.repeatInterval ? Number(detail.repeatInterval) : undefined,
+               repeatEndTime: detail.repeatEndTime || undefined,
+               pictures: pict  // ← 别漏了！EditDialog 从 form.pictures 取
+             };
+             tdeditmenushow.isshow = true;
+             tdaddmenushow.isshow= false;
+           } else {
+             ElMessage({ message: '获取详情失败', type: 'warning' });
+           }
+         } catch (e) {
+           // getone 失败则回退用列表数据（没有周期字段）
+           console.warn('getone 失败，回退用列表数据', e);
+           setfrom(hasselecteds.list[0]);
+           // 确保有默认周期字段
+           addandeditform.form.repeatType = addandeditform.form.repeatType || 'none';
+           addandeditform.form.repeatInterval = addandeditform.form.repeatInterval || undefined;
+           addandeditform.form.repeatEndTime = addandeditform.form.repeatEndTime || undefined;
+           tdeditmenushow.isshow = true;
+           tdaddmenushow.isshow= false;
+         }
      }
      //提供给edit组件 让其可关闭edit组件自己
      let closeeditmenu = function(){
